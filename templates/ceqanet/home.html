@@ -1,0 +1,73 @@
+{% extends "hms2/base.html"%}
+
+{% block content %}
+<h2>
+Welcome to the HMS2 Data Management System!
+</h2>
+  {% if user.is_authenticated %}
+    Your log-on was successful.
+	<p/>
+    <h1>Inventory Summary</h1>
+    <!--
+	<i>If you have a question or problem, please call Dr. Robert Meese at home after 10 p.m.</i>
+    <div id="summary">
+    <ul>
+    {% for object in object_list %}
+   		<li>
+		<a href="inventory?svra={{ object.svra_name }}&taxon={{ object.inventory__fk_taxongroup__taxon_group }}">
+		{{ object.svra_name }},{{ object.inventory__fk_taxongroup__taxon_group }},{{ object.count }}
+		</a>
+		</li>
+    {% endfor %}
+    </ul>
+    </div>
+    -->    
+    <div class = "list">
+        <table border = "0" cellspacing = "10" >
+            <tr>
+                <th>SVRA</th>
+                <th>Taxon</th>
+                <th>Count</th>
+                <th>&nbsp;</th>
+                <th>Inventory</th>
+                <th>Monitoring</th>
+                <th>Incidental Observations</th>
+            </tr>
+            {% for object in object_list %}
+            <tr>
+                <!--
+                <td width=10%>{{ object.svra_name }}</td>
+                <td width=10%>{{ object.inventory__fk_taxongroup__taxon_group }}</td>
+                <div class = "action">
+					<td width=10% align='right'><a href="inventory?svra={{ object.svra_name }}&taxon={{ object.inventory__fk_taxongroup__taxon_group }}">{{ object.count }}</td>
+	             </div>
+                <td width=10%>&nbsp;</td>
+                <div class = "action">
+					<td width=10%><a href="inventory?svra={{ object.svra_name }}&taxon={{ object.inventory__fk_taxongroup__taxon_group }}">Inventory</td>
+					<td width=10%><a href="observation?svra={{ object.svra_name }}&taxon={{ object.inventory__fk_taxongroup__taxon_group }}">Monitoring</td>
+					<td width=10%><a href="monitoring?svra={{ object.svra_name }}&taxon={{ object.inventory__fk_taxongroup__taxon_group }}">I-Observations</td>
+                 </div>
+                -->    
+                <td>{{ object.svra_name }}</td>
+                <td>{{ object.inventory__fk_taxongroup__taxon_group }}</td>
+                <div class = "action">
+					<td align='right'><a href="inventory?svra={{ object.svra_name }}&taxon={{ object.inventory__fk_taxongroup__taxon_group }}">{{ object.count }}</td>
+	             </div>
+                <td>&nbsp;&nbsp;&nbsp;</td>
+                <div class = "action">
+					<td><a href="inventory?svra={{ object.svra_name }}&taxon={{ object.inventory__fk_taxongroup__taxon_group }}">Inventory</td>
+					<td><a href="monitoring?svra={{ object.svra_name }}&taxon={{ object.inventory__fk_taxongroup__taxon_group }}">Monitoring</td>
+					<td><a href="observation?svra={{ object.svra_name }}&taxon={{ object.inventory__fk_taxongroup__taxon_group }}">Incidental Observations</td>
+                 </div>
+               </tr>
+            {% endfor %}
+         </table>
+                
+    </div>
+	<p/>
+	<p/>
+	<p/>
+   
+  {% endif %}
+
+{% endblock %}

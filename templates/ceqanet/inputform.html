@@ -1,0 +1,281 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+  {% if doctype = 'NOE' %}
+<FORM name="inputform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD colspan="2" align="center">
+        Notice of Exemption Submission Form
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR>
+      <td width="25%" valign="top" colspan="2">
+        <i>From:</i>
+      </td>
+    </TR>
+    <tr>
+      <td width="25%" valign="top">
+        <b>From <font color="#000066">(Lead Agency)</font>:</b>
+      </td>
+       <td> 
+        {{ laglist.lag_name }}
+       </td>
+    <tr> 
+      <td width="25%" valign="top">
+        <b>Street Address1:</b>
+      </td>
+      <td> 
+        {{ form.doc_lagaddress1 }}
+      </td>
+    </tr>
+    <tr> 
+      <td width="25%" valign="top">
+        <b>Street Address2:</b>
+      </td>
+      <td> 
+        {{ form.doc_lagaddress2 }}
+      </td>
+    </tr>
+    <TR> 
+      <td width="16%" valign="top">
+        <b>City:</b>
+      </td>
+      <td> 
+        {{ form.doc_lagcity}}
+      </td>
+    </TR>
+    <TR> 
+      <td width="20%" valign="top">
+        <b>State:</b>
+      </td>
+      <td width="74%"> 
+        {{ form.doc_lagstate }}
+      </td>
+    </tr>
+    <tr> 
+      <td width="16%" valign="top">
+        <b>Zip:</b>
+      </td>
+      <td> 
+        {{ form.doc_lagzip }}
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="2" height="30"> 
+        <hr width="75%" align="center">
+      </TD>
+    </TR>
+    <TR>
+      <TD width="16%" valign="top">
+        <b>Project Title:</b>
+      </TD>
+      <TD width="74%"> 
+        {{ form.prj_title }}
+      </TD>
+    </TR>
+    <TR>
+      <TD width="16%"> 
+        <b>Project Location:</b>
+      </TD>
+      <TD width="74%"> 
+        {{ form.doc_location }}
+      </TD>
+    </TR>
+    <TR>
+      <TD width="16%">
+        <b>City:</b>
+      </TD>
+      <TD width="74%"> 
+        <select name="doc_city">
+          <option selected>[Select city]</option>
+        {% for city in citylist %}
+          <option value="{{ city.geow_pk }}">{{ city.geow_shortname }}</option>
+        {% endfor %}
+        </select>             
+      </TD>
+    </TR>
+    <TR>
+      <TD width="16%">
+        <b>County:</b>
+      </TD>
+      <td> 
+        <select size="1" name="strcounty" onChange="doCounty()" class=content>
+          <OPTION selected value=0>[Select County]</OPTION>
+          {% for county in countylist %}
+            <option value="{{ county.geow_pk }}">{{ county.geow_shortname }}
+          {% endfor %}
+        </select>
+      </td>
+    </TR>
+    <TR>
+      <TD width="16%">
+        <b>Project Latitude:</b>
+      </TD>
+      <TD width="16%">
+        {{ form.doc_latitude }}
+      </TD>
+      <TD width="74%">&nbsp;</TD>
+    </TR>
+    <TR>
+      <TD width="16%">
+        <b>Project Longitude:</b>
+      </TD>
+      <TD width="16%">
+        {{ form.doc_longitude }}
+      </TD>
+      <TD width="74%">&nbsp;</TD>
+    </TR>
+    <TR>
+      <TD valign="top" width="16%">
+        <b>Project Description:</b>
+      </TD>
+      <TD valign="top" width="74%"> 
+        {{ form.prj_description }}
+      </TD>
+    </TR>
+    <TR> 
+      <td width="42%">
+        <B>Person or Agency Carrying Out Project:</b>
+      </td>
+      <td width="58%"> 
+        TODO
+      </td>
+    </tr>
+    <tr>
+      <td width="42%">
+        <B>Agency Approving Project <font color="#000066">(Lead Agency)</font>:</B>
+      </td>
+      <td width="58%">
+        {{ laglist.lag_name }}
+      </td>
+    </TR>
+    <TR> 
+    <tr> 
+      <td colspan="2">
+        &nbsp;
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="2">
+        <B>Exempt Status <font color="#000066">(check one)</font>:</B>
+      </td>
+    </tr>
+    <tr> 
+      <td width="24"> 
+        <input type="radio" name="rdoexemptstatus" value="1">
+      </td>
+      <td width="310">
+        Ministerial (Sec.21080(b)(1); 15268);
+      </td>
+    </tr>
+    <tr> 
+      <td width="24">
+        <input type="radio" name="rdoexemptstatus" value="2">
+      </td>
+      <td width="310">
+        Declared Emergency (Sec. 21080(b)(3);15269(a));
+      </td>
+    </tr>
+    <tr> 
+      <td width="24">
+        <input type="radio" name="rdoexemptstatus" value="3">
+      </td>
+      <td width="310">
+        Emergency Project (Sec. 21080(b)(4); 15269(b)(c));
+      </td>
+    </tr>
+    <tr> 
+      <td width="24"> 
+        <input type="radio" name="rdoexemptstatus" value="4">
+      </td>
+      <td width="310">
+        Categorical Exemption. State type and section number:
+      </td>
+      <td width="454">
+        {{ form.strsectionnumber }}
+      </td>
+    </tr>
+    <tr> 
+      <td width="24">
+        <input type="radio" name="rdoexemptstatus" value="5">
+      </td>
+      <td width="310">
+        Statutory Exemptions. State code number:
+      </td>
+      <td width="454"> 
+        {{ form.strcodenumber }}
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <td width="315" valign="top">
+        <B>Reasons why project is exempt:</B>
+      </td>
+      <td width="484" valign="top">
+        &nbsp;
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="2"> 
+        {{ form.txtreason }}
+      </td>
+    </tr>
+    <TR>
+      <TD valign="bottom" width="16%">
+        <B>Lead Agency Contact Person:</B>
+      </TD>
+      <TD valign="bottom" width="74%"> 
+        {{ form.strlagcontact }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD valign="bottom" width="16%" height="31"> 
+        <B>E-mail:</B>
+      </TD>
+      <TD valign="bottom" width="74%" height="31">
+        {{ form.stremail }}  {{ form.stremail.errors }}
+      </TD>
+    </TR>
+    <TR>   
+      <TD width="16%">
+        <B>Phone:</B>
+      </TD>
+      <TD width="74%"> 
+        ({{ form.strphone1 }})
+        {{ form.strphone2 }}
+        {{ form.strphone3}}
+      </TD>
+    </TR>
+    <TR> 
+      <TD width="16%">
+        <B>Entry Date:</B>
+      </TD>
+      <TD width="74%"></TD>
+    </TR>
+    <TR> 
+      <TD width="16%">&nbsp;</TD>
+      <TD width="74%">&nbsp;</TD>
+    </TR>
+    <TR> 
+      <TD width="74%" align="center" colspan="2"> 
+        <input type="submit" value="Continue">
+  &nbsp;<input type="reset" value="Clear Form">
+      </TD>
+    </TR>
+  </TABLE>
+</FORM>
+  {% endif %}
+{% endblock content %}

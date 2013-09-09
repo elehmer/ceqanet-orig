@@ -1,0 +1,299 @@
+{% extends "ceqanet/base.html" %}
+
+{% block title %}OPR Data Clearinghouse Query{% endblock title %}
+
+{% block extrajs %}
+  <script>
+    $(function() {
+        $( "#id_date_from" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+    $(function() {
+        $( "#id_date_to" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+  </script>
+
+<script language="javascript">
+// Popup Window
+  function displayPopup(url, height, width) {
+   properties = "toolbar=0,location=0,scrollbars=1,height=" + height;
+   properties = properties + ",width=" + width;
+   properties = properties + ",left=0,top=0";
+   popupHandle = open(url, "tipwindow", properties);
+ }
+function radiocheck()
+   {
+     document.queryform.rdodate[1].checked = true;
+   }
+function radiocheck_2()
+   {
+     document.queryform.radio2[2].checked = true;
+   }
+function radiocheck_3()
+   {
+     document.queryform.rdoplace[1].checked = true;
+   }
+function radiocheck_4()
+   {
+     document.queryform.rdoplace[2].checked = true;
+   }
+function radiocheck_5()
+   {
+     document.queryform.rdokword[0].checked = true;
+   }
+function radiocheck_6()
+   {
+     document.queryform.rdokword[1].checked = true;
+   }
+function radiocheck_7()
+   {
+     document.queryform.rdolag[0].checked = true;
+   }
+function radiocheck_8()
+   {
+     document.queryform.rdolag[1].checked = true;
+   }
+function radiocheck_9()
+   {
+     document.queryform.rdorag[0].checked = true;
+   }
+function radiocheck_10()
+   {
+     document.queryform.rdorag[1].checked = true;
+   }
+function checkqueryform(mode) {
+  if (mode == 'A') {
+    if (document.queryform.prj_schno.value.length > 0) {
+      document.queryform.mode.value = 'A';
+      document.queryform.submit();
+    }
+    else {
+      alert("Please Enter a Clearinghouse Number.");
+    }
+  }
+  else {
+    document.queryform.mode.value = 'B';
+    document.queryform.submit();
+  }
+}
+</script>
+
+{% endblock extrajs %}
+
+{% block content %}
+
+  <FORM NAME="queryform" METHOD="GET" ACTION="/projectlist/">
+    <table>
+      <tr><td colspan="3">&nbsp;</td></tr>
+      <tr>
+        <td>
+          {{ form.prj_schno.label }}
+        </td>
+        <td>
+          {{ form.prj_schno }}
+        </td>
+        <td>
+          <Input type="button" name="submit1" value="Submit" onclick="checkqueryform('A')">
+        </td>
+      </tr>
+    </table>
+    <INPUT TYPE="hidden" NAME="mode" VALUE="0">
+
+    <table width="100%" border="0">
+      <tr>
+        <td colspan="3">
+          &nbsp;
+        </td>
+      </tr>
+      <tr> 
+        <td colspan="3">
+          <b>Select Options and Submit:</b>
+        </td>
+      </tr>
+      <tr> 
+        <td width=668><b>Date Range : (time period in which the 
+          document was received by the State Clearinghouse)</b> 
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <input type="radio" name="rdodate" value="1">
+          <b><i>All</i></b> </td>
+        <td>&nbsp;</td>
+      </tr>
+      <tr> 
+        <td class="blueLink"> 
+          <input type="radio" name="rdodate" value="2" checked>
+          <b><i>Range</i></b>
+          {{ form.date_from.label }} {{ form.date_from }} {{form.date_to.label }} {{ form.date_to }}
+        </td>
+      </tr>
+    </table>
+      </td>
+    </tr>
+    <tr> 
+      <td width=668><B>Project Location: 
+        (type first letter of city or county to move through list more efficiently)</b>
+        <table width="100%" border="0">
+          <tr> 
+            <td bgcolor="#CCCCCC" align="left" width="19%" class="blueLink"> 
+              <input type="radio" name="rdoplace" value="1" checked>
+              <b><i>All</i></b> </td>
+            <td bgcolor="#CCCCCC"><b></b></td>
+            <td bgcolor="#FFFFFF"><b><i> </i></b> </td>            
+          </tr>
+          <tr> 
+            <td bgcolor="#CCCCCC" align="left" class="blueLink"> 
+              <div align="left"> 
+                <input type="radio" name="rdoplace" value="2" >
+                <b><i>City: </i></b> </div>
+            </td>
+            <td bgcolor="#CCCCCC"><b>
+              <select name="cityid" onclick="radiocheck_3()">
+                {% for city in citylist %}
+                  <option value="{{ city.geow_pk }}">{{ city.geow_shortname }}</option>
+                {% endfor %}
+                </select>             
+              </b></td>
+            <td bgcolor="#FFFFFF"><b><i> </i></b> </td>
+          </tr>
+          <tr> 
+            <td bgcolor="#CCCCCC" align="left" class="blueLink"> 
+              <div align="left"> 
+                <input type="radio" name="rdoplace" value="3">
+                <b><i>County: </i></b> </div>
+            </td>
+            <td bgcolor="#CCCCCC"><b> 
+              <select name="cid" onclick="radiocheck_4()">
+                {% for county in countylist %}
+                <option value="{{ county.geow_pk }}">{{ county.geow_shortname }}
+                {% endfor %}
+              </select>
+              </b></td>
+            <td bgcolor="#FFFFFF"><b><i> </i></b> </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr> 
+      <td width="668" class="blackHeader2"> <b>Keyword (search for word or phrase 
+        in project title or alternate title)</b>: 
+        <table width="100%" border="0">
+          <tr> 
+            <td align="left" width="19%" class="blueLink"> 
+              <input type="radio" name="rdokword" value="1" checked>
+              <b><i>No Keyword</i></b> </td>
+            <td width="81%"><b></b></td>
+          </tr>
+          <tr> 
+            <td align="left" width="19%" class="blueLink"> 
+              <input type="radio" name="rdokword" value="2">
+              <b><i>Keyword</i></b> </td>
+            <td width="81%"> 
+              <input type="text" name="kword" size="45" maxlength="45" style="font-size: 71%" onclick="radiocheck_6()">
+            </td>
+          </tr>
+          <tr> 
+            <td align="left" width="19%">&nbsp;</td>
+            <td valign="top" width="81%"><font color="FF0000" size="1">(Keyword search 
+              may take several minutes; improve search speed by using date and/or 
+              location parameters.)</font></td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr> 
+      <td width="668" class="blackHeader2"> <b>Lead Agency:</b> 
+        <table width="100%" border="0">
+          <tr> 
+            <td align="left" width="19%" bgcolor="#CCCCCC" class="blueLink"> 
+              <input type="radio" name="rdolag" value="1" checked>
+              <b><i>All</i></b></td>
+            <td width="81%" bgcolor="#CCCCCC"><b></b></td>
+          </tr>
+          <tr> 
+            <td align="left" width="19%" class="blueLink" bgcolor="#CCCCCC"> 
+              <input type="radio" name="rdolag" value="2">
+               <i><b>Agency</b></i> </td>
+            <td bgcolor="#CCCCCC" align="left" width="81%"> 
+              <select name="lag_pk" onclick="radiocheck_8()">
+                {% for lag in laglist %}
+                <option value="{{ lag.lag_pk }}">{{ lag.lag_name }}
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr> 
+      <td width="668"> 
+        <table width="100%" border="0" cellspacing="1" cellpadding="3">
+          <tr> 
+            <td height="24" colspan="3" class="blackHeader2"><b>Reviewing Agency:</b> 
+            </td>
+          </tr>
+          <tr> 
+            <td class="blueLink"> 
+              <input type="radio" name="rdorag" value="1" checked>
+              <b><i>All</i></b></td>
+            <td>&nbsp;</td>
+          </tr>
+          <tr> 
+            <td class="blueLink"> 
+              <input type="radio" name="rdorag" value="2">
+              <i><b>Agency</b></i></td>
+            <td>
+              <select name="rag_pk" onClick="radiocheck_10()">
+                {% for rag in raglist %}
+                <option value="{{ rag.rag_pk }}">{{ rag.rag_name }}
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr> 
+      <td width="668" class="blackHeader2"> <b>Document Type:</b><br>
+        <select name="doctype">
+          <option selected value="1">All Types 
+          {% for doc in doctypes %}
+            <option value="{{ doc.keyw_pk }}">{{ doc.keyw_longname }}
+          {% endfor %}
+        </select>
+        <a href="javascript:displayPopup('doctype_definition.htm',615,325)"><font size="1" color="#0000FF">Document 
+        Types</font> </a> </td>
+    </tr>
+    <tr> 
+      <td width="81">&nbsp;</td>
+      <td width="668">&nbsp;</td>
+    </tr>
+    <tr> 
+      <td width="81">&nbsp;</td>
+      <td width="668" > 
+        <input type="reset" name="reset" value="Reset">
+        <input type="button" name="submit2" value="Submit" onClick="checkqueryform('B')">
+      </td>
+    </tr>
+    <tr>
+      <td width="81">&nbsp;</td>
+      <td width="668">
+        <hr width="100%">
+      </td>
+    </tr>
+    <tr> 
+      <td width="81">&nbsp;</td>
+      <td width="668" class="content">Please note that the CEQAnet database does not contain a 
+        comprehensive listing of all CEQA documents prepared in the State. It 
+        contains information only for those CEQA documents that have been submitted 
+        to the State Clearinghouse for state agency review, pursuant to requirements 
+        of CEQA. [Refer to CEQA Guidelines Sections 15062 (Notice of Exemption), 
+        15075 and 15094 (Notice of Determination), 15085 (Notice of Completion), 
+        15205 and 15206 (requirement for State Clearinghouse review).] </td>
+    </tr>
+  </form>
+</table>
+  </body>
+  </html>
+
+{% endblock content %}

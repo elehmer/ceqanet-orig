@@ -1,0 +1,88 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Project Listing{% endblock title %}
+
+{% block listing %}
+
+  {% if object_list %}
+ 	<TABLE border="1">
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          {% if is_paginated %}
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+          {% endif %}
+      </TD>
+    </TR>
+ 	  <TR>
+ 	  	<TH align="center" width="10%">
+ 	      SCH#
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Lead Agency
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Project Title
+ 	  	</TH>
+ 	  	<TH align="center" width="40%">
+ 	  	  Description
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Document Type
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Date Received
+ 	  	</TH>
+ 	  </TR> 
+    {% for doc in docs %}
+      <TR>
+      	<TD align="center">
+    	    {{ doc.doc_prj_fk.prj_schno }}
+    	  </TD>
+      	<TD align="center">
+    	    {{ doc.doc_prj_fk.prj_leadagency }}
+    	  </TD>
+      	<TD align="center">
+    	    <a href="/projdoclist/?prj_pk={{ doc.doc_prj_fk.prj_pk }}"><i>{{ doc.doc_prj_fk.prj_title }}</i></a>
+    	  </TD>
+      	<TD align="center">
+    	    {{ doc.doc_description }}
+    	  </TD>
+      	<TD align="center">
+        {% if doc.doc_doct_fk.keyw_pk = 109 %}
+    	    <a href="/NOEdescription/?doc_pk={{ doc.doc_pk }}">{{ doc.doc_doctype }}</a>
+        {% elif doc.doc_doct_fk.keyw_pk = 108 %}
+          <a href="/NODdescription/?doc_pk={{ doc.doc_pk }}">{{ doc.doc_doctype }}</a>
+        {% else %}
+          <a href="/docdescription/?doc_pk={{ doc.doc_pk }}">{{ doc.doc_doctype }}</a>
+        {% endif %}
+    	</TD>
+      	<TD align="center">
+    	  {{ doc.doc_received }}
+    	</TD>
+      </TR>
+  	{% endfor %}
+    </TABLE>
+  {% endif %}
+
+{% endblock listing %}

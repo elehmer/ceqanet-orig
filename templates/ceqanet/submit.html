@@ -1,0 +1,63 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+  <FORM NAME="submit" METHOD="post" ACTION="">
+    {% csrf_token %}
+    <table border="0" cellpadding="5">
+      <tr><td colspan="3">&nbsp;</td></tr>
+      <tr>
+        <td colspan="3">
+          <B>Begin document submission process by selecting lead agency and document type below:</B>
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Lead Agency:
+        </td>
+        <td>
+          <select name="lag_pk">
+          {% for lag in laglist %}
+            <option value="{{ lag.lag_pk }}">{{ lag.lag_name }}
+          {% endfor %}
+          </select>
+        </td>
+        <td>
+          &nbsp;
+        </td>
+      </tr>
+      <tr>
+        <td>
+          Document Type:
+        </td>
+        <td>
+          <select name="doctype">
+            <option value="noc">NOC</option>
+            <option value="nod">NOD</option>
+            <option value="noe" selected>NOE</option>
+            <option value="nop">NOP</option>
+        </td>
+      </tr>
+    <TR>
+      <tD colspan="2">
+        Is there an existiing project associated with this document?:
+      </TD>
+    </TR>
+    <TR>
+      <tD>
+        <input type="radio" name="prjtoggle" class="prjtoggle" value="yes" checked>Yes
+      </TD>
+      <tD>
+        <input type="radio" name="prjtoggle" class="prjtoggle" value="no">No
+      </TD>
+    </TR>
+      <tr colspan="2">
+        <td>
+          <Input type="submit" value="Next >>">
+        </td>
+      </tr>
+    </table>
+
+{% endblock content %}

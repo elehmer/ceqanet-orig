@@ -1,0 +1,331 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Project Listing{% endblock title %}
+
+{% block listing %}
+  {% load staticfiles %}
+  {% if object_list %}
+<table width="763" border="0" cellpadding="3" align="left">
+  <tr>
+    <td>
+      <h3>{{ NOD.doc_prj_fk.prj_title }}</h3>
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <B>SCH Number:</B> {{ NOD.doc_prj_fk.prj_schno }} 
+    </td>
+  </tr>
+  <tr> 
+    <td> 
+      <B>Document Type:</b> {{ NOD.doc_doctype }} - {{ NOD.doc_docname }}
+    </td>
+  </tr>  
+  {% if NOD.doc_title.strip.length > 0 %}
+  <tr> 
+    <td> 
+      <b>Alternate Title:</b> {{ NOD.doc_title }}
+    </td>
+  </tr>
+  {% endif %}
+  <tr> 
+    <td> 
+      <b>Project Lead Agency:</b> {{ NOD.doc_prj_fk.prj_leadagency }}
+    </td>
+  </tr>
+  <tr>
+    <td> 
+        <hr width="100%">
+    </td>
+  </tr>
+  <tr>
+    <td> 
+      <b>Project Description</b>
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      {{ NOD.doc_description }}
+    </td>
+  </tr>
+  <tr> 
+    <td> 
+      <hr width="100%">
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <b>Contact Information</b> 
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <table border="0">
+        <tr>
+          <td align="left">
+            <b>Primary Contact:</b>
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            {{ NOD.doc_conname }}
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            {{ NOD.doc_conagency }}
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            {{ NOD.doc_conphone }}
+          </td>
+        </tr>
+      <br>
+        <tr>
+          <td align="left">
+            {{ NOD.doc_conaddress1 }}
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            {{ NOD.doc_conaddress2 }}
+          </td>
+        </tr>
+        <tr>
+          <td align="left">
+            {{ NOD.doc_concity.strip }}, {{ NOD.doc_constate }} {{ NOD.doc_conzip }}
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+  <tr> 
+    <td> 
+      <hr width="100%">
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <b>Project Location</b> 
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <table border="0">
+        <tr>
+          <td align="left">
+            County: {{ NOD.doc_county }}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+            City: {{ NOD.doc_city }}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+            Region: {{ NOD.doc_region }}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+            Cross Streets: {{ NOD.doc_xstreets }}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+            {% if latlongs.exists %}
+              {% for ll in latlongs %}
+                Latitude/Longitude: {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
+              {% endfor %}
+            {% else %}
+              Latitude/Longitude:
+            {% endif %}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+            Parcel No: {{ NOD.doc_parcelno }}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+           Township: {{ NOD.doc_township }}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+            Range: {{ NOD.doc_range }}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+            Section: {{ NOD.doc_section }}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+            Base: {{ NOD.doc_base }}
+          </td>
+        </tr> 
+        <tr>
+          <td align="left">
+            Other Location Info: {{ NOD.doc_location }}
+          </td>
+        </tr> 
+      </table>
+    </td>
+  </tr>
+  <tr> 
+    <td> 
+      <hr width="100%">
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <b>Determinations</b>
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      This is to advise that the 
+      {% if NOD.doc_nodbylead %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      Lead Agency &nbsp; 
+      {% if NOD.doc_nodbyresp %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      Responsible Agency &nbsp; 
+      {% if NOD.doc_nodagency.strip = '' %} 
+        ________________
+      {% else %}
+        &nbsp;{{ NOD.doc_nodagency }}&nbsp; 
+      {% endif %}
+      has approved the project described above on 
+      {% if NOD.doc_nod = None %} 
+        ______
+      {% else %}
+        &nbsp;{{ NOD.doc_nod }}&nbsp; 
+      {% endif %}
+      and has made the following determinations regarding the project described 
+      above.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      1. The project 
+      {% if NOD.doc_detsigeffect %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      will &nbsp; 
+      {% if NOD.doc_detnotsigeffect %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      will not have a significant effect on the environment.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      2. 
+      {% if NOD.doc_deteir %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      An Environmental Impact Report was prepared for this project pursuant to 
+      the provisions of CEQA.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      &nbsp;&nbsp;&nbsp;
+      {% if NOD.doc_detnegdec %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      A Negative Declaration was prepared for this project pursuant to the provisions 
+      of CEQA.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      3. Mitigation measures 
+      {% if NOD.doc_detmitigation %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      were &nbsp; 
+      {% if NOD.doc_detnotmitigation %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      were not made a condition of the approval of the project.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      4. A Statement of Overriding Considerations 
+      {% if NOD.doc_detconsider %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      was &nbsp; 
+      {% if NOD.doc_detnotconsider %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      was not adopted for this project.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      5. Findings 
+      {% if NOD.doc_detfindings %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      were &nbsp; 
+      {% if NOD.doc_detnotfindings %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      were not made pursuant to the provisions of CEQA.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <b>Final EIR Available at:</b> {{ NOD.doc_eiravailableat }}
+    </td>
+  </tr>
+  <tr> 
+    <td> 
+      <hr width="100%">
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <b>Date Received:</b> {{ NOD.doc_received }} 
+    </td>
+  </tr>
+</table>
+
+  {% endif %}
+
+{% endblock listing %}

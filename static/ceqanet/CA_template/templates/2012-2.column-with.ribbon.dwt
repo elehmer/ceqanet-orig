@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+
+<!-- 
+State of California 2013 master template
+Version 2013.xx.xx
+
+Based on 320 and Up boilerplate extension
+-->
+
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if IE 9]>    <html class="no-js ie9 oldie" lang="en"> <![endif]-->
+<!--[if (gt IE 9)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+<meta charset="utf-8">
+<!-- TemplateBeginEditable name="doctitle" -->
+<title>Your Organization Name</title>
+<!-- TemplateEndEditable -->
+<!-- TemplateBeginEditable name="MetaTags" -->
+<meta name="Author" content="State of California" />
+<meta name="Description" content="State of California" />
+<meta name="Keywords" content="California, government" />
+<!-- TemplateEndEditable -->
+
+<!--#include virtual="/ssi/head_css_js.html" -->
+
+<!-- TemplateBeginEditable name="head" -->
+<!-- TemplateEndEditable -->
+
+</head>
+
+<body class="home two_column clearfix">
+<!--
+Step 2
+Select your navigation type:
+/ssi/header.single_level_nav.html
+/ssi/header.mininav.html
+/ssi/header.megadropdown.html
+-->
+
+<!--#include virtual="/ssi/header.megadropdown.html" -->
+
+<div id="main_content" class="clearfix">
+	<div class="content_left_column clearfix">
+
+		<div class="add_maincontent_padding">
+		<!-- TemplateBeginEditable name="MainContent" -->
+
+			<h1 class="add_icon_blue_arrow_right">Heading H1</h1>
+
+			<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. In eu odio sem, non faucibus lectus. Maecenas et lacus et nisl volutpat semper a a magna. Curabitur aliquam risus sit amet mauris sagittis fermentum. Praesent ut pellentesque mauris. Mauris semper varius fringilla. Nam eget sagittis elit. Ut eleifend, ipsum non sagittis tempor, tellus dui fermentum risus, eu tempus lacus nisl vel augue. Proin lacus massa, varius a dictum ac, bibendum at ligula. Phasellus porttitor sollicitudin semper. In malesuada, magna ac consequat consectetur, nisi elit molestie magna, sed hendrerit turpis mi mattis massa. Proin in ante nec enim rutrum mattis. Curabitur tempus, nunc in posuere blandit, libero odio consectetur quam, eget sollicitudin tortor ante eget urna. Etiam in massa quis elit aliquet lacinia. Quisque semper rutrum leo, nec condimentum odio suscipit eget. Etiam blandit sapien vel mi bibendum auctor. </p>
+
+
+
+		<!-- TemplateEndEditable -->
+		</div>
+	</div>
+
+	<div class="content_right_column clearfix">
+	<!-- TemplateBeginEditable name="ContentRightColumn" -->
+
+		<div class="container_style_d">
+			<h5>Container Style D</h5>
+			<div class="add_side_padding">
+				<p>Proin lacus massa, varius a dictum ac, bibendum at ligula. Phasellus porttitor sollicitudin semper. In malesuada, magna ac consequat consectetur, nisi elit molestie magna, sed hendrerit turpis mi mattis massa. Proin in ante nec enim rutrum mattis. Curabitur tempus, nunc in posuere blandit, libero odio consectetur quam, eget sollicitudin tortor ante eget urna. Etiam in massa quis elit aliquet lacinia. Quisque semper rutrum leo, nec condimentum odio suscipit eget. Etiam blandit sapien vel mi bibendum auctor. </p>
+			</div>
+		</div>
+
+
+	<!-- TemplateEndEditable -->
+	</div>
+
+	<div class="cleaner"></div>
+
+</div>
+
+<!--#include virtual="/ssi/footer_2.html" -->
+
+</body>
+</html>

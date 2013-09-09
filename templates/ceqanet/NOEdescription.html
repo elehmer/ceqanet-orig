@@ -1,0 +1,262 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Project Listing{% endblock title %}
+
+{% block listing %}
+  {% load staticfiles %}
+  {% if object_list %}
+<table width="763" border="0" cellpadding="3" align="left">
+  <TR>
+    <TD align="center">
+      <h3>{{ NOE.doc_prj_fk.prj_title }}</h3>
+    </TD>
+  </TR>
+  <TR>
+   	<TD>
+   	  <b>SCH Number:</B> {{ NOE.doc_prj_fk.prj_schno }}
+   	</TD>
+      </TR>
+      <TR>
+      	<TD>
+    	    <B>Document Type:</B> {{ NOE.doc_doctype }} - {{ NOE.doc_docname }}
+    	  </TD>
+      </TR>
+      {% if NOE.doc_title.strip.length > 0 %}
+      <TR>
+      	<TD>
+    	    <B>Alternate Title:</B> {{ NOE.doc_title }}
+    	  </TD>
+      </TR>
+      {% endif %}
+      <TR>
+      	<TD>
+    	    <B>Project Lead Agency:</B> {{ NOE.doc_prj_fk.prj_leadagency }}
+    	  </TD>
+      </TR>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <TR>
+      	<TD>
+    	    <B>Project Description:</B> {{ NOE.doc_description }}
+    	  </TD>
+      </TR>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Contact Information</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <td align="left">
+                <b>Primary Contact:</b>
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ NOE.doc_conname }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ NOE.doc_conagency }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ NOE.doc_conphone }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ NOE.doc_conaddress1 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ NOE.doc_conaddress2 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ NOE.doc_concity.strip }}, {{ NOE.doc_constate }} {{ NOE.doc_conzip }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Project Location</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <td align="left">
+                County: {{ NOE.doc_county }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                City: {{ NOE.doc_city }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Region: {{ NOE.doc_region }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Cross Streets: {{ NOE.doc_xstreets }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                {% if latlongs.exists %}
+                  {% for ll in latlongs %}
+                    Latitude/Longitude: {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
+                  {% endfor %}
+                {% else %}
+                  Latitude/Longitude:
+                {% endif %}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Parcel No: {{ NOE.doc_parcelno }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Township: {{ NOE.doc_township }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Range: {{ NOE.doc_range }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Section: {{ NOE.doc_section }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Base: {{ NOE.doc_base }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Other Location Info: {{ NOE.doc_location }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Exempt Status</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if NOE.doc_exministerial %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Ministerial
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if NOE.doc_exdeclared %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Declared Emergency
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if NOE.doc_exemergency %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Emergency Project
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if NOE.doc_excategorical %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Categorical Exemption
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if NOE.doc_exstatutory %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Statutory Exemption
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Type, Section or Code Number:</b> {{ NOE.doc_exnumber }}  
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Reasons for Exemption</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ NOE.doc_exreasons }}
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Date Received:</b> {{ NOE.doc_received }}
+        </td>
+      </tr>
+    </TABLE>
+  {% endif %}
+
+{% endblock listing %}

@@ -1,0 +1,79 @@
+{% load i18n %}
+{% load staticfiles %}
+<!-- Google Analytics -->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-3419582-14']); // Step 4: your google analytics profile code, either from your own google account, or contact eServices to have one set up for you
+  _gaq.push(['_setDomainName', '.ca.gov']);
+  _gaq.push(['_trackPageview']);
+
+  _gaq.push(['b._setAccount', 'UA-3419582-2']); // statewide analytics - do not remove or change
+  _gaq.push(['b._setDomainName', '.ca.gov']);
+  _gaq.push(['b._trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+<!-- Google Suggest -->
+<script type="text/javascript" src="http://www.google.com/jsapi"></script>
+<script type="text/javascript">
+	google.load('search', '1');
+	google.setOnLoadCallback(function() {
+		google.search.CustomSearchControl.attachAutoCompletion(
+			'001779225245372747843:mdsmtl_vi1a', // Step 6: Update this value with your search engine unique ID. Submit a request to the OTech Service Desk if you don't already know your unique search engine ID.
+			document.getElementById('search_local_textfield'),
+			'local_form');
+	});
+</script>
+
+<header role="banner">
+	<div id="skip_to_content"><a href="#main_content">Skip to Main Content</a></div>
+
+	<div class="phone_hdr">
+		<div class="phone_hd_left">
+			<a class="p_h_button p_h_menu" onclick="toggle_menu();"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Menu" /></a>
+		</div>
+		<div class="phone_hd_right">
+			<a class="p_h_button p_h_contact" href="/Contact.html"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Contact Us" /></a>
+			<a class="p_h_button p_h_search" onclick="toggle_search();"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Search" /></a>
+		</div>
+		<div class="logo_and_banner">
+			<div class="head_cagov_logo"><a href="http://www.ca.gov/"><img src="{% static "ceqanet/CA_template/images/template2013/header_ca.gov.png" %}" alt="CA.gov" /></a></div>
+			<div class="head_organization_banner"><a href="/"><img src="{% static "ceqanet/img/OPR_banner.png" %}" alt="Organization Title" height=90px/></a></div>
+		</div>
+	</div>
+
+	<div id="head_search">
+		<form id="local_form" action="http://www.google.com/cse"> <!-- the form action will be changed using javascript -->
+			<div class="textfield_container">
+				<label for="search_local_textfield" accesskey="s" class="hidden">Search this site: </label>
+				<input type="text" name="q" id="search_local_textfield" size="40" autocomplete="off" value="Search" onfocus="if(this.value=='Search')this.value=''" onblur="if(this.value=='')this.value='Search'" />
+
+				<input type="hidden" name="cx" value="001779225245372747843:mdsmtl_vi1a" /> <!-- Step 6: Update this value with your search engine unique ID. Submit a request to the OTech Service Desk if you don't already know your unique search engine ID. -->
+				<input type="hidden" name="cof" value="" /> <!-- this value will be set using javascript -->
+				<input type="hidden" name="ie" value="UTF-8" />
+				<input type="hidden" name="nojs" value="1" />
+
+			</div>
+			<div class="submit_container clearfix">
+				<input type="image" alt="Search" title="Search" name="submit" src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" />
+			</div>
+		</form>
+	</div>
+	
+	<nav id="navigation" class="singlelevelnav">
+		<ul id="nav_list">
+			<li><a href="{% url 'index' %}" class="nav_level1_link"><span id="nav_home_container"></span><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Home" />&nbsp;</a></li>
+			<li><a href="{% url 'query' %}" class="nav_level1_link">{% trans "Query" %}</a></li>
+			<li><a href="{% url 'submit' %}" class="nav_level1_link">{% trans "Submit" %}</a></li>
+		</ul>
+	</nav>
+	
+	<div id="img_ribbon"></div>
+</header>

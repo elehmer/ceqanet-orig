@@ -1,0 +1,64 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+{{ form.media }}
+<FORM name="nocform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD colspan="2" align="center">
+        Notice of Completion Submission Form
+      </TD>
+    </TR>
+    <TR>
+      <tD colspan="2">
+        Is there an existiing project associated with this document?:
+      </TD>
+    <TR>
+    <TR>
+      <tD colspan="2">
+        <input type="radio" name="prjtoggle" class="prjtoggle" value="yes">Yes
+        <div id="prjdiv_yes">
+          {{ form.prj_schno.label }} {{ form.prj_schno }}
+        </div>
+      </TD>
+    <TR>
+    <TR>
+      <tD colspan="2">
+        <input type="radio" name="prjtoggle" class="prjtoggle" value="no">No
+        <div id="prjdiv_no">
+          {{ form.prj_title.label }} {{ form.prj_title }}
+        </div>
+      </TD>
+    </TR>
+<script>
+$('#prjdiv_yes').hide();
+$('#prjdiv_no').hide();
+$(function() {
+$('.prjtoggle').change(function() {
+if($(this).val() == 'yes') {$('#prjdiv_yes').show('500');$('#prjdiv_no').hide('500');}
+if($(this).val() == 'no') {$('#prjdiv_yes').hide('500');$('#prjdiv_no').show('500');}
+});
+});
+</script>
+    <TR> 
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR>
+      <TD colspan="2">
+      </TD>
+    </TR>
+    <TR> 
+      <TD width="74%" align="center" colspan="2"> 
+        <input type="submit" value="Continue">
+  &nbsp;<input type="reset" value="Clear Form">
+      </TD>
+    </TR>
+  </TABLE>
+  <INPUT type="hidden" name="lag_pk" value="{{ lag_pk }}">
+</FORM>
+{% endblock content %}

@@ -1,0 +1,29 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+{{ form.media }}
+<FORM name="addprj" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD align="center">
+        Add a New Project Form
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        <B>{{ form.prj_title.label }}</B> {{ form.prj_title }} {{ form.prj_title.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        <B>{{ form.prj_description.label }}</B> {{ form.prj_description }} {{ form.prj_description.errors }}
+      </TD>
+    </TR>
+  </TABLE>
+</FORM>
+
+{% endblock content %}

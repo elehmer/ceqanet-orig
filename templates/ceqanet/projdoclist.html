@@ -1,0 +1,54 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Project Listing{% endblock title %}
+
+{% block listing %}
+
+  {% if object_list %}
+ 	<TABLE border="1">
+ 	  <TR>
+ 	  	<TH align="center" width="10%">
+ 	      City
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Cross Street
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Document Type
+ 	  	</TH>
+ 	  	<TH align="center" width="40%">
+ 	  	  Description
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Date Received
+ 	  	</TH>
+ 	  </TR> 
+    {% for prjdoc in prjdocs %}
+      <TR>
+      	<TD align="center">
+    	  {{ prjdoc.doc_city }}
+    	</TD>
+      	<TD align="center">
+    	  {{ prjdoc.doc_xstreets }}
+    	</TD>
+      	<TD align="center">
+        {% if prjdoc.doc_doct_fk.keyw_pk == 109 %}
+    	    <a href="/NOEdescription/?doc_pk={{ prjdoc.doc_pk }}"><i>{{ prjdoc.doc_docname }}</i></a>
+        {% elif prjdoc.doc_doct_fk.keyw_pk == 108 %}
+          <a href="/NODdescription/?doc_pk={{ prjdoc.doc_pk }}"><i>{{ prjdoc.doc_docname }}</i></a>
+    	  {% else %}
+          <a href="/docdescription/?doc_pk={{ prjdoc.doc_pk }}"><i>{{ prjdoc.doc_docname }}</i></a>
+        {% endif %}
+      </TD>
+      	<TD align="center">
+    	  {{ prjdoc.doc_description }}
+    	</TD>
+      	<TD align="center">
+    	  {{ prjdoc.doc_received|date:"SHORT_DATE_FORMAT" }}
+    	</TD>
+      </TR>
+  	{% endfor %}
+    </TABLE>
+  {% endif %}
+
+{% endblock listing %}

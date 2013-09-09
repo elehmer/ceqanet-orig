@@ -1,0 +1,18 @@
+/*
+768 and greater
+
+Move right column content to the right side
+*/
+
+.content_left_column {
+	width:70.3125%;
+	float:left;
+}
+.content_right_column {
+	width:29.6875%;
+	float:right; /* changed 'left' to 'right' to fix random 1px gap at right edge */
+	background:transparent url(../images/template2013/nav_shadow.png) repeat-x;
+}
+.home .content_right_column {
+	background:transparent;
+}

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+
+<!-- 
+State of California 2013 master template
+Version 2013.xx.xx
+
+Based on 320 and Up boilerplate extension
+-->
+
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if IE 9]>    <html class="no-js ie9 oldie" lang="en"> <![endif]-->
+<!--[if (gt IE 9)]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+  <title>{% block title %} OPR CEQANET {% endblock title%}</title>
+  <meta name="AUTHOR" content="ICE" />
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  {% load staticfiles %}
+  {% load i18n %}
+  {% include "ceqanet/head_css_js.html" %}
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.2/themes/smoothness/jquery-ui.min.css" />
+{% block extrajs %}
+{% endblock extrajs %}
+</head>
+<body class="clearfix" id="page_bg" {% block onload %}{% endblock onload %}>
+<div id="header">
+{% include "ceqanet/header.single_level_nav.html" %}
+</div>
+
+<div id="main_content" class="clearfix">
+  <div class="add_maincontent_padding">
+    {% block content %}
+    {% endblock content %}
+	</div>
+  <div class="cleaner"></div>
+</div>
+{% include "ceqanet/footer_2.html" %}
+</body>
+</html>
