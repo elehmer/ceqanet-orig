@@ -6,9 +6,9 @@
 
   {% if object_list %}
  	<TABLE border="1">
+    {% if is_paginated %}
     <TR>
       <TD COLSPAN="6" ALIGN="middle">
-          {% if is_paginated %}
           <B>
             {% if page_obj.number = 1 %}
               [First]&nbsp;&nbsp;
@@ -31,9 +31,9 @@
               [Last]
             {% endif %}
           </B>
-          {% endif %}
       </TD>
     </TR>
+    {% endif %}
  	  <TR>
  	  	<TH align="center" width="10%">
  	      SCH#

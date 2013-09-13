@@ -1,0 +1,13 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+{{ form.media }}
+<FORM name="editdoc" method="post" action="">
+  {% csrf_token %}
+  {{ form.as_table() }}
+</FORM>
+
+{% endblock content %}

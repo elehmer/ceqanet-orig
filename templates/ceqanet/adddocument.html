@@ -30,6 +30,23 @@
         {{ form.prj_description }} {{ form.prj_description.errors }}
       </TD>
     </TR>
+    {% else %}
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.prj_title.label }}
+      </TH>
+      <TD colspan="2">
+        {{ prjinfo.prj_title }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.prj_description.label }}
+      </TH>
+      <TD colspan="2">
+        {{ prjinfo.prj_description }}
+      </TD>
+    </TR>
     {% endif %}    
     <TR> 
       <TH align="left" colspan="3">
@@ -41,6 +58,32 @@
         Lead Agency Contact Information:
       </TH>
     </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conname.label }}
+      </TH>
+      <TD colspan="2"> 
+        {{ form.doc_conname }}
+      </TD>
+    </TR>
+    <TR> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conemail.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_conemail }}  {{ form.doc_conemail.errors }}
+      </TD>
+    </TR>
+    <TR>   
+      <TD width="25%" valign="top">
+        <B>Phone:</B>
+      </TD>
+      <TD colspan="2"> 
+        ({{ form.strphone1 }})
+        {{ form.strphone2 }}
+        {{ form.strphone3}}
+      </TD>
+    </TR>
     <tr>
       <td width="25%" valign="top">
         <b>From <font color="#000066">(Lead Agency)</font>:</b>
@@ -51,42 +94,42 @@
     </tr>
     <tr> 
       <TH width="25%" align="left" valign="top">
-        {{ form.doc_lagaddress1.label }}
+        {{ form.doc_conaddress1.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_lagaddress1 }}
+        {{ form.doc_conaddress1 }}
       </td>
     </tr>
     <tr> 
       <TH width="25%" align="left" valign="top">
-        {{ form.doc_lagaddress2.label }}
+        {{ form.doc_conaddress2.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_lagaddress2 }}
+        {{ form.doc_conaddress2 }}
       </td>
     </tr>
     <TR> 
       <TH width="25%" align="left" valign="top">
-        {{ form.doc_lagcity.label }}
+        {{ form.doc_concity.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_lagcity }}
+        {{ form.doc_concity }}
       </td>
     </TR>
     <TR> 
       <TH width="25%" align="left" valign="top">
-        {{ form.doc_lagstate.label }}
+        {{ form.doc_constate.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_lagstate }}
+        {{ form.doc_constate }}
       </td>
     </tr>
     <tr> 
       <TH width="25%" align="left" valign="top">
-        {{ form.doc_lagzip.label }}
+        {{ form.doc_conzip.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_lagzip }}
+        {{ form.doc_conzip }}
       </td>
     </tr>
     <TR> 
@@ -101,32 +144,6 @@
       <TD colspan="2"> 
         {{ form.doc_location }}
       </TD>
-    </TR>
-    <TR>
-      <TD width="25%" valign="top">
-        <b>City:</b>
-      </TD>
-      <TD colspan="2"> 
-        <select name="doc_city">
-          <option selected>[Select city]</option>
-        {% for city in citylist %}
-          <option value="{{ city.geow_pk }}">{{ city.geow_shortname }}</option>
-        {% endfor %}
-        </select>             
-      </TD>
-    </TR>
-    <TR>
-      <TD width="25%" valign="top">
-        <b>County:</b>
-      </TD>
-      <td colspan="2"> 
-        <select size="1" name="strcounty" onChange="doCounty()" class=content>
-          <OPTION selected value=0>[Select County]</OPTION>
-          {% for county in countylist %}
-            <option value="{{ county.geow_pk }}">{{ county.geow_shortname }}
-          {% endfor %}
-        </select>
-      </td>
     </TR>
     <TR>
       <TH width="25%" align="left" valign="top">
@@ -144,12 +161,43 @@
         {{ form.doc_longitude }}
       </TD>
     </TR>
+    <TR>
+      <TD width="25%" valign="top">
+        <b>City:</b>
+      </TD>
+      <TD colspan="2"> 
+        <select name="doc_city">
+          <option selected value="0">[Select city]</option>
+        {% for city in citylist %}
+          <option value="{{ city.geow_shortname }}">{{ city.geow_shortname }}</option>
+        {% endfor %}
+        </select>             
+      </TD>
+    </TR>
+    <TR>
+      <TD width="25%" valign="top">
+        <b>County:</b>
+      </TD>
+      <td colspan="2"> 
+        <select name="doc_county">
+          <OPTION selected value="0">[Select County]</OPTION>
+          {% for county in countylist %}
+            <option value="{{ county.geow_shortname }}">{{ county.geow_shortname }}
+          {% endfor %}
+        </select>
+      </td>
+    </TR>
+    <TR> 
+      <TD colspan="3" height="30"> 
+        <hr width="100%" align="center">
+      </TD>
+    </TR>
     <TR> 
       <TD width="25%" valign="top">
         <B>Person or Agency Carrying Out Project:</b>
       </td>
       <td colspan="2"> 
-        TODO
+        {{ form.strleadagency2 }}
       </td>
     </tr>
     <tr> 
@@ -183,7 +231,7 @@
     </tr>
     <tr> 
       <TD width="25%" valign="top">
-        <input type="radio" name="rdoexemptstatus" value="4">
+        <input type="radio" name="rdoexemptstatus" value="4" checked>
       </td>
       <td>
         Categorical Exemption. State type and section number:
@@ -211,32 +259,6 @@
         {{ form.txtreason }}
       </td>
     </tr>
-    <TR>
-      <TH width="25%" align="left" valign="top">
-        {{ form.strlagcontact.label }}
-      </TH>
-      <TD colspan="2"> 
-        {{ form.strlagcontact }}
-      </TD>
-    </TR>
-    <TR> 
-      <TH width="25%" align="left" valign="top">
-        {{ form.stremail.label }}
-      </TH>
-      <TD colspan="2">
-        {{ form.stremail }}  {{ form.stremail.errors }}
-      </TD>
-    </TR>
-    <TR>   
-      <TD width="25%" valign="top">
-        <B>Phone:</B>
-      </TD>
-      <TD colspan="2"> 
-        ({{ form.strphone1 }})
-        {{ form.strphone2 }}
-        {{ form.strphone3}}
-      </TD>
-    </TR>
     <TR> 
       <TD width="25%" valign="top">
         <B>Entry Date:</B>
@@ -247,11 +269,13 @@
     </TR>
     <TR> 
       <TD align="center" colspan="3"> 
-        <input type="button" value="Continue" onClick="checkform()">
-  &nbsp;<input type="reset" value="Clear Form">
+        <input type="submit" value="Submit to OPR for review...">
       </TD>
     </TR>
   </TABLE>
+  <input type="hidden" name="prj_pk" value="{{ prj_pk }}">
+  <input type="hidden" name="lag_pk" value="{{ lag_pk }}">
+  <input type="hidden" name="doctype" value="{{ doctype }}">
 </FORM>
 
 {% endblock content %}

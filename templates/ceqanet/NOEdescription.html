@@ -256,6 +256,11 @@
           <b>Date Received:</b> {{ NOE.doc_received }}
         </td>
       </tr>
+      <tr> 
+        <td> 
+          <input type="button" name="editdoc" value="Edit Document" onclick="window.location = './{{ doc_pk }}/edit'">
+        </td>
+      </tr>      
     </TABLE>
   {% endif %}
 

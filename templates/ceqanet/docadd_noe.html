@@ -17,6 +17,32 @@
         Is there an existiing project associated with this document?:
       </TD>
     </TR>
+    <TR>
+      <tD colspan="2">
+        <input type="radio" name="prjtoggle" class="prjtoggle" value="yes">Yes
+        <div id="prjdiv_yes">
+          <B>{{ form.prj_schno.label }}</B> {{ form.prj_schno }} {{ form.prj_schno.errors }}
+        </div>
+      </TD>
+    <TR>
+    <TR>
+      <tD colspan="2">
+        <input type="radio" name="prjtoggle" class="prjtoggle" value="no">No
+        <div id="prjdiv_no">
+          <B>{{ form.prj_title.label }}</B> {{ form.prj_title }} {{ form.prj_title.errors }}
+        </div>
+      </TD>
+    </TR>
+<script>
+$('#prjdiv_yes').hide();
+$('#prjdiv_no').hide();
+$(function() {
+$('.prjtoggle').change(function() {
+if($(this).val() == 'yes') {$('#prjdiv_yes').show('500');$('#prjdiv_no').hide('500');}
+if($(this).val() == 'no') {$('#prjdiv_yes').hide('500');$('#prjdiv_no').show('500');}
+});
+});
+</script>
     <TR> 
       <TD colspan="2">
         &nbsp;

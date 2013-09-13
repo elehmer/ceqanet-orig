@@ -72,6 +72,13 @@
 			<li><a href="{% url 'index' %}" class="nav_level1_link"><span id="nav_home_container"></span><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Home" />&nbsp;</a></li>
 			<li><a href="{% url 'query' %}" class="nav_level1_link">{% trans "Query" %}</a></li>
 			<li><a href="{% url 'submit' %}" class="nav_level1_link">{% trans "Submit" %}</a></li>
+			<li><a href="{% url 'docreview' %}" class="nav_level1_link">{% trans "Review" %}</a></li>
+
+			{% if user.is_anonymous %}
+            <li><a href="{% url 'login' %}" class="nav_level1_link">{% trans "Login" %}</a></li>
+            {% else %}
+            <li><a href="{% url 'logout' %}" class="nav_level1_link">{% trans "Logout" %}</a></li>
+            {% endif %}
 		</ul>
 	</nav>
 	

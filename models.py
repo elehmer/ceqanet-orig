@@ -134,6 +134,8 @@ class documents(models.Model):
 	doc_long_deg = models.CharField(null=True,blank=True,max_length=12)
 	doc_long_min = models.CharField(null=True,blank=True,max_length=10)
 	doc_long_sec = models.CharField(null=True,blank=True,max_length=10)
+	doc_pending = models.BooleanField()
+	doc_visible = models.BooleanField()
 class geowordlists(models.Model):
 	geol_pk = models.AutoField(primary_key=True)
 	geol_shortname = models.CharField(null=True,blank=True,max_length=32)
@@ -232,6 +234,8 @@ class projects(models.Model):
 	prj_otherzip = models.CharField(null=True,blank=True,max_length=10)
 	prj_otherphone = models.CharField(null=True,blank=True,max_length=20)
 	prj_updated = models.DateField(null=True,blank=True)
+	prj_pending = models.BooleanField()
+	prj_visible = models.BooleanField()
 class reviewingagencies(models.Model):
 	rag_pk = models.AutoField(primary_key=True)
 	rag_name = models.CharField(max_length=90,db_index=True)
