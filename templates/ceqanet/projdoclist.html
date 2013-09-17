@@ -32,14 +32,8 @@
     	  {{ prjdoc.doc_xstreets }}
     	</TD>
       	<TD align="center">
-        {% if prjdoc.doc_doct_fk.keyw_pk == 109 %}
-    	    <a href="/NOEdescription/?doc_pk={{ prjdoc.doc_pk }}"><i>{{ prjdoc.doc_docname }}</i></a>
-        {% elif prjdoc.doc_doct_fk.keyw_pk == 108 %}
-          <a href="/NODdescription/?doc_pk={{ prjdoc.doc_pk }}"><i>{{ prjdoc.doc_docname }}</i></a>
-    	  {% else %}
-          <a href="/docdescription/?doc_pk={{ prjdoc.doc_pk }}"><i>{{ prjdoc.doc_docname }}</i></a>
-        {% endif %}
-      </TD>
+          <a href="/docdescription/{{ prjdoc.doc_pk }}/?doctype={{ prjdoc.doc_doctype }}">{{ prjdoc.doc_docname }}</a>
+        </TD>
       	<TD align="center">
     	  {{ prjdoc.doc_description }}
     	</TD>

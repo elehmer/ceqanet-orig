@@ -4,34 +4,32 @@
 
 {% block listing %}
   {% load staticfiles %}
-  {% if object_list %}
-
     <table width="767" border="0" cellpadding="3">
       <tr>
         <td align="center">
-          <h3>{{ docs.doc_prj_fk.prj_title }}</h3>
+          <h3>{{ doc.doc_prj_fk.prj_title }}</h3>
         </td>
       </tr>
       <tr> 
         <td> 
-          <b>SCH Number:</b> {{ docs.doc_prj_fk.prj_schno }}
+          <b>SCH Number:</b> {{ doc.doc_prj_fk.prj_schno }}
         </td>
       </tr>
       <tr> 
         <td> 
-          <b>Document Type:</b> {{ docs.doc_doctype }}  - {{ docs.doc_docname }}
+          <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
         </td>
       </tr>
-      {% if docs.doc_title.strip.length > 0 %}
+      {% if doc.doc_title.strip.length > 0 %}
       <tr> 
         <td> 
-          <b>Alternate Title:</b> {{ docs.doc_title }}
+          <b>Alternate Title:</b> {{ doc.doc_title }}
         </td>
       </tr>
       {% endif %}
       <tr> 
         <td> 
-          <b>Project Lead Agency:</b> {{ docs.doc_prj_fk.prj_leadagency }}
+          <b>Project Lead Agency:</b> {{ doc.doc_prj_fk.prj_leadagency }}
         </td>
       </tr>
       <tr>
@@ -46,7 +44,7 @@
       </tr>
       <tr> 
         <td>
-          {{ docs.doc_description }}
+          {{ doc.doc_description }}
         </td>
       </tr>
       <tr> 
@@ -69,32 +67,32 @@
             </tr>
             <tr>
               <td align="left">
-               {{ docs.doc_conname }}
+               {{ doc.doc_conname }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ docs.doc_conagency }}
+                {{ doc.doc_conagency }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ docs.doc_conphone }}
+                {{ doc.doc_conphone }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ docs.doc_conaddress1 }}
+                {{ doc.doc_conaddress1 }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ docs.doc_conaddress2 }}
+                {{ doc.doc_conaddress2 }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ docs.doc_concity }}, {{ docs.doc_constate }} {{ docs.doc_conzip }}
+                {{ doc.doc_concity }}, {{ doc.doc_constate }} {{ doc.doc_conzip }}
               </td>
             </tr>
           </table>
@@ -115,22 +113,22 @@
           <table border="0">
             <tr>
               <td align="left">
-                County: {{ docs.doc_county }}
+                County: {{ doc.doc_county }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                City: {{ docs.doc_city }}
+                City: {{ doc.doc_city }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Region: {{ docs.doc_region }}
+                Region: {{ doc.doc_region }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Cross Streets: {{ docs.doc_xstreets }}
+                Cross Streets: {{ doc.doc_xstreets }}
               </td>
             </tr> 
             <tr>
@@ -146,32 +144,32 @@
             </tr> 
             <tr>
               <td align="left">
-                Parcel No: {{ docs.doc_parcelno }}
+                Parcel No: {{ doc.doc_parcelno }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Township: {{ docs.doc_township }}
+                Township: {{ doc.doc_township }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Range: {{ docs.doc_range }}
+                Range: {{ doc.doc_range }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Section: {{ docs.doc_section }}
+                Section: {{ doc.doc_section }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Base: {{ docs.doc_base }}
+                Base: {{ doc.doc_base }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Other Location Info: {{ docs.doc_location }}
+                Other Location Info: {{ doc.doc_location }}
               </td>
             </tr>
           </table>
@@ -182,6 +180,233 @@
           <hr width="100%">
         </td>
       </tr>
+      {% if doctype = "NOE" %}
+      <tr> 
+        <td>
+          <b>Exempt Status</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exministerial %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Ministerial
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exdeclared %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Declared Emergency
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exemergency %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Emergency Project
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_excategorical %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Categorical Exemption
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exstatutory %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Statutory Exemption
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Type, Section or Code Number:</b> {{ doc.doc_exnumber }}  
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Reasons for Exemption</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ doc.doc_exreasons }}
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Date Received:</b> {{ doc.doc_received }}
+        </td>
+      </tr>
+
+      {% elif doctype = "NOD" %}
+  <tr> 
+    <td>
+      <b>Determinations</b>
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      This is to advise that the 
+      {% if doc.doc_nodbylead %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      Lead Agency &nbsp; 
+      {% if doc.doc_nodbyresp %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      Responsible Agency &nbsp; 
+      {% if doc.doc_nodagency.strip = '' %} 
+        ________________
+      {% else %}
+        &nbsp;{{ doc.doc_nodagency }}&nbsp; 
+      {% endif %}
+      has approved the project described above on 
+      {% if doc.doc_nod = None %} 
+        ______
+      {% else %}
+        &nbsp;{{ doc.doc_nod }}&nbsp; 
+      {% endif %}
+      and has made the following determinations regarding the project described 
+      above.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      1. The project 
+      {% if doc.doc_detsigeffect %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      will &nbsp; 
+      {% if doc.doc_detnotsigeffect %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      will not have a significant effect on the environment.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      2. 
+      {% if doc.doc_deteir %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      An Environmental Impact Report was prepared for this project pursuant to 
+      the provisions of CEQA.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      &nbsp;&nbsp;&nbsp;
+      {% if doc.doc_detnegdec %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      A Negative Declaration was prepared for this project pursuant to the provisions 
+      of CEQA.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      3. Mitigation measures 
+      {% if doc.doc_detmitigation %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      were &nbsp; 
+      {% if doc.doc_detnotmitigation %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      were not made a condition of the approval of the project.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      4. A Statement of Overriding Considerations 
+      {% if doc.doc_detconsider %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      was &nbsp; 
+      {% if doc.doc_detnotconsider %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      was not adopted for this project.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      5. Findings 
+      {% if doc.doc_detfindings %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      were &nbsp; 
+      {% if doc.doc_detnotfindings %}
+        <img src="{% static "ceqanet/img/check1.gif" %}"> 
+      {% else %}
+        <img src="{% static "ceqanet/img/check0.gif" %}"> 
+      {% endif %}
+      were not made pursuant to the provisions of CEQA.
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <b>Final EIR Available at:</b> {{ doc.doc_eiravailableat }}
+    </td>
+  </tr>
+  <tr> 
+    <td> 
+      <hr width="100%">
+    </td>
+  </tr>
+  <tr> 
+    <td>
+      <b>Date Received:</b> {{ doc.doc_received }} 
+    </td>
+  </tr>
+
+      {% else %}
       <tr> 
         <td>
           <b>Proximity To</b>
@@ -192,33 +417,32 @@
           <table border="0">
             <tr>
               <td align="left">
-                Highways: {{ docs.doc_highways }}
-              </td>
-            </tr>
-
-            <tr>
-              <td align="left">
-                Airports: {{ docs.doc_airports }}
+                Highways: {{ doc.doc_highways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Railways: {{ docs.doc_railways }}
+                Airports: {{ doc.doc_airports }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Waterways: {{ docs.doc_waterways }}
+                Railways: {{ doc.doc_railways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Schools: {{ docs.doc_schools }}
+                Waterways: {{ doc.doc_waterways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Land Use: {{ docs.doc_landuse }}
+                Schools: {{ doc.doc_schools }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                Land Use: {{ doc.doc_landuse }}
               </td>
             </tr>
           </table>
@@ -335,24 +559,22 @@
       </tr>
       <tr> 
         <td> 
-          <b>Date Received:</b> {{ docs.doc_received }}&nbsp; 
+          <b>Date Received:</b> {{ doc.doc_received }}&nbsp; 
           <b>Start of Review:</b>
-          {% if docs.doc_dept != None %} 
-            {{ docs.doc_dept }}&nbsp; 
+          {% if doc.doc_dept != None %} 
+            {{ doc.doc_dept }}&nbsp; 
           {% endif %}&nbsp;&nbsp;&nbsp; 
           <b>End of Review:</b> 
-          {% if docs.doc_clear != None %} 
-            {{ docs.doc_clear }} 
+          {% if doc.doc_clear != None %} 
+            {{ doc.doc_clear }} 
           {% endif %}
         </td>
       </tr>
+      {% endif %}
       <tr>
         <td>
           <hr width="100%">
         </td>
       </tr>
     </table>
-
-  {% endif %}
-
 {% endblock listing %}

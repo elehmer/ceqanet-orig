@@ -69,19 +69,42 @@
     	    {{ doc.doc_description }}
     	  </TD>
       	<TD align="center">
-        {% if doc.doc_doct_fk.keyw_pk = 109 %}
-    	    <a href="/NOEdescription/?doc_pk={{ doc.doc_pk }}">{{ doc.doc_doctype }}</a>
-        {% elif doc.doc_doct_fk.keyw_pk = 108 %}
-          <a href="/NODdescription/?doc_pk={{ doc.doc_pk }}">{{ doc.doc_doctype }}</a>
-        {% else %}
-          <a href="/docdescription/?doc_pk={{ doc.doc_pk }}">{{ doc.doc_doctype }}</a>
-        {% endif %}
-    	</TD>
+    	    <a href="/docdescription/{{ doc.doc_pk }}/?doctype={{ doc.doc_doctype }}">{{ doc.doc_doctype }}</a>
+      	</TD>
       	<TD align="center">
     	  {{ doc.doc_received }}
     	</TD>
       </TR>
   	{% endfor %}
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+
     </TABLE>
   {% endif %}
 

@@ -15,7 +15,7 @@
     </TR>
     <TR> 
       <TH align="left" colspan="3">
-        Lead Agency Contact Information:
+        Contact Information:
       </TH>
     </TR>
     <TR>
@@ -79,6 +79,102 @@
         <hr width="100%" align="center">
       </TD>
     </TR>
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_county.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_county }}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_city.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_city }}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_region.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_region }}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_xstreets.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_xstreets }}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        Latitude:
+      </TH>
+      <td colspan="2">
+        {% if latlongs.exists %}
+          {% for ll in latlongs %}
+            {{ ll.doc_latitude}}
+          {% endfor %}
+        {% endif %}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        Longitude:
+      </TH>
+      <td colspan="2">
+        {% if latlongs.exists %}
+          {% for ll in latlongs %}
+            {{ ll.doc_longitude}}
+          {% endfor %}
+        {% endif %}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_parcelno.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_parcelno }}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_township.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_township }}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_range.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_range }}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_section.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_section }}
+      </td>
+    </tr> 
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_base.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_base }}
+      </td>
+    </tr> 
     <TR>
       <TH width="25%" align="left" valign="top"> 
         {{ form.doc_location.label }}
@@ -92,6 +188,65 @@
         <hr width="100%" align="center">
       </TD>
     </TR>
+    <tr> 
+      <td colspan="3">
+        <B>Exempt Status <font color="#000066">(check one)</font>:</B>
+      </td>
+    </tr>
+    <tr> 
+      <TD width="25%" valign="top">
+        <input type="radio" name="rdoexemptstatus" value="1">
+      </td>
+      <td colspan="2">
+        Ministerial (Sec.21080(b)(1); 15268);
+      </td>
+    </tr>
+    <tr> 
+      <TD width="25%" valign="top">
+        <input type="radio" name="rdoexemptstatus" value="2">
+      </td>
+      <td colspan="2">
+        Declared Emergency (Sec. 21080(b)(3);15269(a));
+      </td>
+    </tr>
+    <tr> 
+      <TD width="25%" valign="top">
+        <input type="radio" name="rdoexemptstatus" value="3">
+      </td>
+      <td colspan="2">
+        Emergency Project (Sec. 21080(b)(4); 15269(b)(c));
+      </td>
+    </tr>
+    <tr> 
+      <TD width="25%" valign="top">
+        <input type="radio" name="rdoexemptstatus" value="4" checked>
+      </td>
+      <td>
+        Categorical Exemption. State type and section number:
+      </td>
+      <td>
+        {{ form.strsectionnumber }}
+      </td>
+    </tr>
+    <tr> 
+      <TD width="25%" valign="top">
+        <input type="radio" name="rdoexemptstatus" value="5">
+      </td>
+      <td>
+        Statutory Exemptions. State code number:
+      </td>
+      <td> 
+        {{ form.strcodenumber }}
+      </td>
+    </tr>
+    <TR> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_exreasons.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_exreasons }}
+      </td>
+    </tr>
     <TR> 
       <TD align="center" colspan="3"> 
         <input type="submit" value="Update">

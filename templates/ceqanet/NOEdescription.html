@@ -4,7 +4,6 @@
 
 {% block listing %}
   {% load staticfiles %}
-  {% if object_list %}
 <table width="763" border="0" cellpadding="3" align="left">
   <TR>
     <TD align="center">
@@ -13,7 +12,7 @@
   </TR>
   <TR>
    	<TD>
-   	  <b>SCH Number:</B> {{ NOE.doc_prj_fk.prj_schno }}
+   	  <b>SCH Number:</B> {{ NOE.doc_prj_fk.prj_schno }} {{ doctype }}
    	</TD>
       </TR>
       <TR>
@@ -262,6 +261,4 @@
         </td>
       </tr>      
     </TABLE>
-  {% endif %}
-
 {% endblock listing %}

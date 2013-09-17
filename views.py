@@ -2,6 +2,7 @@ from django.template import RequestContext, Context, loader
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.http import HttpResponseRedirect
+from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import FormView,UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
@@ -107,8 +108,6 @@ class adddocument(FormView):
         if self.request.GET.get("prj_pk") != '-9999':
             context['prjinfo'] = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
         context['laglist'] = leadagencies.objects.get(lag_pk__exact=self.request.GET.get('lag_pk'))
-        context['citylist'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname')
-        context['countylist'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname')
 
         return context
     
@@ -129,7 +128,7 @@ class adddocument(FormView):
         doc_received = today
         lag = leadagencies.objects.get(pk=self.request.POST.get('lag_pk'))
         doc = documents.objects.get(pk=0)
-        cnty = counties.objects.get(geow_shortname__exact=self.request.POST.get('doc_county'))
+        cnty = counties.objects.get(pk=data['doc_county'].pk)
         doct = doctypes.objects.get(keyw_shortname__startswith=self.request.POST.get('doctype'))
         doc_conphone = data['strphone1']+data['strphone2']+data['strphone3']
         if self.request.POST.get('doctype') == 'NOE':
@@ -163,14 +162,14 @@ class adddocument(FormView):
             addprj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
             addprj.save()
             if self.request.POST.get('doctype') == 'NOE':
-                adddoc = documents(doc_prj_fk=addprj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=self.request.POST.get('doc_city'),doc_county=self.request.POST.get('doc_county'),doc_pending=1,doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber)
+                adddoc = documents(doc_prj_fk=addprj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber)
             adddoc.save()
             addprj.prj_doc_fk=adddoc
             addprj.save()
         else:
             prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
             if self.request.POST.get('doctype') == 'NOE':
-                adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=self.request.POST.get('doc_city'),doc_county=self.request.POST.get('doc_county'),doc_pending=1,doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber)
+                adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber)
             adddoc.save()
             prj.prj_doc_fk=adddoc
             prj.save()
@@ -183,14 +182,20 @@ class adddocument(FormView):
         strBody = strBody + "The State Clearinghouse will review your submittal and provide a State Clearinghouse Number and filing date within one business day. \n \n"
         strBody = strBody + "If you have questions about the form submittal process, please reply to this email.  Thank you for using CEQAnet. \n"
         strBody = strBody + "\n \n" + "--- Information Submitted ---" + "\n"
-        strBody = strBody + "Document Type: " + self.request.POST.get('doctype') + "\n"
-        strBody = strBody + "Project Title: " + data['prj_title'] + "\n"
+        strBody = strBody + "Document Type: " + self.request.POST.get('doctype') + "\n"        
+        if self.request.POST.get('prj_pk') == '-9999':
+            strBody = strBody + "Project Title: " + data['prj_title'] + "\n"
+        else:
+            strBody = strBody + "Project Title: " + prj.prj_title + "\n"            
         strBody = strBody + "Project Location: " + data['doc_location'] + "\n"
-        strBody = strBody + "    City: " + self.request.POST.get('doc_city') + "\n"
-        strBody = strBody + "    County: " + self.request.POST.get('doc_county') + "\n"
+        strBody = strBody + "    City: " + data['doc_city'].geow_shortname + "\n"
+        strBody = strBody + "    County: " + data['doc_county'].geow_shortname + "\n"
         strBody = strBody + "    Latitude: " + data['doc_latitude'] + "\n"
         strBody = strBody + "    Longitude: " + data['doc_longitude'] + "\n"
-        strBody = strBody + "Project Description: " + data['prj_description'] + "\n"
+        if self.request.POST.get('prj_pk') == '-9999':
+            strBody = strBody + "Project Description: " + data['prj_description'] + "\n"
+        else:
+            strBody = strBody + "Project Description: " + prj.prj_description + "\n"
         #strBody = strBody + "Person or Agency Carrying out Project: " & prj_otheragency + "\n"
         strBody = strBody + "Agency Approving Project: " + lag.lag_name + "\n"
         strBody = strBody + "Primary Contact:  " + "\n"
@@ -421,19 +426,21 @@ def ProjDocListQuery(request):
     queryset = documents.objects.filter(doc_visible=True).filter(doc_prj_fk__exact=prj_pk).order_by('-doc_received')
     return queryset
 
-class NOEdescription(ListView):
+class NOEdescription(DetailView):
+    model = documents
     template_name="ceqanet/NOEdescription.html"
     context_object_name = "NOE"
 
-    def get_queryset(self):
-        queryset = NOEdescriptionQuery(self.request)
-        return queryset
+    #def get_queryset(self):
+    #    queryset = NOEdescriptionQuery(self.request)
+    #    return queryset
 
     def get_context_data(self, **kwargs):
         context = super(NOEdescription, self).get_context_data(**kwargs)
-        doc_pk = self.request.GET.get('doc_pk')
-        context['doc_pk'] = doc_pk
-        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        #doc_pk = self.request.GET.get('doc_pk')
+        context['doc_pk'] = self.kwargs['pk']
+        context['doctype'] = self.request.GET.get("doctype")
+        context['latlongs'] = latlongs.objects.filter(doc_pk=self.kwargs['pk'])
 
         return context
 
@@ -464,29 +471,38 @@ def NODdescriptionQuery(request):
     queryset = documents.objects.get(doc_pk=doc_pk)
     return queryset
 
-class docdescription(ListView):
+class docdescription(DetailView):
+    model = documents
     template_name="ceqanet/docdescription.html"
-    context_object_name = "docs"
+    context_object_name = "doc"
 
-    def get_queryset(self):
-        queryset = docdescriptionQuery(self.request)
-        return queryset
+    #def get_queryset(self):
+    #    queryset = docdescriptionQuery(self.request)
+    #    return queryset
 
     def get_context_data(self, **kwargs):
         context = super(docdescription, self).get_context_data(**kwargs)
-        doc_pk = self.request.GET.get('doc_pk')
-        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
-        context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
-        context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
-        context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
-        context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        doc_pk = self.kwargs['pk']
+        context['doc_pk'] = doc_pk
+        doctype = self.request.GET.get("doctype")
+        context['doctype'] = doctype
+        if doctype == "NOE":
+            context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        elif doctype == "NOD":
+            context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        else:
+            context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+            context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
+            context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
+            context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
+            context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
         return context
 
-def docdescriptionQuery(request):
-    doc_pk = request.GET.get('doc_pk')
-
-    queryset = documents.objects.get(doc_pk=doc_pk)
-    return queryset
+#def docdescriptionQuery(request):
+#    doc_pk = request.GET.get('doc_pk')
+#
+#    queryset = documents.objects.get(doc_pk=doc_pk)
+#    return queryset
 
 class NOEedit(UpdateView):
     model = documents
@@ -494,8 +510,16 @@ class NOEedit(UpdateView):
     template_name="ceqanet/NOEedit.html"
 
     def get_success_url(self):
-        success_url = "%s" % (reverse_lazy('NOEdescription'))
-        return success_url        
+        success_url = "%s?doc_pk=%s" % (reverse_lazy('NOEdescription'),self.request.POST.get('doc_pk'))
+        return success_url
+
+    def get_context_data(self, **kwargs):
+        context = super(NOEedit, self).get_context_data(**kwargs)
+        context['doc_pk'] = self.kwargs['pk']
+        context['latlongs'] = latlongs.objects.filter(doc_pk=self.kwargs['pk'])
+
+        return context
+
 
 class docreview(ListView):
     template_name="ceqanet/docreview.html"

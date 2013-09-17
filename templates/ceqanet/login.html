@@ -1,4 +1,4 @@
-{% extends "hms2/base.html" %}
+{% extends "ceqanet/base.html" %}
 {% load url from future %}
 
 {% block content %}
@@ -21,7 +21,7 @@
 </table>
 
 <input id='loginBtn' type="submit" value="login" />
-<input type="hidden" name="next" value="{% url 'hms2index' %}" />
+<input type="hidden" name="next" value="{% url 'index' %}" />
 </form>
 
 {% endblock %}

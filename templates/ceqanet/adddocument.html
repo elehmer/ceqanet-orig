@@ -63,7 +63,7 @@
         {{ form.doc_conname.label }}
       </TH>
       <TD colspan="2"> 
-        {{ form.doc_conname }}
+        {{ form.doc_conname }} {{ form.doc_conname.errors }}
       </TD>
     </TR>
     <TR> 
@@ -97,7 +97,7 @@
         {{ form.doc_conaddress1.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conaddress1 }}
+        {{ form.doc_conaddress1 }} {{ form.doc_conaddress1.errors }}
       </td>
     </tr>
     <tr> 
@@ -105,7 +105,7 @@
         {{ form.doc_conaddress2.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conaddress2 }}
+        {{ form.doc_conaddress2 }} {{ form.doc_conaddress2.errors }}
       </td>
     </tr>
     <TR> 
@@ -113,7 +113,7 @@
         {{ form.doc_concity.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_concity }}
+        {{ form.doc_concity }} {{ form.doc_concity.errors }}
       </td>
     </TR>
     <TR> 
@@ -121,7 +121,7 @@
         {{ form.doc_constate.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_constate }}
+        {{ form.doc_constate }} {{ form.doc_constate.errors }}
       </td>
     </tr>
     <tr> 
@@ -129,7 +129,7 @@
         {{ form.doc_conzip.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conzip }}
+        {{ form.doc_conzip }} {{ form.doc_conzip.errors }}
       </td>
     </tr>
     <TR> 
@@ -142,7 +142,7 @@
         {{ form.doc_location.label }}
       </TH>
       <TD colspan="2"> 
-        {{ form.doc_location }}
+        {{ form.doc_location }} {{ form.doc_location.errors }}
       </TD>
     </TR>
     <TR>
@@ -150,7 +150,7 @@
         {{ form.doc_latitude.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_latitude }}
+        {{ form.doc_latitude }} {{ form.doc_latitude.errors }}
       </TD>
     </TR>
     <TR>
@@ -158,7 +158,7 @@
         {{ form.doc_longitude.label }}
       </TH>
       <TD>
-        {{ form.doc_longitude }}
+        {{ form.doc_longitude }} {{ form.doc_longitude.errors }}
       </TD>
     </TR>
     <TR>
@@ -166,12 +166,7 @@
         <b>City:</b>
       </TD>
       <TD colspan="2"> 
-        <select name="doc_city">
-          <option selected value="0">[Select city]</option>
-        {% for city in citylist %}
-          <option value="{{ city.geow_shortname }}">{{ city.geow_shortname }}</option>
-        {% endfor %}
-        </select>             
+        {{ form.doc_city }} {{ form.doc_city.errors }}
       </TD>
     </TR>
     <TR>
@@ -179,12 +174,7 @@
         <b>County:</b>
       </TD>
       <td colspan="2"> 
-        <select name="doc_county">
-          <OPTION selected value="0">[Select County]</OPTION>
-          {% for county in countylist %}
-            <option value="{{ county.geow_shortname }}">{{ county.geow_shortname }}
-          {% endfor %}
-        </select>
+        {{ form.doc_county }} {{ form.doc_county.errors }}
       </td>
     </TR>
     <TR> 
@@ -197,7 +187,7 @@
         <B>Person or Agency Carrying Out Project:</b>
       </td>
       <td colspan="2"> 
-        {{ form.strleadagency2 }}
+        {{ form.strleadagency2 }} {{ form.strleadagency2.errors }}
       </td>
     </tr>
     <tr> 

@@ -1,6 +1,7 @@
 {% load i18n %}
 {% load staticfiles %}
-<!-- Google Analytics -->
+<!--
+<!- - Google Analytics - ->
 <script type="text/javascript">
 
   var _gaq = _gaq || [];
@@ -20,7 +21,7 @@
 
 </script>
 
-<!-- Google Suggest -->
+<!- - Google Suggest - ->
 <script type="text/javascript" src="http://www.google.com/jsapi"></script>
 <script type="text/javascript">
 	google.load('search', '1');
@@ -31,6 +32,8 @@
 			'local_form');
 	});
 </script>
+-->
+
 
 <header role="banner">
 	<div id="skip_to_content"><a href="#main_content">Skip to Main Content</a></div>
@@ -40,23 +43,36 @@
 			<a class="p_h_button p_h_menu" onclick="toggle_menu();"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Menu" /></a>
 		</div>
 		<div class="phone_hd_right">
-			<a class="p_h_button p_h_contact" href="/Contact.html"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Contact Us" /></a>
-			<a class="p_h_button p_h_search" onclick="toggle_search();"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Search" /></a>
+			<a class="p_h_button p_h_contact" href="/Contact.html"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Contact Us" /></a>
+			<!--<a class="p_h_button p_h_search" onclick="toggle_search();"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Search" /></a>-->
+			{% if user.is_anonymous %}
+			<a class="p_h_button p_h_search" href="{% url 'login' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Login" /></a>
+            {% else %}
+			<a class="p_h_button p_h_search" href="{% url 'logout' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Logout" /></a>
+            {% endif %}
 		</div>
 		<div class="logo_and_banner">
-			<div class="head_cagov_logo"><a href="http://www.ca.gov/"><img src="{% static "ceqanet/CA_template/images/template2013/header_ca.gov.png" %}" alt="CA.gov" /></a></div>
-			<div class="head_organization_banner"><a href="/"><img src="{% static "ceqanet/img/OPR_banner.png" %}" alt="Organization Title" height=90px/></a></div>
+			<div class="head_cagov_logo"><a href="http://www.ca.gov/"><img src="{% static 'ceqanet/CA_template/images/template2013/header_ca.gov.png' %}" alt="CA.gov" /></a></div>
+			<div class="head_organization_banner"><a href="/"><img src="{% static 'ceqanet/img/OPR_banner.png' %}" alt="Organization Title" height=90px/></a></div>
 		</div>
 	</div>
+	<div class="head_loginout">
+			{% if user.is_anonymous %}
+				<a class="head_login" href="{% url 'login' %}">{% trans "Log in" %}</a>
+			{% else %}
+				<a class="head_logout" href="{% url 'logout' %}">{% trans "Log out" %}</a>
+			{% endif %}
+	</div>
 
+	<!--
 	<div id="head_search">
-		<form id="local_form" action="http://www.google.com/cse"> <!-- the form action will be changed using javascript -->
+		<form id="local_form" action="http://www.google.com/cse"> <!- - the form action will be changed using javascript - ->
 			<div class="textfield_container">
 				<label for="search_local_textfield" accesskey="s" class="hidden">Search this site: </label>
 				<input type="text" name="q" id="search_local_textfield" size="40" autocomplete="off" value="Search" onfocus="if(this.value=='Search')this.value=''" onblur="if(this.value=='')this.value='Search'" />
 
-				<input type="hidden" name="cx" value="001779225245372747843:mdsmtl_vi1a" /> <!-- Step 6: Update this value with your search engine unique ID. Submit a request to the OTech Service Desk if you don't already know your unique search engine ID. -->
-				<input type="hidden" name="cof" value="" /> <!-- this value will be set using javascript -->
+				<input type="hidden" name="cx" value="001779225245372747843:mdsmtl_vi1a" /> <!- - Step 6: Update this value with your search engine unique ID. Submit a request to the OTech Service Desk if you don't already know your unique search engine ID. - ->
+				<input type="hidden" name="cof" value="" /> <!- - this value will be set using javascript - ->
 				<input type="hidden" name="ie" value="UTF-8" />
 				<input type="hidden" name="nojs" value="1" />
 
@@ -66,19 +82,14 @@
 			</div>
 		</form>
 	</div>
+-->
 	
 	<nav id="navigation" class="singlelevelnav">
 		<ul id="nav_list">
-			<li><a href="{% url 'index' %}" class="nav_level1_link"><span id="nav_home_container"></span><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Home" />&nbsp;</a></li>
+			<li><a href="{% url 'index' %}" class="nav_level1_link"><span id="nav_home_container"></span><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Home" />&nbsp;</a></li>
 			<li><a href="{% url 'query' %}" class="nav_level1_link">{% trans "Query" %}</a></li>
 			<li><a href="{% url 'submit' %}" class="nav_level1_link">{% trans "Submit" %}</a></li>
 			<li><a href="{% url 'docreview' %}" class="nav_level1_link">{% trans "Review" %}</a></li>
-
-			{% if user.is_anonymous %}
-            <li><a href="{% url 'login' %}" class="nav_level1_link">{% trans "Login" %}</a></li>
-            {% else %}
-            <li><a href="{% url 'logout' %}" class="nav_level1_link">{% trans "Logout" %}</a></li>
-            {% endif %}
 		</ul>
 	</nav>
 	
