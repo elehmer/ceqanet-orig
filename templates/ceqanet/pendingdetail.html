@@ -1,23 +1,10 @@
 {% extends "ceqanet/listpage.html" %}
 
-{% block title %}OPR Data Clearinghouse Document Review Detail{% endblock title %}
-
-{% block extrajs %}
-
-  <script>
-    $(function() {
-        $( "#id_doc_dept" ).datepicker({dateFormat: "yy-mm-dd"});
-    });
-    $(function() {
-        $( "#id_doc_clear" ).datepicker({dateFormat: "yy-mm-dd"});
-    });
-  </script>
-
-{% endblock extrajs %}
+{% block title %}OPR Data Clearinghouse Pending Document Detail{% endblock title %}
 
 {% block listing %}
   {% load staticfiles %}
-<FORM name="reviewdetailform" method="post" action="">
+<FORM name="pendingetailform" method="post" action="">
   {% csrf_token %}
     <table width="767" border="0" cellpadding="3">
       <tr>
@@ -351,20 +338,25 @@
         </td>
       </tr>
       <tr> 
+        <td> 
+          <b>Assign Region:</b>
+          <select name="doc_plannerregion">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </td>
+      </tr>      
+      <tr> 
         <td>
-          <table>
-            <tr>
-               <td>
-                 <b>Date Received:</b> {{ detail.doc_received }}
-              </td>
-              <td>
-                <b>Start of Review:</b> {{ form.doc_dept }}
-              </td>
-              <td>
-                <b>End of Review:</b> {{ form.doc_clear }}
-              </td>
-            </tr>
-          </table>
+          <b>Date Received:</b> {{ detail.doc_received }}
         </td>
       </tr>
       <tr>
@@ -374,12 +366,11 @@
       </tr>
       <TR> 
         <TD align="center" colspan="3"> 
-          <input type="submit" value="Accept Document">
+          <input type="submit" value="Assign Document">
           <input type="submit" value="Reject Document">
         </TD>
       </TR>
     </table>
     <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
-    <input type="hidden" name="user_id" value="{{ user_id }}">
   </form>
 {% endblock listing %}

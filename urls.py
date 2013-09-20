@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,addproject,inputform,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,NOEedit,docreview,accept,reviewdetail,usersettings
+from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,addproject,inputform,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,NOEedit,pending,pendingdetail,accept,review,reviewdetail,usersettings,comment,commentdetail
 
 urlpatterns = patterns('ceqanet.views',
 	url(r'^$','index',name='index'),
@@ -19,8 +19,12 @@ urlpatterns = patterns('ceqanet.views',
 	url(r'^docadd_nop/$',docadd_nop.as_view(),name='docadd_nop'),
 	url(r'^adddocument/$',adddocument.as_view(),name='adddocument'),
 	url(r'^accept/$','accept',name='accept'),
-	url(r'^docreview/$',docreview.as_view(),name='docreview'),
+	url(r'^pending/$',pending.as_view(),name='pending'),
+	url(r'^pendingdetail/$',pendingdetail.as_view(),name='pendingdetail'),
+	url(r'^review/$',review.as_view(),name='review'),
 	url(r'^reviewdetail/$',reviewdetail.as_view(),name='reviewdetail'),
+	url(r'^comment/$',comment.as_view(),name='comment'),
+	url(r'^commentdetail/$',commentdetail.as_view(),name='commentdetail'),
 	url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
 )
 

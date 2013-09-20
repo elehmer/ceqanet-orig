@@ -5,7 +5,7 @@
 {% block content %}
 
 
-  <h4> Pending Documents Currently Under Review</h4>
+  <h4>Current Pending Documents</h4>
   {% if object_list %}
   <TABLE border="1">
     {% if is_paginated %}
@@ -59,7 +59,7 @@
           {{ pending.doc_prj_fk.prj_leadagency }}
         </TD>
         <TD align="center">
-          <a href="/reviewdetail?doc_pk={{ pending.doc_pk }}"><i>{{ pending.doc_prj_fk.prj_title }}</i></a>
+          <a href="/pendingdetail?doc_pk={{ pending.doc_pk }}"><i>{{ pending.doc_prj_fk.prj_title }}</i></a>
         </TD>
         <TD align="center">
           {{ pending.doc_prj_fk.prj_description }}

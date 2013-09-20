@@ -7,7 +7,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import FormView,UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
-from ceqanet.forms import QueryForm,SubmitForm,AddPrjForm,AddDocForm,InputForm,nocform,nodform,noeform,nopform,NOEeditForm,DocReviewForm,usersettingsform,reviewdetailform
+from ceqanet.forms import QueryForm,SubmitForm,AddPrjForm,AddDocForm,InputForm,nocform,nodform,noeform,nopform,NOEeditForm,DocReviewForm,usersettingsform,reviewdetailform,pendingdetailform
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords
 from django.contrib.auth.models import User
 from datetime import datetime
@@ -542,8 +542,8 @@ class NOEedit(UpdateView):
         return context
 
 
-class docreview(ListView):
-    template_name="ceqanet/docreview.html"
+class pending(ListView):
+    template_name="ceqanet/pending.html"
     context_object_name = "pendings"
     paginate_by = 25
 
@@ -552,20 +552,14 @@ class docreview(ListView):
         return queryset
 
     def get_context_data(self, **kwargs):
-        context = super(docreview, self).get_context_data(**kwargs)
+        context = super(pending, self).get_context_data(**kwargs)
 
-        doc_pk = self.request.GET.get('doc_pk')
         qsminuspage = self.request.GET.copy()
         
         if "page" in qsminuspage:
             qsminuspage.pop('page')
 
         context['restofqs'] = qsminuspage.urlencode()
-        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
-        context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
-        context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
-        context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
-        context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
 
         return context
 
@@ -573,17 +567,13 @@ def PendingListQuery(request):
     queryset = documents.objects.filter(doc_pending=True).order_by('-doc_received')
     return queryset
 
-class reviewdetail(FormView):
-    form_class = reviewdetailform
-    template_name="ceqanet/reviewdetail.html"
+class pendingdetail(FormView):
+    form_class = pendingdetailform
+    template_name="ceqanet/pendingdetail.html"
     context_object_name = "detail"
-
-#    def get_queryset(self):
-#        queryset = ReviewDetailQuery(self.request)
-#        return queryset
  
     def get_context_data(self, **kwargs):
-        context = super(reviewdetail, self).get_context_data(**kwargs)
+        context = super(pendingdetail, self).get_context_data(**kwargs)
 
         doc_pk = self.request.GET.get('doc_pk')
         context['doc_pk'] = doc_pk
@@ -597,11 +587,84 @@ class reviewdetail(FormView):
         return context
 
     def get_success_url(self):
-        success_url = "%s" % reverse_lazy('docreview')
+        success_url = "%s" % reverse_lazy('pending')
         return success_url
 
     def form_valid(self,form):
         data = form.cleaned_data
+
+        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
+        doc.doc_pending = False
+        doc.doc_plannerreview = True
+        doc.doc_plannerregion = self.request.POST.get('doc_plannerregion')
+
+        prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
+
+        if prj.prj_pending:
+            prj.prj_pending = False
+            prj.prj_plannerreview = True
+        doc.save()
+        prj.save()
+
+        return super(pendingdetail,self).form_valid(form)
+
+class review(ListView):
+    template_name="ceqanet/review.html"
+    context_object_name = "reviews"
+    paginate_by = 25
+
+    def get_queryset(self):
+        queryset = ReviewListQuery(self.request)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(review, self).get_context_data(**kwargs)
+
+        user_id = self.request.GET.get('user_id')
+        qsminuspage = self.request.GET.copy()
+        
+        if "page" in qsminuspage:
+            qsminuspage.pop('page')
+
+        context['restofqs'] = qsminuspage.urlencode()
+        context['user_id'] = user_id
+
+        return context
+
+def ReviewListQuery(request):
+    user_id = request.GET.get('user_id')
+    region = UserProfile.objects.get(user_id__exact=user_id).region 
+    queryset = documents.objects.filter(doc_plannerregion=region).filter(doc_plannerreview=True).order_by('-doc_received')
+    return queryset
+
+class reviewdetail(FormView):
+    form_class = reviewdetailform
+    template_name="ceqanet/reviewdetail.html"
+    context_object_name = "detail"
+ 
+    def get_context_data(self, **kwargs):
+        context = super(reviewdetail, self).get_context_data(**kwargs)
+
+        doc_pk = self.request.GET.get('doc_pk')
+        context['doc_pk'] = doc_pk
+        context['user_id'] = self.request.GET.get('user_id')
+        context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
+        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
+        context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
+        context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
+        context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+
+        return context
+
+    def get_success_url(self):
+        success_url = "%s?user_id=%s" % (reverse_lazy('review'),self.request.GET.get('user_id'))
+        return success_url
+
+    def form_valid(self,form):
+        data = form.cleaned_data
+
+        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
 
         ch = clearinghouse.objects.get(pk=1)
         currentidnum = str(ch.currentid)
@@ -609,31 +672,109 @@ class reviewdetail(FormView):
             currentidnum = "00"+currentidnum
         elif len(currentidnum) == 2:
             currentidnum = "0"+currentidnum
-        schno = ch.schnoprefix + self.request.POST.get('region') + currentidnum
+        schno = ch.schnoprefix + str(doc.doc_plannerregion) + currentidnum
         ch.currentid = ch.currentid+1
         ch.save()
 
-        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
         doc.doc_dept = data['doc_dept']
         doc.doc_clear = data['doc_clear']
-        doc.doc_pending = False
         doc.doc_review = True
+        doc.doc_plannerreview = False
         doc.doc_schno = schno
 
         prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
 
         if prj.prj_pending:
-            prj.prj_pending = False
             prj.prj_schno = schno
+            prj.prj_plannerreview = False
         doc.save()
         prj.save()
 
         return super(reviewdetail,self).form_valid(form)
 
-#def ReviewDetailQuery(request):
-#    doc_pk = request.GET.get("doc_pk")
-#    queryset = documents.objects.get(pk=doc_pk)
-#    return queryset
+class comment(ListView):
+    template_name="ceqanet/comment.html"
+    context_object_name = "comments"
+    paginate_by = 25
+
+    def get_queryset(self):
+        queryset = CommentListQuery(self.request)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(comment, self).get_context_data(**kwargs)
+
+        user_id = self.request.GET.get('user_id')
+        qsminuspage = self.request.GET.copy()
+        
+        if "page" in qsminuspage:
+            qsminuspage.pop('page')
+
+        context['restofqs'] = qsminuspage.urlencode()
+        context['user_id'] = user_id
+
+        return context
+
+def CommentListQuery(request):
+    user_id = request.GET.get('user_id')
+    set_lag_fk = UserProfile.objects.get(user_id__exact=user_id).set_lag_fk.lag_pk 
+    queryset = documents.objects.filter(doc_review=True).filter(doc_prj_fk__prj_lag_fk__lag_pk=set_lag_fk).order_by('-doc_received')
+    return queryset
+
+class commentdetail(FormView):
+    form_class = commentdetailform
+    template_name="ceqanet/commentdetail.html"
+    context_object_name = "detail"
+ 
+    def get_context_data(self, **kwargs):
+        context = super(commentdetail, self).get_context_data(**kwargs)
+
+        doc_pk = self.request.GET.get('doc_pk')
+        context['doc_pk'] = doc_pk
+        context['user_id'] = self.request.GET.get('user_id')
+        context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
+        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
+        context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
+        context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
+        context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+
+        return context
+
+    def get_success_url(self):
+        success_url = "%s?user_id=%s" % (reverse_lazy('comment'),self.request.GET.get('user_id'))
+        return success_url
+
+    def form_valid(self,form):
+        data = form.cleaned_data
+
+        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
+
+        ch = clearinghouse.objects.get(pk=1)
+        currentidnum = str(ch.currentid)
+        if len(currentidnum) == 1:
+            currentidnum = "00"+currentidnum
+        elif len(currentidnum) == 2:
+            currentidnum = "0"+currentidnum
+        schno = ch.schnoprefix + str(doc.doc_plannerregion) + currentidnum
+        ch.currentid = ch.currentid+1
+        ch.save()
+
+        doc.doc_dept = data['doc_dept']
+        doc.doc_clear = data['doc_clear']
+        doc.doc_review = True
+        doc.doc_plannerreview = False
+        doc.doc_schno = schno
+
+        prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
+
+        if prj.prj_pending:
+            prj.prj_schno = schno
+            prj.prj_plannerreview = False
+        doc.save()
+        prj.save()
+
+        return super(reviewdetail,self).form_valid(form)
 
 def accept(request):
     t = loader.get_template("ceqanet/accept.html")

@@ -138,6 +138,8 @@ class documents(models.Model):
 	doc_pending = models.BooleanField()
 	doc_visible = models.BooleanField()
 	doc_review = models.BooleanField()
+	doc_plannerregion = models.IntegerField(null=True,blank=True)
+	doc_plannerreview = models.BooleanField()
 class geowordlists(models.Model):
 	geol_pk = models.AutoField(primary_key=True)
 	geol_shortname = models.CharField(null=True,blank=True,max_length=32)
@@ -155,8 +157,7 @@ class geowords(models.Model):
 	inlookup = models.BooleanField(default=True)
 
 	def __unicode__(self):
-		return self.geow_shortname
-		
+		return self.geow_shortname		
 class holidays(models.Model):
 	hday_pk = models.AutoField(primary_key=True)
 	hday_name = models.CharField(max_length=40)
@@ -245,6 +246,7 @@ class projects(models.Model):
 	prj_updated = models.DateField(null=True,blank=True)
 	prj_pending = models.BooleanField()
 	prj_visible = models.BooleanField()
+	prj_plannerreview = models.BooleanField()
 class reviewingagencies(models.Model):
 	rag_pk = models.AutoField(primary_key=True)
 	rag_name = models.CharField(max_length=90,db_index=True)

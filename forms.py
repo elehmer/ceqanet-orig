@@ -117,6 +117,9 @@ class InputForm(forms.Form):
 class DocReviewForm(forms.Form):
 	pass
 
+class pendingdetailform(forms.Form):
+	pass
+
 class reviewdetailform(forms.Form):
 	doc_dept = forms.DateField(label="Start of Review:",input_formats=['%Y-%m-%d'])
 	doc_clear = forms.DateField(label="End of Review:",input_formats=['%Y-%m-%d'])
