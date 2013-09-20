@@ -2,19 +2,27 @@
 
 {% block title %}OPR Data Clearinghouse Document Review Detail{% endblock title %}
 
+{% block extrajs %}
+
+  <script>
+    $(function() {
+        $( "#id_doc_dept" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+    $(function() {
+        $( "#id_doc_clear" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+  </script>
+
+{% endblock extrajs %}
+
 {% block listing %}
   {% load staticfiles %}
-  {% if object_list %}
-
+<FORM name="reviewdetailform" method="post" action="">
+  {% csrf_token %}
     <table width="767" border="0" cellpadding="3">
       <tr>
         <td align="center">
           <h3>{{ detail.doc_prj_fk.prj_title }}</h3>
-        </td>
-      </tr>
-      <tr> 
-        <td> 
-          <b>SCH Number:</b> {{ detail.doc_prj_fk.prj_schno }}
         </td>
       </tr>
       <tr> 
@@ -63,38 +71,43 @@
         <td>
           <table border="0">
             <tr>
-              <th align="left">
-                Primary Contact:
+              <td align="left">
+               <b>Contact Person:</b> {{ detail.doc_conname }}
               </td>
             </tr>
             <tr>
               <td align="left">
-               {{ detail.doc_conname }}
+                <b>Lead Agency:</b> {{ detail.doc_conagency }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ detail.doc_conagency }}
+                <B>Phone:</B> {{ detail.doc_conphone }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ detail.doc_conphone }}
+                <b>Street Address1:</B> {{ detail.doc_conaddress1 }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ detail.doc_conaddress1 }}
+                <b>Street Address1:</B> {{ detail.doc_conaddress2 }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ detail.doc_conaddress2 }}
+                <B>City:</B> {{ detail.doc_concity }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ detail.doc_concity }}, {{ detail.doc_constate }} {{ detail.doc_conzip }}
+                <B>State:</B> {{ detail.doc_constate }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <B>Zip:</B> {{ detail.doc_conzip }}
               </td>
             </tr>
           </table>
@@ -115,65 +128,67 @@
           <table border="0">
             <tr>
               <td align="left">
-                County: {{ detail.doc_county }}
+                <B>County:</b> {{ detail.doc_county }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                City: {{ detail.doc_city }}
-              </td>
-            </tr> 
-            <tr>
-              <td align="left">
-                Region: {{ detail.doc_region }}
-              </td>
-            </tr> 
-            <tr>
-              <td align="left">
-                Cross Streets: {{ detail.doc_xstreets }}
+                <B>City:</b> {{ detail.doc_city }}
               </td>
             </tr> 
             <tr>
               <td align="left">
                 {% if latlongs.exists %}
                   {% for ll in latlongs %}
-                    Latitude/Longitude: {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
+                    <B>Latitude/Longitude:</b> {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
                   {% endfor %}
                 {% else %}
-                  Latitude/Longitude:
+                  <B>Latitude/Longitude:</B>
                 {% endif %}
               </td>
             </tr> 
+            {% if detail.doc_doctype = 'NOC' or detail.doc_doctype = 'NOP' %}
             <tr>
               <td align="left">
-                Parcel No: {{ detail.doc_parcelno }}
+                <B>Region:</b> {{ detail.doc_region }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Township: {{ detail.doc_township }}
+                <B>Cross Streets:</b> {{ detail.doc_xstreets }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Range: {{ detail.doc_range }}
+                <B>Parcel No:</b> {{ detail.doc_parcelno }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Section: {{ detail.doc_section }}
+                <B>Township:</b> {{ detail.doc_township }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Base: {{ detail.doc_base }}
+                <B>Range:</b> {{ detail.doc_range }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Other Location Info: {{ detail.doc_location }}
+                <B>Section:</b> {{ detail.doc_section }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>Base:</b> {{ detail.doc_base }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>Other Location Info:</b> {{ detail.doc_location }}
               </td>
             </tr>
+            {% endif %}
           </table>
         </td>
       </tr>
@@ -182,6 +197,7 @@
           <hr width="100%">
         </td>
       </tr>
+      {% if detail.doc_doctype = 'NOC' or detail.doc_doctype = 'NOP' %}
       <tr> 
         <td>
           <b>Proximity To</b>
@@ -192,63 +208,36 @@
           <table border="0">
             <tr>
               <td align="left">
-                Highways: {{ detail.doc_highways }}
+                <B>Highways:</b> {{ detail.doc_highways }}
               </td>
             </tr>
 
             <tr>
               <td align="left">
-                Airports: {{ detail.doc_airports }}
+                <B>Airports:</b> {{ detail.doc_airports }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Railways: {{ detail.doc_railways }}
+                <B>Railways:</b> {{ detail.doc_railways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Waterways: {{ detail.doc_waterways }}
+                <B>Waterways:</b> {{ detail.doc_waterways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Schools: {{ detail.doc_schools }}
+                <B>Schools:</b> {{ detail.doc_schools }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Land Use: {{ detail.doc_landuse }}
+                <B>Land Use:</b> {{ detail.doc_landuse }}
               </td>
             </tr>
           </table>
-        </td>
-      </tr>
-      <tr> 
-        <td> 
-          <hr width="100%">
-        </td>
-      </tr>
-      <tr> 
-        <td> 
-          <b>Development Type</b>
-        </td>
-      </tr>
-      <tr> 
-        <td>
-          <ul>
-            {% for d in dev %}
-              <li>{{ d.dkey_keyw_fk.keyw_longname }}
-              {% if d.dkey_comment.strip != '' %}
-                ({{ d.dkey_comment }})
-              {% endif %} 
-              {% if d.dkey_keyw_fk.keyw_longname = "Other" %}
-                {% if d.dkey_doc_fk.doc_devnotes.strip != '' %}
-                  ({{ d.dkey_doc_fk.doc_devnotes }})
-                {% endif %}
-              {% endif %}</li>
-            {% endfor %}
-          </ul>
         </td>
       </tr>
       <tr> 
@@ -266,12 +255,39 @@
           <ul>
             {% for a in actions %}
               <li>{{ a.dkey_keyw_fk.keyw_longname }}
-              {% if a.dkey_comment.strip != '' %}
+              {% if a.dkey_comment.strip != None %}
                 ({{ a.dkey_comment }})
               {% endif %}
-              {% if a.dkey_keyw_fk.keyw_longname = "Other Action" %}
-                {% if a.dkey_doc_fk.doc_actionnotes.strip != '' %}
+              {% if a.dkey_keyw_fk.keyw_longname.strip = "Other Action" %}
+                {% if a.dkey_doc_fk.doc_actionnotes.strip != None %}
                   ({{ a.dkey_doc_fk.doc_actionnotes }}) 
+                {% endif %}
+              {% endif %}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Development Type</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            {% for d in dev %}
+              <li>{{ d.dkey_keyw_fk.keyw_longname }}
+              {% if d.dkey_comment.strip != None %}
+                ({{ d.dkey_comment }})
+              {% endif %} 
+              {% if d.dkey_keyw_fk.keyw_longname.strip = "Other" %}
+                {% if d.dkey_doc_fk.doc_devnotes.strip != None %}
+                  ({{ d.dkey_doc_fk.doc_devnotes }})
                 {% endif %}
               {% endif %}</li>
             {% endfor %}
@@ -312,7 +328,7 @@
       </tr>
       <tr> 
         <td> 
-          <b>Reviewing Agencies</b>  (Agencies in <b>Bold Type</b> submitted comment letters to the State Clearinghouse) 
+          <b>Reviewing Agencies</b>
         </td>
       </tr>
       <tr> 
@@ -328,6 +344,7 @@
           </ul>
         </td>
       </tr>
+      {% endif %}
       <tr> 
         <td> 
           <hr width="100%">
@@ -335,15 +352,36 @@
       </tr>
       <tr> 
         <td> 
-          <b>Date Received:</b> {{ detail.doc_received }}&nbsp; 
-          <b>Start of Review:</b>
-          {% if detail.doc_dept != None %} 
-            {{ detail.doc_dept }}&nbsp; 
-          {% endif %}&nbsp;&nbsp;&nbsp; 
-          <b>End of Review:</b> 
-          {% if detail.doc_clear != None %} 
-            {{ detail.doc_clear }} 
-          {% endif %}
+          <b>Assign Region:</b>
+          <select name="region">
+            <option value="0">0</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+            <option value="5">5</option>
+            <option value="6">6</option>
+            <option value="7">7</option>
+            <option value="8">8</option>
+            <option value="9">9</option>
+          </select>
+        </td>
+      </tr>      
+      <tr> 
+        <td>
+          <table>
+            <tr>
+               <td>
+                 <b>Date Received:</b> {{ detail.doc_received }}
+              </td>
+              <td>
+                <b>Start of Review:</b> {{ form.doc_dept }}
+              </td>
+              <td>
+                <b>End of Review:</b> {{ form.doc_clear }}
+              </td>
+            </tr>
+          </table>
         </td>
       </tr>
       <tr>
@@ -358,7 +396,6 @@
         </TD>
       </TR>
     </table>
-
-  {% endif %}
-
+    <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
+  </form>
 {% endblock listing %}

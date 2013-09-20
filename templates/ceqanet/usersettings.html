@@ -1,0 +1,36 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<FORM name="settingsform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD colspan="2" align="center">
+        User Settings
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        Region: {{ form.region }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        Lead Agency: {{ form.lag_fk }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        <input type="submit" value="Update">
+      </TD>
+    </TR>
+  </TABLE>
+</FORM>
+{% endblock content %}

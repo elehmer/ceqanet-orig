@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 # Create your models here.
 class counties(models.Model):
@@ -20,10 +21,10 @@ class dockeywords(models.Model):
 	dkey_pk = models.AutoField(primary_key=True)
 	dkey_doc_fk = models.ForeignKey("documents",db_column="dkey_doc_fk")
 	dkey_keyw_fk = models.ForeignKey("keywords",db_column="dkey_keyw_fk")
-	dkey_comment = models.CharField(max_length=64)
-	dkey_value1 = models.CharField(max_length=16)
-	dkey_value2 = models.CharField(max_length=16)
-	dkey_value3 = models.CharField(max_length=16)
+	dkey_comment = models.CharField(null=True,blank=True,max_length=64)
+	dkey_value1 = models.CharField(null=True,blank=True,max_length=16)
+	dkey_value2 = models.CharField(null=True,blank=True,max_length=16)
+	dkey_value3 = models.CharField(null=True,blank=True,max_length=16)
 	dkey_rank = models.IntegerField()
 class docreviews(models.Model):
 	drag_pk = models.AutoField(primary_key=True)
@@ -136,6 +137,7 @@ class documents(models.Model):
 	doc_long_sec = models.CharField(null=True,blank=True,max_length=10)
 	doc_pending = models.BooleanField()
 	doc_visible = models.BooleanField()
+	doc_review = models.BooleanField()
 class geowordlists(models.Model):
 	geol_pk = models.AutoField(primary_key=True)
 	geol_shortname = models.CharField(null=True,blank=True,max_length=32)
@@ -213,6 +215,9 @@ class leadagencies(models.Model):
 	lag_prjcnt = models.IntegerField()
 	lag_note = models.CharField(max_length=60)
 	inlookup = models.BooleanField(default=True)
+
+	def __unicode__(self):
+		return self.lag_name
 class prinfo(models.Model):
 	info_prjdate = models.DateField()
 	info_docdate = models.DateField()
@@ -258,3 +263,13 @@ class reviewingagencies(models.Model):
 	rag_acronym = models.CharField(max_length=10)
 	rag_disable = models.BooleanField()
 	inlookup = models.BooleanField(default=True)
+
+	def __unicode__(self):
+		return self.rag_title
+class UserProfile(models.Model):
+	user = models.ForeignKey(User,unique=True)
+	region = models.IntegerField(blank=True)
+	lag_fk = models.ForeignKey("leadagencies",db_column="set_lag_fk")
+class clearinghouse(models.Model):
+	schnoprefix = models.CharField(max_length=6)
+	currentid = models.IntegerField()

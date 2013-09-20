@@ -59,20 +59,48 @@
           {{ pending.doc_prj_fk.prj_leadagency }}
         </TD>
         <TD align="center">
-          <a href="/reviewdetail/?doc_pk={{ pending.doc_pk }}"><i>{{ pending.doc_prj_fk.prj_title }}</i></a>
+          <a href="/reviewdetail?doc_pk={{ pending.doc_pk }}"><i>{{ pending.doc_prj_fk.prj_title }}</i></a>
         </TD>
         <TD align="center">
-          {{ pending.doc_description }}
+          {{ pending.doc_prj_fk.prj_description }}
         </TD>
         <TD align="center">
           {{ pending.doc_doctype }}
         </TD>
         <TD align="center">
-        {{ pending.doc_received }}
-      </TD>
+          {{ pending.doc_received }}
+        </TD>
       </TR>
     {% endfor %}
-    </TABLE>
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+  </TABLE>
   {% endif %}
 
 {% endblock content %}

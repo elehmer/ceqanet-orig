@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from datetime import datetime, date, timedelta
-from ceqanet.models import projects,documents,geowords
+from ceqanet.models import projects,documents,geowords,reviewingagencies,UserProfile,leadagencies
 
 class QueryForm(forms.Form):
 	prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)
@@ -30,11 +30,26 @@ class AddDocForm(forms.Form):
 	doc_longitude = forms.CharField(label="Document Longitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
 	strsectionnumber = forms.CharField(label="Section Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
 	strcodenumber = forms.CharField(label="Code Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-	txtreason = forms.CharField(label="Reasons why project is exempt:",widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
-	strleadagency2 = forms.CharField(label="Person or Agency Carrying Out Project:",max_length=45,widget=forms.TextInput(attrs={'size':'45'}))
+	txtreason = forms.CharField(label="Reasons why project is exempt:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+	strleadagency2 = forms.CharField(label="Person or Agency Carrying Out Project:",required=False,max_length=45,widget=forms.TextInput(attrs={'size':'45'}))
 	strphone1 = forms.CharField(max_length=3,widget=forms.TextInput(attrs={'size':'3'}))
 	strphone2 = forms.CharField(max_length=3,widget=forms.TextInput(attrs={'size':'3'}))
 	strphone3 = forms.CharField(max_length=4,widget=forms.TextInput(attrs={'size':'4'}))
+	doc_parcelno = forms.CharField(label='Parcel No.:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
+	doc_xstreets = forms.CharField(label='Cross Streets:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
+	doc_township = forms.CharField(label='Township:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
+	doc_range = forms.CharField(label='Range:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
+	doc_section = forms.CharField(label='Section:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
+	doc_base = forms.CharField(label='Base:',required=False,max_length=8,widget=forms.TextInput(attrs={'size':'8'}))
+	doc_highways = forms.CharField(label="State Hwy #:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_airports = forms.CharField(label="Airports:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_railways = forms.CharField(label="Railways:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_waterways = forms.CharField(label="Waterways:",required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
+	doc_landuse = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_schools = forms.CharField(label="Schools:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_actionnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_issuesnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
 
 	def clean(self):
 		cleaned_data = super(AddDocForm, self).clean()
@@ -101,3 +116,16 @@ class InputForm(forms.Form):
 
 class DocReviewForm(forms.Form):
 	pass
+
+class reviewdetailform(forms.Form):
+	doc_dept = forms.DateField(label="Start of Review:",input_formats=['%Y-%m-%d'])
+	doc_clear = forms.DateField(label="End of Review:",input_formats=['%Y-%m-%d'])
+
+class usersettingsform(ModelForm):
+	formID = "usersettingsform"
+
+	lag_fk = forms.ModelChoiceField(label="Lead Agency:",queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'))
+
+	class Meta:
+		model = UserProfile
+		fields = ('region','lag_fk')

@@ -47,6 +47,14 @@
         {{ prjinfo.prj_description }}
       </TD>
     </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        Project Clearinghouse Number:
+      </TH>
+      <TD colspan="2">
+        {{ prjinfo.prj_schno }}
+      </TD>
+    </TR>
     {% endif %}    
     <TR> 
       <TH align="left" colspan="3">
@@ -58,6 +66,14 @@
         Lead Agency Contact Information:
       </TH>
     </TR>
+    <tr>
+      <td width="25%" valign="top">
+        <b>From <font color="#000066">(Lead Agency)</font>:</b>
+      </td>
+      <td colspan="2"> 
+        {{ laglist.lag_name }}
+      </td>
+    </tr>
     <TR>
       <TH width="25%" align="left" valign="top">
         {{ form.doc_conname.label }}
@@ -84,14 +100,6 @@
         {{ form.strphone3}}
       </TD>
     </TR>
-    <tr>
-      <td width="25%" valign="top">
-        <b>From <font color="#000066">(Lead Agency)</font>:</b>
-      </td>
-      <td colspan="2"> 
-        {{ laglist.lag_name }}
-      </td>
-    </tr>
     <tr> 
       <TH width="25%" align="left" valign="top">
         {{ form.doc_conaddress1.label }}
@@ -132,11 +140,11 @@
         {{ form.doc_conzip }} {{ form.doc_conzip.errors }}
       </td>
     </tr>
-    <TR> 
-      <TD colspan="3" height="30"> 
-        <hr width="100%" align="center">
-      </TD>
-    </TR>
+    <tr> 
+      <td colspan="3" height="20">
+        <h5>Location Information:</h5>
+      </td>
+    </tr>
     <TR>
       <TH width="25%" align="left" valign="top"> 
         {{ form.doc_location.label }}
@@ -157,7 +165,7 @@
       <TH width="25%" align="left" valign="top">
         {{ form.doc_longitude.label }}
       </TH>
-      <TD>
+      <TD colspan="2">
         {{ form.doc_longitude }} {{ form.doc_longitude.errors }}
       </TD>
     </TR>
@@ -177,11 +185,696 @@
         {{ form.doc_county }} {{ form.doc_county.errors }}
       </td>
     </TR>
+    {% if doctype = "NOC" or doctype = "NOP" %}
+    <tr> 
+      <td colspan="3">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="3"> 
+        <B>{{ form.doc_parcelno.label }}</B> {{ form.doc_parcelno }} {{ form.doc_parcelno.errors }}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3"> 
+        <B>{{ form.doc_xstreets.label }}</B> {{ form.doc_xstreets }} {{ form.doc_xstreets.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_township.label }}</B> {{ form.doc_township }} {{ form.doc_township.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_range.label }}</B> {{ form.doc_range }} {{ form.doc_range.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_section.label }}</B> {{ form.doc_section }} {{ form.doc_section.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_base.label }}</B> {{ form.doc_base }} {{ form.doc_base.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">&nbsp;</td>
+    </tr>
+    <tr> 
+      <td colspan="3" align="left"><b>Within 2 Miles:</b></td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_highways.label }}</B> {{ form.doc_highways }} {{ form.doc_highways.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_railways.label }}</B> {{ form.doc_railways }}{{ form.doc_railways.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_airports.label }}</B> {{ form.doc_airports }} {{ form.doc_airports.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_schools.label }}</B> {{ form.doc_schools }} {{ form.doc_schools.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_waterways.label }}</B> {{ form.doc_waterways }} {{ form.doc_waterways.errors }}
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3" align="left">
+        <B>Present Land Use/Zoning/General Plan Designation:</B>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="3"> 
+        {{ form.doc_landuse }} {{ form.doc_landuse.errors }}
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Document Type:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3"> 
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          {% if doctype = "NOP" %}
+          <tr> 
+            <td width="6%"> 
+              <input type="radio" name="doctypeid" value="102" checked>
+            </td>
+            <td width="28%" class="content">Notice of Preparation</td>
+            <td colspan="4">
+              &nbsp;
+            </td>
+          </tr>
+          {% else %}
+          <tr> 
+            <TH colspan="2"> CEQA : </TH>
+            <TH colspan="2"> NEPA : </TH>
+            <TH colspan="2"> Joint Document: </TH>
+          </tr>
+          <tr> 
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="117">
+            </td>
+            <td width="28" class="content">Early Consultation</td>
+            <td width="6%"> 
+              <input type="radio" name="doctypeid" value="103">
+            </td>
+            <td width="28%" class="content">Notice of Intent</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="191">
+            </td>
+            <td width="28%" class="content">NOP/NOI</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="106">
+            </td>
+            <td width="28%" class="content">Draft EIR</td>
+            <td width="6%" class="content">
+              <input type="radio" name="doctypeid" value="105">
+            </td>
+            <td width="28%" class="content" height="24">Draft EA</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="192">
+            </td>
+            <td width="28%" class="content">Draft EIR/Draft EIS</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="110">
+            </td>
+            <td width="28%" class="content">Supplemental EIR</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="157">
+            </td>
+            <td width="28%" class="content">Final Env Assessment</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="193">
+            </td>
+            <td width="28%" class="content">Neg Dec/Draft EIS</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="124">
+            </td>
+            <td width="28%" class="content">Subsequent EIR</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="119">
+            </td>
+            <td width="28%" class="content">Supplemental Env Assessment</td>
+            <td width="6%"> 
+              <input type="radio" name="doctypeid" value="194">
+            </td>
+            <td width="28%" class="content">Draft EIR/Draft EA</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="151">
+            </td>
+            <td width="28%" class="content">Addendum to EIR</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="153">
+            </td>
+            <td width="28%" class="content">Subsequent Env Assessment</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="195">
+            </td>
+            <td width="28%" class="content">Neg Dec/Draft EA</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="114">
+            </td>
+            <td width="28%" class="content">Final EIR</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="111">
+            </td>
+            <td width="28%" class="content">Draft EIS</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="196">
+            </td>
+            <td width="28%" class="content">Final EIR/Final EIS</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="107">
+            </td>
+            <td width="28%" class="content">Negative Declaration</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="118">
+            </td>
+            <td width="28%" class="content">Supplemental EIS</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="197">
+            </td>
+            <td width="28%" class="content">NOD/Record of Decision</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="152">
+            </td>
+            <td width="28%" class="content">Mitigated Neg Dec</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="154">
+            </td>
+            <td width="28%" class="content">Subsequent EIS</td>
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content">
+              <input type="radio" name="doctypeid" value="115">
+            </td>
+            <td width="28%" class="content">Master Env Assessment</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="155">
+            </td>
+            <td width="28%" class="content">Addendum to EIS</td>
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content">
+              <input type="radio" name="doctypeid" value="181">
+            </td>
+            <td width="28%" class="content">Other-Tribal EIR/Gaming Compact </td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="122">
+            </td>
+            <td width="28%" class="content">Final EIS</td>
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content">
+              <input type="radio" name="doctypeid" value="182">
+            </td>
+            <td width="28%" class="content">Other-State/Local Document </td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="104">
+            </td>
+            <td width="28%" class="content">FONSI</td>
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content">&nbsp; </td>
+            <td width="28%" class="content">Other State Doc Type 
+              <input type="text" name="oth_state_doctype">
+            </td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="156">
+            </td>
+            <td width="28%" class="content">Record of Decision</td>
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp;</td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="183">
+            </td>
+            <td width="28%" class="content">Other-BIA </td>
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp; </td>
+            <td width="6%" class="content"> 
+              <input type="radio" name="doctypeid" value="184">
+            </td>
+            <td width="28%" class="content">Other-Federal </td>
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content">&nbsp; </td>
+            <td width="6%" class="content">&nbsp;</td>
+            <td width="28%" class="content"> Other Federal Doc Type 
+               <input type="text" name="oth_fed_doctype">
+            </td>
+            <td width="6%">&nbsp;</td>
+            <td width="28%">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%">&nbsp;</td>
+            <td width="28%" class="content">&nbsp; </td>
+            <td width="6%">&nbsp;</td>
+            <td width="28%" class="content">&nbsp; </td>
+            <td width="6%">&nbsp;</td>
+            <td width="28%">&nbsp;</td>
+          </tr>
+          {% endif %}          
+        </TABLE>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Local Action Type:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3"> 
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          {% for a in actions %}
+          <TR>
+            <td width="6%"> 
+              <input type="checkbox" name="lat{{ a.keyw_pk }}" value="1">
+            </td>
+            <td width="44%">
+              {% if a.keyw_longname.strip = 'Other Action' %}
+                Other {{ form.doc_actionnotes }}  {{ form.doc_actionnotes.errors }}
+              {% else %}
+                {{ a.keyw_longname }}
+              {% endif %}
+            </TD>
+          </TR>
+          {% endfor %}
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Development Type:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3"> 
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="dev6001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Residential:</td>
+            <td width="25%" class="content"><i>Units</i> 
+              <input   type="text" name="dev6001_val1" value="">
+            </td>
+            <td width="25%" class="content"><i>Acres</i> 
+              <input   type="text" name="dev6001_val2" value="">
+            </td>
+            <td width="11%">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="dev6002" value="1">
+            </td>
+            <td width="15%" class="subtitle">Office:</td>
+            <td width="25%" class="content"><i>Sq. ft</i> 
+              <input   type="text" name="dev6002_val1" value="">
+            </td>
+            <td width="25%" class="content"><i>Acres</i> 
+              <input   type="text" name="dev6002_val2" value="">
+            </td>
+            <td width="25%" class="content"><i>Employees</i> 
+              <input   type="text" name="dev6002_val3" value="">
+            </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="dev6003" value="1">
+            </td>
+            <td width="15%" class="subtitle">Commercial:</td>
+            <td width="25%" class="content"><i>Sq. ft</i> 
+              <input   type="text" name="dev6003_val1" value="">
+            <td width="25%" class="content"><i>Acres</i> 
+              <input   type="text" name="dev6003_val2" value="">
+            </td>
+            <td width="25%" class="content"><i>Employees</i> 
+              <input   type="text" name="dev6003_val3" value="">
+            </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="6004" value="1">
+            </td>
+            <td width="15%" class="subtitle">Industrial:</td>
+            <td width="25%" class="content"><i>Sq. ft</i> 
+              <input   type="text" name="dev6004_val1" value="">
+            </td>
+            <td width="25%" class="content"><i>Acres</i> 
+              <input   type="text" name="dev6004_val2" value="">
+            </td>
+            <td width="25%" class="content"><i>Employees</i> 
+              <input   type="text" name="dev6004_val3" value="">
+            </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="dev7001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Educational</td>
+            <td width="25%" class="content"> <i>Type</i> 
+              <input type="text" name="dev7001_val1" value="">
+            </td>
+            <td width="25%" class="content">&nbsp; </td>
+            <td width="25%" class="content">&nbsp; </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="dev8001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Recreational</td>
+            <td width="25%" class="content"> <i>Type</i> 
+              <input type="text" name="dev8001_val1" value="">
+            </td>
+            <td width="25%" class="content">&nbsp; </td>
+            <td width="25%" class="content">&nbsp; </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="chk107" value="1">
+            </td>
+            <td width="15%" class="subtitle">Transportation:</td>
+            <td width="25%" class="content"><i>Type</i> 
+              <input   type="text" name="dev_trans_dkval1" value="">
+            </td>
+            <td width="11%">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="dev10001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Mining:</td>
+            <td width="25%" class="content"><i>Mineral</i> 
+              <input   type="text" name="dev10001_val1" value="">
+            </td>
+            <td width="11%">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="chk109" value="1">
+            </td>
+            <td width="15%" class="subtitle">Power:</td>
+            <td width="25%" class="content"><i>Type</i> 
+              <input   type="text" name="dev_power_dkval1" value="">
+            </td>
+            <td width="25%" class="content"><i>Watts</i> 
+              <input   type="text" name="dev_power_dkval2" value="">
+            </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="chk110" value="1">
+            </td>
+            <td width="15%" class="subtitle">Waste Treatment:</td>
+            <td width="25%" class="content"><i>Type</i> 
+              <input   type="text" name="dev_waste_dkval1" value="">
+            </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="dev9001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Water Facilities:</td>
+            <td width="25%" class="content"><i>Type</i> 
+              <input   type="text" name="dev9001_val1" value="">
+            </td>
+            <td width="25%" class="content"><i>MGD</i> 
+              <input   type="text" name="dev9001_val2" value="">
+            </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="chk112" value="1">
+            </td>
+            <td width="15%" class="subtitle">Hazardous Waste:</td>
+            <td width="25%" class="content"><i>Type</i> 
+              <input type="text" name="dev_haz_dkval1" value="">
+            </td>
+            <td width="25%" class="content">&nbsp; </td>
+            <td width="25%" class="content">&nbsp; </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="dev11001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Other:</td>
+            <td width="25%"> 
+              <input   type="text" name="dev11001_val1" value="">
+            </td>
+          </tr>
+          <tr> 
+            <td width="6%">&nbsp; </td>
+            <td width="15%" class="subtitle">&nbsp;</td>
+            <td width="25%">&nbsp; </td>
+          </tr>
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Project Issues Discussed in Document:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3">
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2004" value="1">
+            </td>
+            <td width=" 44%" class="content">Aesthetic/Visual </td>
+            <td width="6%"> 
+              <input type="checkbox" name="issue2015" value="1">
+            </td>
+            <td width=" 44%" class="content">Schools/Universities </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2003" value="1">
+            </td>
+            <td width=" 44%" class="content">Agricultural Land </td>
+            <td width="6%"> 
+              <input type="checkbox" name="issue2016" value="1">
+            </td>
+            <td width=" 44%" class="content">Septic Systems </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2002" value="1">
+            </td>
+            <td width=" 44%" class="content">Air Quality </td>
+            <td width="6%" height="19"> 
+              <input type="checkbox" name="issue2017" value="1">
+            </td>
+            <td width=" 44%" height="19" class="content">Sewer Capacity </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2001" value="1">
+            </td>
+            <td width=" 44%" class="content">Archeological/Historical </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2019" value="1">
+            </td>
+            <td width=" 44%" class="content">Soil Erosion/Compaction/Grading </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue500002" value="1">
+            </td>
+            <td width=" 44%" class="content">Biological Resources </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2020" value="1">
+            </td>
+            <td width=" 44%" class="content">Solid Waste </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2005" value="1">
+            </td>
+            <td width=" 44%"  class="content">Coastal Zone </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2021" value="1">
+            </td>
+            <td width=" 44%" class="content">Toxic/Hazardous </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2035" value="1">
+            </td>
+            <td width=" 44%" class="content">Drainage/Absorbtion </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2022" value="1">
+            </td>
+            <td width=" 44%" class="content">Traffic/Circulation </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2006" value="1">
+            </td>
+            <td width=" 44%" class="content"> Economic/Jobs </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2023" value="1">
+            </td>
+            <td width=" 44%" class="content">Vegetation </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox"name="issue2031" value="1">
+            </td>
+            <td width=" 44%" class="content">Fiscal Impacts</td>
+            <td width="6%">
+              <input type="checkbox" name="issue2024" value="1">
+            </td>
+            <td width=" 44%" class="content">Water Quality </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2008" value="1">
+            </td>
+            <td width=" 44%" class="content">Flood Plain/Flooding </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2025" value="1">
+            </td>
+            <td width=" 44%" class="content">Water Supply/Ground Water </td>
+          </tr>
+          <tr> 
+            <td width="6%">
+              <input type="checkbox" name="issue2007" value="1">
+            </td>
+            <td width=" 44%" class="content">Forest Land /Fire Hazard </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2026" value="1">
+            </td>
+            <td width=" 44%" class="content">Wetland/Riparian </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2009" value="1">
+            </td>
+            <td width=" 44%" class="content">Geologic/Seismic </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2028" value="1">
+            </td>
+            <td width=" 44%" class="content">Growth Inducing </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2012" value="1">
+            </td>
+            <td width=" 44%" class="content">Minerals</td>
+            <td width="6%" >
+              <input type="checkbox" name="issue2029" value="1">
+            </td>
+            <td width=" 44%" class="content">Land Use </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2013" value="1">
+            </td>
+            <td width=" 44%" class="content">Noise </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2030" value="1">
+            </td>
+            <td width=" 44%" class="content">Cumulative Effects </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2032" value="1">
+            </td>
+            <td width=" 44%" class="content"> Population/Jobs/Housing Balance 
+            </td>
+            <td width="6%">
+              <input type="checkbox" name="issue2034" value="1">
+            </td>
+            <td width=" 44%" class="content">Other </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2014" value="1">
+            </td>
+            <td width=" 44%" class="content">Public Services/Facilities </td>
+            <td width="6%">&nbsp; </td>
+            <td width=" 44%" class="content">
+              {{ form.doc_issuesnotes }} {{ form.doc_issuesnotes.errors }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="6%"> 
+              <input type="checkbox" name="issue2033" value="1">
+            </td>
+            <td width=" 44%" class="content">Recreation/Parks </td>
+            <td colspan="2">
+              &nbsp;
+            </td>
+          </tr>
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Reviewing Agencies Checklist:</h5>
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        {{ form.ragencies }}
+      </td>
+    </tr>
+    {% endif %}
     <TR> 
       <TD colspan="3" height="30"> 
         <hr width="100%" align="center">
       </TD>
     </TR>
+    {% if doctype = "NOE" %}
     <TR> 
       <TD width="25%" valign="top">
         <B>Person or Agency Carrying Out Project:</b>
@@ -249,6 +942,7 @@
         {{ form.txtreason }}
       </td>
     </tr>
+    {% endif %}
     <TR> 
       <TD width="25%" valign="top">
         <B>Entry Date:</B>
