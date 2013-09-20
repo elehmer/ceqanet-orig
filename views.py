@@ -9,6 +9,7 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
 from ceqanet.forms import QueryForm,SubmitForm,AddPrjForm,AddDocForm,InputForm,nocform,nodform,noeform,nopform,NOEeditForm,DocReviewForm,usersettingsform,reviewdetailform
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords
+from django.contrib.auth.models import User
 from datetime import datetime
 
 # Create your views here.
@@ -639,11 +640,55 @@ def accept(request):
     c = RequestContext(request,{})
     return HttpResponse(t.render(c))
 
-class usersettings(UpdateView):
-    model = UserProfile
+class usersettings(FormView):
     form_class = usersettingsform
     template_name="ceqanet/usersettings.html"
 
     def get_success_url(self):
         success_url = "%s" % (reverse_lazy('index'))
         return success_url
+
+    def get_initial(self):
+        initial = super(usersettings, self).get_initial()
+
+        us_query = UserProfile.objects.get(user_id__exact=self.request.GET.get('user_id'))
+        initial['region'] = us_query.region
+        initial['set_lag_fk'] = us_query.set_lag_fk.lag_pk
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(usersettings, self).get_context_data(**kwargs)
+
+        user_id = self.request.GET.get('user_id')
+
+        context['user_id'] = user_id
+        user = User.objects.get(pk=user_id)
+        islead = False
+        isplanner = False
+        for g in user.groups.all():
+            if g.name == 'leads':
+                islead = True
+            if g.name == 'planners':
+                isplanner = True
+        context['islead'] = islead
+        context['isplanner'] = isplanner
+
+        return context
+
+    def form_valid(self,form):
+        data = form.cleaned_data
+
+        region = data['region']
+        if region == None:
+            region = -1
+
+        set_lag_fk = data['set_lag_fk']
+        if set_lag_fk == None:
+            set_lag_fk = leadagencies.objects.get(pk=0)
+
+        us = UserProfile.objects.get(user_id__exact=self.request.POST.get('user_id'))
+        us.region = region
+        us.set_lag_fk = set_lag_fk
+        us.save()
+
+        return super(usersettings,self).form_valid(form)

@@ -96,7 +96,7 @@
 			<li><a href="{% url 'docreview' %}" class="nav_level1_link">{% trans "Review" %}</a></li>
 			{% endif %}
 			{% if user.is_active %}
-			<li><a href="{% url 'usersettings' user.pk %}" class="nav_level1_link">{% trans "Settings" %}</a></li>
+			<li><a href="{% url 'usersettings' %}?user_id={{user.pk}}" class="nav_level1_link">{% trans "Settings" %}</a></li>
 			{% endif %}
 		</ul>
 	</nav>

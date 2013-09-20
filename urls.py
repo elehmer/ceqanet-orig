@@ -21,7 +21,7 @@ urlpatterns = patterns('ceqanet.views',
 	url(r'^accept/$','accept',name='accept'),
 	url(r'^docreview/$',docreview.as_view(),name='docreview'),
 	url(r'^reviewdetail/$',reviewdetail.as_view(),name='reviewdetail'),
-	url(r'^usersettings/(?P<pk>\d+)/$',usersettings.as_view(),name='usersettings'),
+	url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
 )
 
 urlpatterns += patterns('',

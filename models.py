@@ -269,7 +269,7 @@ class reviewingagencies(models.Model):
 class UserProfile(models.Model):
 	user = models.ForeignKey(User,unique=True)
 	region = models.IntegerField(blank=True)
-	lag_fk = models.ForeignKey("leadagencies",db_column="set_lag_fk")
+	set_lag_fk = models.ForeignKey("leadagencies",blank=True,null=True,db_column="set_lag_fk")
 class clearinghouse(models.Model):
 	schnoprefix = models.CharField(max_length=6)
 	currentid = models.IntegerField()

@@ -121,11 +121,8 @@ class reviewdetailform(forms.Form):
 	doc_dept = forms.DateField(label="Start of Review:",input_formats=['%Y-%m-%d'])
 	doc_clear = forms.DateField(label="End of Review:",input_formats=['%Y-%m-%d'])
 
-class usersettingsform(ModelForm):
+class usersettingsform(forms.Form):
 	formID = "usersettingsform"
 
-	lag_fk = forms.ModelChoiceField(label="Lead Agency:",queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'))
-
-	class Meta:
-		model = UserProfile
-		fields = ('region','lag_fk')
+	region = forms.IntegerField(required=False)
+	set_lag_fk = forms.ModelChoiceField(label="Lead Agency:",required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'))

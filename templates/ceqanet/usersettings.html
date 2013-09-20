@@ -18,12 +18,16 @@
     </TR>
     <TR> 
       <TD colspan="2">
+        {% if isplanner %}
         Region: {{ form.region }}
+        {% endif %}
       </TD>
     </TR>
     <TR> 
       <TD colspan="2">
-        Lead Agency: {{ form.lag_fk }}
+        {% if islead %}
+        Lead Agency: {{ form.set_lag_fk }}
+        {% endif %}
       </TD>
     </TR>
     <TR> 
@@ -32,5 +36,6 @@
       </TD>
     </TR>
   </TABLE>
+  <input type="hidden" name="user_id" value="{{user_id}}">
 </FORM>
 {% endblock content %}
