@@ -32,6 +32,13 @@
     </TR>
     <TR> 
       <TD colspan="2">
+        {% if isreview %}
+        Reviewing Agency: {{ form.set_rag_fk }}
+        {% endif %}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
         <input type="submit" value="Update">
       </TD>
     </TR>

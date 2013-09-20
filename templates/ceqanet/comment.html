@@ -56,19 +56,19 @@
     {% for comment in comments %}
       <TR>
         <TD align="center">
-          {{ comment.doc_prj_fk.prj_leadagency }}
+          {{ comment.drag_doc_fk.doc_prj_fk.prj_leadagency }}
         </TD>
         <TD align="center">
-          <a href="/commentdetail?user_id={{ user_id }&doc_pk={{ comment.doc_pk }}"><i>{{ comment.doc_prj_fk.prj_title }}</i></a>
+          <a href="/commentdetail?user_id={{ user_id }}&doc_pk={{ comment.drag_doc_fk.doc_pk }}&drag_pk={{ comment.drag_pk }}"><i>{{ comment.drag_doc_fk.doc_prj_fk.prj_title }}</i></a>
         </TD>
         <TD align="center">
-          {{ comment.doc_prj_fk.prj_description }}
+          {{ comment.drag_doc_fk.doc_prj_fk.prj_description }}
         </TD>
         <TD align="center">
-          {{ comment.doc_doctype }}
+          {{ comment.drag_doc_fk.doc_doctype }}
         </TD>
         <TD align="center">
-          {{ comment.doc_received }}
+          {{ comment.drag_doc_fk.doc_received }}
         </TD>
       </TR>
     {% endfor %}

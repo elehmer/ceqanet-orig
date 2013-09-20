@@ -7,7 +7,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import FormView,UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
-from ceqanet.forms import QueryForm,SubmitForm,AddPrjForm,AddDocForm,InputForm,nocform,nodform,noeform,nopform,NOEeditForm,DocReviewForm,usersettingsform,reviewdetailform,pendingdetailform
+from ceqanet.forms import QueryForm,SubmitForm,AddPrjForm,AddDocForm,InputForm,nocform,nodform,noeform,nopform,NOEeditForm,DocReviewForm,usersettingsform,reviewdetailform,pendingdetailform,commentdetailform
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords
 from django.contrib.auth.models import User
 from datetime import datetime
@@ -717,8 +717,8 @@ class comment(ListView):
 
 def CommentListQuery(request):
     user_id = request.GET.get('user_id')
-    set_lag_fk = UserProfile.objects.get(user_id__exact=user_id).set_lag_fk.lag_pk 
-    queryset = documents.objects.filter(doc_review=True).filter(doc_prj_fk__prj_lag_fk__lag_pk=set_lag_fk).order_by('-doc_received')
+    set_rag_fk = UserProfile.objects.get(user_id__exact=user_id).set_rag_fk.rag_pk
+    queryset = docreviews.objects.filter(drag_rag_fk__rag_pk=set_rag_fk).filter(drag_doc_fk__doc_review=True).order_by('-drag_doc_fk__doc_received')
     return queryset
 
 class commentdetail(FormView):
@@ -732,6 +732,7 @@ class commentdetail(FormView):
         doc_pk = self.request.GET.get('doc_pk')
         context['doc_pk'] = doc_pk
         context['user_id'] = self.request.GET.get('user_id')
+        context['drag_pk'] = self.request.GET.get('drag_pk')
         context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
         context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
         context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
@@ -741,6 +742,13 @@ class commentdetail(FormView):
 
         return context
 
+    def get_initial(self):
+        initial = super(commentdetail, self).get_initial()
+
+        dr_query = docreviews.objects.get(drag_pk__exact=self.request.GET.get('drag_pk'))
+        initial['drag_ragcomment'] = dr_query.drag_ragcomment
+        return initial
+
     def get_success_url(self):
         success_url = "%s?user_id=%s" % (reverse_lazy('comment'),self.request.GET.get('user_id'))
         return success_url
@@ -748,33 +756,12 @@ class commentdetail(FormView):
     def form_valid(self,form):
         data = form.cleaned_data
 
-        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
+        docreview = docreviews.objects.get(drag_pk=self.request.POST.get('drag_pk'))
 
-        ch = clearinghouse.objects.get(pk=1)
-        currentidnum = str(ch.currentid)
-        if len(currentidnum) == 1:
-            currentidnum = "00"+currentidnum
-        elif len(currentidnum) == 2:
-            currentidnum = "0"+currentidnum
-        schno = ch.schnoprefix + str(doc.doc_plannerregion) + currentidnum
-        ch.currentid = ch.currentid+1
-        ch.save()
+        docreview.drag_ragcomment = data['drag_ragcomment']
+        docreview.save()
 
-        doc.doc_dept = data['doc_dept']
-        doc.doc_clear = data['doc_clear']
-        doc.doc_review = True
-        doc.doc_plannerreview = False
-        doc.doc_schno = schno
-
-        prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
-
-        if prj.prj_pending:
-            prj.prj_schno = schno
-            prj.prj_plannerreview = False
-        doc.save()
-        prj.save()
-
-        return super(reviewdetail,self).form_valid(form)
+        return super(commentdetail,self).form_valid(form)
 
 def accept(request):
     t = loader.get_template("ceqanet/accept.html")
@@ -795,6 +782,7 @@ class usersettings(FormView):
         us_query = UserProfile.objects.get(user_id__exact=self.request.GET.get('user_id'))
         initial['region'] = us_query.region
         initial['set_lag_fk'] = us_query.set_lag_fk.lag_pk
+        initial['set_rag_fk'] = us_query.set_rag_fk.rag_pk
         return initial
 
     def get_context_data(self, **kwargs):
@@ -806,13 +794,17 @@ class usersettings(FormView):
         user = User.objects.get(pk=user_id)
         islead = False
         isplanner = False
+        isreview = False
         for g in user.groups.all():
             if g.name == 'leads':
                 islead = True
             if g.name == 'planners':
                 isplanner = True
+            if g.name == 'reviewers':
+                isreview = True
         context['islead'] = islead
         context['isplanner'] = isplanner
+        context['isreview'] = isreview
 
         return context
 
@@ -827,9 +819,14 @@ class usersettings(FormView):
         if set_lag_fk == None:
             set_lag_fk = leadagencies.objects.get(pk=0)
 
+        set_rag_fk = data['set_rag_fk']
+        if set_rag_fk == None:
+            set_rag_fk = reviewingagencies.objects.get(pk=0)
+
         us = UserProfile.objects.get(user_id__exact=self.request.POST.get('user_id'))
         us.region = region
         us.set_lag_fk = set_lag_fk
+        us.set_rag_fk = set_rag_fk
         us.save()
 
         return super(usersettings,self).form_valid(form)

@@ -1,0 +1,359 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Document Review Detail{% endblock title %}
+
+{% block listing %}
+  {% load staticfiles %}
+<FORM name="commentdetailform" method="post" action="">
+  {% csrf_token %}
+    <table width="767" border="0" cellpadding="3">
+      <tr>
+        <td align="center">
+          <h3>{{ detail.doc_prj_fk.prj_title }}</h3>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Document Type:</b> {{ detail.doc_doctype }}  - {{ detail.doc_docname }}
+        </td>
+      </tr>
+      {% if detail.doc_title.strip.length > 0 %}
+      <tr> 
+        <td> 
+          <b>Alternate Title:</b> {{ detail.doc_title }}
+        </td>
+      </tr>
+      {% endif %}
+      <tr> 
+        <td> 
+          <b>Project Lead Agency:</b> {{ detail.doc_prj_fk.prj_leadagency }}
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Description</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ detail.doc_description }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Contact Information</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <td align="left">
+               <b>Contact Person:</b> {{ detail.doc_conname }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <b>Lead Agency:</b> {{ detail.doc_conagency }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <B>Phone:</B> {{ detail.doc_conphone }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <b>Street Address1:</B> {{ detail.doc_conaddress1 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <b>Street Address1:</B> {{ detail.doc_conaddress2 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <B>City:</B> {{ detail.doc_concity }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <B>State:</B> {{ detail.doc_constate }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <B>Zip:</B> {{ detail.doc_conzip }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>  
+          <b>Project Location</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <td align="left">
+                <B>County:</b> {{ detail.doc_county }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>City:</b> {{ detail.doc_city }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                {% if latlongs.exists %}
+                  {% for ll in latlongs %}
+                    <B>Latitude/Longitude:</b> {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
+                  {% endfor %}
+                {% else %}
+                  <B>Latitude/Longitude:</B>
+                {% endif %}
+              </td>
+            </tr> 
+            {% if detail.doc_doctype = 'NOC' or detail.doc_doctype = 'NOP' %}
+            <tr>
+              <td align="left">
+                <B>Region:</b> {{ detail.doc_region }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>Cross Streets:</b> {{ detail.doc_xstreets }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>Parcel No:</b> {{ detail.doc_parcelno }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>Township:</b> {{ detail.doc_township }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>Range:</b> {{ detail.doc_range }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>Section:</b> {{ detail.doc_section }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>Base:</b> {{ detail.doc_base }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                <B>Other Location Info:</b> {{ detail.doc_location }}
+              </td>
+            </tr>
+            {% endif %}
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      {% if detail.doc_doctype = 'NOC' or detail.doc_doctype = 'NOP' %}
+      <tr> 
+        <td>
+          <b>Proximity To</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <td align="left">
+                <B>Highways:</b> {{ detail.doc_highways }}
+              </td>
+            </tr>
+
+            <tr>
+              <td align="left">
+                <B>Airports:</b> {{ detail.doc_airports }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <B>Railways:</b> {{ detail.doc_railways }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <B>Waterways:</b> {{ detail.doc_waterways }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <B>Schools:</b> {{ detail.doc_schools }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                <B>Land Use:</b> {{ detail.doc_landuse }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Local Action</b>
+        </td>
+      </tr>
+      <tr> 
+        <td class="content">
+          <ul>
+            {% for a in actions %}
+              <li>{{ a.dkey_keyw_fk.keyw_longname }}
+              {% if a.dkey_comment.strip != None %}
+                ({{ a.dkey_comment }})
+              {% endif %}
+              {% if a.dkey_keyw_fk.keyw_longname.strip = "Other Action" %}
+                {% if a.dkey_doc_fk.doc_actionnotes.strip != None %}
+                  ({{ a.dkey_doc_fk.doc_actionnotes }}) 
+                {% endif %}
+              {% endif %}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Development Type</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            {% for d in dev %}
+              <li>{{ d.dkey_keyw_fk.keyw_longname }}
+              {% if d.dkey_comment.strip != None %}
+                ({{ d.dkey_comment }})
+              {% endif %} 
+              {% if d.dkey_keyw_fk.keyw_longname.strip = "Other" %}
+                {% if d.dkey_doc_fk.doc_devnotes.strip != None %}
+                  ({{ d.dkey_doc_fk.doc_devnotes }})
+                {% endif %}
+              {% endif %}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Issues</b> 
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul> 
+            {% for i in issues %}
+              <li>{{ i.dkey_keyw_fk.keyw_longname }}
+              {% if i.dkey_comment.strip != '' %}
+                ({{ i.dkey_comment }})
+              {% endif %}
+              {% if i.dkey_keyw_fk.keyw_longname = "Other Issues" %}
+                {% if i.dkey_doc_fk.doc_issuesnotes.strip != '' %}
+                  ({{ i.dkey_doc_fk.doc_issuesnotes }}) 
+                {% endif %}
+              {% endif %}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Reviewing Agencies</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul> 
+            {% for l in lag %}
+              {% if l.drag_received = None %}
+                <li>{{ l.drag_rag_fk.rag_name }}
+              {% else %}
+                <li><B>{{ l.drag_rag_fk.rag_name }}</B>
+              {% endif %}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      {% endif %}
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <B>{{ form.drag_ragcomment.label }}</B> {{ form.drag_ragcomment }}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <hr width="100%">
+        </td>
+      </tr>
+      <TR> 
+        <TD align="center" colspan="3"> 
+          <input type="submit" value="Add Comment">
+        </TD>
+      </TR>
+    </table>
+    <input type="hidden" name="drag_pk" value="{{ drag_pk }}">
+    <input type="hidden" name="user_id" value="{{ user_id }}">
+  </form>
+{% endblock listing %}

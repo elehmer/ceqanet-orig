@@ -42,6 +42,7 @@ class docreviews(models.Model):
 	dscode = models.CharField(max_length=5)
 	dsloc = models.CharField(max_length=30)
 	drag_lateletter = models.DateField()
+	drag_ragcomment = models.TextField(null=True,blank=True)
 class documents(models.Model):
 	doc_pk = models.AutoField(primary_key=True)
 	doc_prj_fk = models.ForeignKey("projects",null=True,blank=True,db_column="doc_prj_fk")
@@ -272,6 +273,7 @@ class UserProfile(models.Model):
 	user = models.ForeignKey(User,unique=True)
 	region = models.IntegerField(blank=True)
 	set_lag_fk = models.ForeignKey("leadagencies",blank=True,null=True,db_column="set_lag_fk")
+	set_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="set_rag_fk")
 class clearinghouse(models.Model):
 	schnoprefix = models.CharField(max_length=6)
 	currentid = models.IntegerField()

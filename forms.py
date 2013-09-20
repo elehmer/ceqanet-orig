@@ -124,8 +124,12 @@ class reviewdetailform(forms.Form):
 	doc_dept = forms.DateField(label="Start of Review:",input_formats=['%Y-%m-%d'])
 	doc_clear = forms.DateField(label="End of Review:",input_formats=['%Y-%m-%d'])
 
+class commentdetailform(forms.Form):
+	drag_ragcomment = forms.CharField(label="Comment:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+
 class usersettingsform(forms.Form):
 	formID = "usersettingsform"
 
 	region = forms.IntegerField(required=False)
 	set_lag_fk = forms.ModelChoiceField(label="Lead Agency:",required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'))
+	set_rag_fk = forms.ModelChoiceField(label="Reviewing Agency:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_name'))

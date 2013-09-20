@@ -89,14 +89,14 @@
 		<ul id="nav_list">
 			<li><a href="{% url 'index' %}" class="nav_level1_link"><span id="nav_home_container"></span><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Home" />&nbsp;</a></li>
 			<li><a href="{% url 'query' %}" class="nav_level1_link">{% trans "Query" %}</a></li>
-			{% if user.is_staff %}
-			<li><a href="{% url 'submit' %}" class="nav_level1_link">{% trans "Submit" %}</a></li>
-			{% endif %}
-			{% if user.is_superuser %}
+			{% for g in user.groups.all %}
+			{% if g.name = "clearinghouse" %}
 			<li><a href="{% url 'pending' %}" class="nav_level1_link">{% trans "Pending" %}</a></li>
 			{% endif %}
-			{% for g in user.groups.all %}
 			{% if g.name = "leads" %}
+			<li><a href="{% url 'submit' %}" class="nav_level1_link">{% trans "Submit" %}</a></li>
+			{% endif %}
+			{% if g.name = "reviewers" %}
 			<li><a href="{% url 'comment' %}?user_id={{user.pk}}" class="nav_level1_link">{% trans "Comment" %}</a></li>
 			{% endif %}
 			{% if g.name = "planners" %}
