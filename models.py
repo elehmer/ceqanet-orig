@@ -1,4 +1,5 @@
-from django.db import models
+#from django.db import models
+from django.contrib.gis.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -6,11 +7,13 @@ class counties(models.Model):
 	geow_pk = models.AutoField(primary_key=True)
 	geow_shortname = models.CharField(max_length=32)
 	geow_longname = models.CharField(max_length=64)
+
 class doctypes(models.Model):
 	keyw_pk = models.AutoField(primary_key=True)
 	keyw_shortname = models.CharField(max_length=32)
 	keyw_longname = models.CharField(max_length=64)
 	inlookup = models.BooleanField(default=True)
+
 class docgeowords(models.Model):
 	dgeo_pk = models.AutoField(primary_key=True)
 	dgeo_geow_fk = models.ForeignKey("geowords",db_column="dgeo_geow_fk")
@@ -43,6 +46,7 @@ class docreviews(models.Model):
 	dsloc = models.CharField(max_length=30)
 	drag_lateletter = models.DateField()
 	drag_ragcomment = models.TextField(null=True,blank=True)
+
 class documents(models.Model):
 	doc_pk = models.AutoField(primary_key=True)
 	doc_prj_fk = models.ForeignKey("projects",null=True,blank=True,db_column="doc_prj_fk")
@@ -141,12 +145,14 @@ class documents(models.Model):
 	doc_review = models.BooleanField()
 	doc_plannerregion = models.IntegerField(null=True,blank=True)
 	doc_plannerreview = models.BooleanField()
+
 class geowordlists(models.Model):
 	geol_pk = models.AutoField(primary_key=True)
 	geol_shortname = models.CharField(null=True,blank=True,max_length=32)
 	geol_longname = models.CharField(null=True,blank=True,max_length=64)
 	geol_description = models.TextField(null=True,blank=True)
 	geol_listsource = models.CharField(null=True,blank=True,max_length=10)
+
 class geowords(models.Model):
 	geow_pk = models.AutoField(primary_key=True)
 	geow_geol_fk = models.ForeignKey("geowordlists",db_column="geow_geol_fk")
@@ -159,18 +165,22 @@ class geowords(models.Model):
 
 	def __unicode__(self):
 		return self.geow_shortname		
+
 class holidays(models.Model):
+
 	hday_pk = models.AutoField(primary_key=True)
 	hday_name = models.CharField(max_length=40)
 	hday_date = models.DateField()
 	hday_dow = models.CharField(max_length=10)
 	hday_note = models.TextField()
+
 class keywordlists(models.Model):
 	keyl_pk = models.AutoField(primary_key=True)
 	keyl_shortname = models.CharField(max_length=32)
 	keyl_longname = models.CharField(max_length=64)
 	keyl_description = models.TextField()
 	keyl_listsource = models.CharField(max_length=10)
+
 class keywords(models.Model):
 	keyw_pk = models.AutoField(primary_key=True)
 	keyw_keyl_fk = models.ForeignKey("keywordlists",db_column="keyw_keyl_fk")
@@ -182,6 +192,7 @@ class keywords(models.Model):
 	keyw_caption3 = models.CharField(max_length=10)
 	keyw_originalcontrolid = models.CharField(max_length=10)
 	keyw_recordsource = models.CharField(max_length=10)
+
 class latlongs(models.Model):
 	doc_pk = models.AutoField(primary_key=True)
 	doc_prj_fk = models.ForeignKey("projects",db_column="doc_prj_fk")
@@ -196,6 +207,7 @@ class latlongs(models.Model):
 	doc_latitude = models.CharField(max_length=30)
 	doc_longitude = models.CharField(max_length=30)
 	doc_map_link = models.CharField(max_length=240)
+
 class leadagencies(models.Model):
 	lag_pk = models.AutoField(primary_key=True)
 	lag_geow_fk = models.ForeignKey("geowords",db_column="lag_geow_fk")
@@ -220,9 +232,11 @@ class leadagencies(models.Model):
 
 	def __unicode__(self):
 		return self.lag_name
+
 class prinfo(models.Model):
 	info_prjdate = models.DateField()
 	info_docdate = models.DateField()
+
 class projects(models.Model):
 	prj_pk = models.AutoField(primary_key=True)
 	prj_lag_fk = models.ForeignKey("leadagencies",db_column="prj_lag_fk")
@@ -248,6 +262,7 @@ class projects(models.Model):
 	prj_pending = models.BooleanField()
 	prj_visible = models.BooleanField()
 	prj_plannerreview = models.BooleanField()
+
 class reviewingagencies(models.Model):
 	rag_pk = models.AutoField(primary_key=True)
 	rag_name = models.CharField(max_length=90,db_index=True)
@@ -269,11 +284,20 @@ class reviewingagencies(models.Model):
 
 	def __unicode__(self):
 		return self.rag_title
+
 class UserProfile(models.Model):
 	user = models.ForeignKey(User,unique=True)
 	region = models.IntegerField(blank=True)
 	set_lag_fk = models.ForeignKey("leadagencies",blank=True,null=True,db_column="set_lag_fk")
 	set_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="set_rag_fk")
+
 class clearinghouse(models.Model):
 	schnoprefix = models.CharField(max_length=6)
 	currentid = models.IntegerField()
+
+class Locations(models.Model):
+    '''Spatial model to store locations associations with Documents'''
+    document = models.ForeignKey("documents",db_column="doc_pk")
+    geom = models.GeometryCollectionField()
+    objects = models.GeoManager()
+
