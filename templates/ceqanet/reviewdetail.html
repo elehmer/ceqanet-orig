@@ -54,7 +54,7 @@
       </tr>
       <tr> 
         <td>
-          {{ detail.doc_description }}
+          {{ detail.doc_prj_fk.prj_description }}
         </td>
       </tr>
       <tr> 
@@ -357,12 +357,14 @@
                <td>
                  <b>Date Received:</b> {{ detail.doc_received }}
               </td>
+              {% if detail.doc_doctype = 'NOC' or detail.doc_doctype = 'NOP' %}
               <td>
                 <b>Start of Review:</b> {{ form.doc_dept }}
               </td>
               <td>
                 <b>End of Review:</b> {{ form.doc_clear }}
               </td>
+              {% endif %}
             </tr>
           </table>
         </td>

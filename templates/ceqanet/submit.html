@@ -10,7 +10,7 @@
       <tr><td colspan="3">&nbsp;</td></tr>
       <tr>
         <td colspan="3">
-          <B>Begin document submission process by selecting lead agency and document type below:</B>
+          <B>Begin document submission process by selecting type below:</B>
         </td>
       </tr>
       <tr>
@@ -18,11 +18,7 @@
           Lead Agency:
         </td>
         <td>
-          <select name="lag_pk">
-          {% for lag in laglist %}
-            <option value="{{ lag.lag_pk }}">{{ lag.lag_name }}
-          {% endfor %}
-          </select>
+          {{ laginfo.lag_name }}
         </td>
         <td>
           &nbsp;
@@ -63,5 +59,8 @@
         </td>
       </tr>
     </table>
+    <input type="hidden" name="user_id" value="{{user_id}}">
+    <input type="hidden" name="lag_pk" value="{{laginfo.lag_pk}}">
+  </FORM>
 
 {% endblock content %}

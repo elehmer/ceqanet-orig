@@ -51,21 +51,21 @@ class AddDocForm(forms.Form):
 	doc_issuesnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
 	ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
 
-	def clean(self):
-		cleaned_data = super(AddDocForm, self).clean()
-		prj_title = cleaned_data.get("prj_title")
-		prj_description = cleaned_data.get("prj_description")
+	# def clean(self):
+	# 	cleaned_data = super(AddDocForm, self).clean()
+	# 	prj_title = cleaned_data.get("prj_title")
+	# 	prj_description = cleaned_data.get("prj_description")
 
-		msg_title = u"Project Title is required."
-		msg_description = u"Project Description is required."
+	# 	msg_title = u"Project Title is required."
+	# 	msg_description = u"Project Description is required."
 
-		if prj_title == '':
-			self._errors["prj_title"] = self.error_class([msg_title])
-			del cleaned_data["prj_title"]
-		if prj_description == '':
-			self._errors["prj_description"] = self.error_class([msg_description])
-			del cleaned_data["prj_description"]
-		return cleaned_data
+	# 	if prj_title == '':
+	# 		self._errors["prj_title"] = self.error_class([msg_title])
+	# 		del cleaned_data["prj_title"]
+	# 	if prj_description == '':
+	# 		self._errors["prj_description"] = self.error_class([msg_description])
+	# 		del cleaned_data["prj_description"]
+	# 	return cleaned_data
 
 class NOEeditForm(ModelForm):
 	formID = "NOEeditForm"
@@ -121,8 +121,8 @@ class pendingdetailform(forms.Form):
 	pass
 
 class reviewdetailform(forms.Form):
-	doc_dept = forms.DateField(label="Start of Review:",input_formats=['%Y-%m-%d'])
-	doc_clear = forms.DateField(label="End of Review:",input_formats=['%Y-%m-%d'])
+	doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'])
+	doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'])
 
 class commentdetailform(forms.Form):
 	drag_ragcomment = forms.CharField(label="Comment:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
