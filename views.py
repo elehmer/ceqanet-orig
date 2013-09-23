@@ -37,19 +37,24 @@ class submit(FormView):
     form_class = SubmitForm
 
     def get_success_url(self):
+        user_id = self.request.POST.get('user_id')
         lag_pk = self.request.POST.get('lag_pk')
         doctype = self.request.POST.get('doctype')
         prjtoggle = self.request.POST.get('prjtoggle')
 
         if prjtoggle == "yes":
-            success_url = "%s?prj_schno=&lag_pk=%s&doctype=%s" % (reverse_lazy('findproject'),lag_pk,doctype)
+            success_url = "%s?prj_schno=&lag_pk=%s&user_id=%s&doctype=%s" % (reverse_lazy('findproject'),lag_pk,user_id,doctype)
         elif prjtoggle == "no":
-            success_url = "%s?prj_pk=-9999&lag_pk=%s&doctype=%s" % (reverse_lazy('adddocument'),lag_pk,doctype)
+            success_url = "%s?prj_pk=-9999&lag_pk=%s&user_id=%s&doctype=%s" % (reverse_lazy('adddocument'),lag_pk,user_id,doctype)
         return success_url
 
     def get_context_data(self, **kwargs):
         context = super(submit, self).get_context_data(**kwargs)
-        context['laglist'] = leadagencies.objects.filter(inlookup=True).order_by('lag_name')
+        user_id = self.request.GET.get('user_id')
+        set_lag_fk = UserProfile.objects.get(user_id__exact=user_id).set_lag_fk.lag_pk
+
+        context['user_id'] = user_id
+        context['laginfo'] = leadagencies.objects.get(pk=set_lag_fk)
         return context
 
 class findproject(ListView):
@@ -74,6 +79,7 @@ class findproject(ListView):
         if "whichpk" in qsminuspage:
             qsminuspage.pop('whichpk')
 
+        context['user_id'] = self.request.GET.get('user_id')
         context['prj_schno'] = self.request.GET.get('prj_schno')
         context['lag_pk'] = self.request.GET.get('lag_pk')
         context['doctype'] = self.request.GET.get('doctype')
@@ -118,6 +124,10 @@ class adddocument(FormView):
     
     def get_initial(self):
         initial = super(adddocument, self).get_initial()
+
+        user_query = User.objects.get(pk=self.request.GET.get('user_id'))
+        initial['doc_conname'] = user_query.first_name + " " + user_query.last_name
+        initial['doc_conemail'] = user_query.email
 
         la_query = leadagencies.objects.get(lag_pk__exact=self.request.GET.get('lag_pk'))
         initial['doc_conaddress1'] = la_query.lag_address1.strip
@@ -224,7 +234,7 @@ class adddocument(FormView):
             prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
 
         if self.request.POST.get('doctype') in ['NOC','NOP']:
-            adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base)
+            adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base)
             adddoc.save()
             actions = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001)
             for a in actions:
@@ -246,10 +256,13 @@ class adddocument(FormView):
                 docrev.save()
 
         if self.request.POST.get('doctype') == 'NOE':
-            adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber)
+            adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber)
             adddoc.save()
         prj.prj_doc_fk=adddoc
         prj.save()
+
+        coords = latlongs(doc_pk=adddoc.pk,doc_prj_fk=prj,doc_doctype=self.request.POST.get('doctype'),doc_latitude=data['doc_latitude'],doc_longitude=data['doc_longitude'])
+        coords.save()
 
         strFrom = "ceqanet@opr.ca.gov"
         ToList = [data['doc_conemail']]
@@ -283,7 +296,7 @@ class adddocument(FormView):
             strBody = strBody + "Reason for Exemption: " + data['txtreason'] + "\n"
         strBody = strBody + "DATE: " + doc_received.strftime('%m/%d/%Y') + "\n"
 
-        #send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
+        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
 
         return super(adddocument,self).form_valid(form)
 
@@ -676,9 +689,12 @@ class reviewdetail(FormView):
         ch.currentid = ch.currentid+1
         ch.save()
 
-        doc.doc_dept = data['doc_dept']
-        doc.doc_clear = data['doc_clear']
-        doc.doc_review = True
+        if doc.doc_doctype in ['NOC','NOP']:
+            doc.doc_dept = data['doc_dept']
+            doc.doc_clear = data['doc_clear']
+            doc.doc_review = True
+        if doc.doc_doctype == 'NOE':
+            doc.doc_visible = True
         doc.doc_plannerreview = False
         doc.doc_schno = schno
 

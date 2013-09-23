@@ -41,7 +41,7 @@
 
 	<div class="phone_hdr">
 		<div class="phone_hd_left">
-			<a class="p_h_button p_h_menu" onclick="toggle_menu();"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Menu" /></a>
+			<a class="p_h_button p_h_menu" onclick="toggle_menu();"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Menu" /></a>
 		</div>
 		<div class="phone_hd_right">
 			<a class="p_h_button p_h_contact" href="/Contact.html"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Contact Us" /></a>
@@ -94,7 +94,7 @@
 			<li><a href="{% url 'pending' %}" class="nav_level1_link">{% trans "Pending" %}</a></li>
 			{% endif %}
 			{% if g.name = "leads" %}
-			<li><a href="{% url 'submit' %}" class="nav_level1_link">{% trans "Submit" %}</a></li>
+			<li><a href="{% url 'submit' %}?user_id={{user.pk}}" class="nav_level1_link">{% trans "Submit" %}</a></li>
 			{% endif %}
 			{% if g.name = "reviewers" %}
 			<li><a href="{% url 'comment' %}?user_id={{user.pk}}" class="nav_level1_link">{% trans "Comment" %}</a></li>
