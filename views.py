@@ -854,7 +854,10 @@ class usersettings(FormView):
         
 def locations_geojson(request):
 	locations_qs = Locations.objects.all()
-	djf = Django.Django(geodjango="geom", properties=['document'])
+	#locations_qs = list(Locations.objects.values('pk','id','geom','document__doc_title')[:10])
+	#djf = Django.Django(geodjango="geom", properties=['documents__doc_title'])
+	djf = Django.Django(geodjango="geom")
 	geoj = GeoJSON.GeoJSON()
 	string = geoj.encode(djf.decode(locations_qs))
+	#string = locations_qs
 	return HttpResponse(string)
