@@ -852,8 +852,8 @@ class usersettings(FormView):
 
         return super(usersettings,self).form_valid(form)
         
-def locations_geojson(request):
-	locations_qs = Locations.objects.all()
+def locations_geojson(request,limit):
+	locations_qs = Locations.objects.all()[:limit]
 	#locations_qs = list(Locations.objects.values('pk','id','geom','document__doc_title')[:10])
 	#djf = Django.Django(geodjango="geom", properties=['documents__doc_title'])
 	djf = Django.Django(geodjango="geom")
