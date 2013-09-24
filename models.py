@@ -146,6 +146,9 @@ class documents(models.Model):
 	doc_plannerregion = models.IntegerField(null=True,blank=True)
 	doc_plannerreview = models.BooleanField()
 
+    def __unicode__(self):
+        return self.doc_pk    
+
 class geowordlists(models.Model):
 	geol_pk = models.AutoField(primary_key=True)
 	geol_shortname = models.CharField(null=True,blank=True,max_length=32)
