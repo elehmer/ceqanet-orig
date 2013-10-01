@@ -92,7 +92,7 @@
             </tr>
             <tr>
               <td align="left">
-                <b>Street Address1:</B> {{ detail.doc_conaddress2 }}
+                <b>Street Address2:</B> {% if detail.doc_conaddress2 != None %} {{ detail.doc_conaddress2 }} {% endif %}
               </td>
             </tr>
             <tr>
@@ -382,6 +382,5 @@
       </TR>
     </table>
     <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
-    <input type="hidden" name="user_id" value="{{ user_id }}">
   </form>
 {% endblock listing %}

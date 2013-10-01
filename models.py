@@ -141,6 +141,7 @@ class documents(models.Model):
 	doc_review = models.BooleanField()
 	doc_plannerregion = models.IntegerField(null=True,blank=True)
 	doc_plannerreview = models.BooleanField()
+	doc_exstatus = models.IntegerField()
 class geowordlists(models.Model):
 	geol_pk = models.AutoField(primary_key=True)
 	geol_shortname = models.CharField(null=True,blank=True,max_length=32)
@@ -274,6 +275,7 @@ class UserProfile(models.Model):
 	region = models.IntegerField(blank=True)
 	set_lag_fk = models.ForeignKey("leadagencies",blank=True,null=True,db_column="set_lag_fk")
 	set_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="set_rag_fk")
+	conphone = models.CharField(null=True,blank=True,max_length=32)
 class clearinghouse(models.Model):
 	schnoprefix = models.CharField(max_length=6)
 	currentid = models.IntegerField()

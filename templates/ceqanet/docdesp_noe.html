@@ -1,0 +1,269 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Document Listing{% endblock title %}
+
+{% block listing %}
+  {% load staticfiles %}
+    <table width="767" border="0" cellpadding="3">
+      <tr>
+        <td align="center">
+          <h3>{{ doc.doc_prj_fk.prj_title }}</h3>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>SCH Number:</b> {{ doc.doc_prj_fk.prj_schno }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
+        </td>
+      </tr>
+      {% if doc.doc_title.strip.length > 0 %}
+      <tr> 
+        <td> 
+          <b>Alternate Title:</b> {{ doc.doc_title }}
+        </td>
+      </tr>
+      {% endif %}
+      <tr> 
+        <td> 
+          <b>Project Lead Agency:</b> {{ doc.doc_prj_fk.prj_leadagency }}
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Description</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ doc.doc_description }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Contact Information</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <th align="left">
+                Primary Contact:
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+               {{ doc.doc_conname }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ doc.doc_conagency }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ doc.doc_conphone }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ doc.doc_conaddress1 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ doc.doc_conaddress2 }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                {{ doc.doc_concity }}, {{ doc.doc_constate }} {{ doc.doc_conzip }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>  
+          <b>Project Location</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <table border="0">
+            <tr>
+              <td align="left">
+                County: {{ doc.doc_county }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                City: {{ doc.doc_city }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Region: {{ doc.doc_region }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Cross Streets: {{ doc.doc_xstreets }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                {% if latlongs.exists %}
+                  {% for ll in latlongs %}
+                    Latitude/Longitude: {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
+                  {% endfor %}
+                {% else %}
+                  Latitude/Longitude:
+                {% endif %}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Parcel No: {{ doc.doc_parcelno }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Township: {{ doc.doc_township }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Range: {{ doc.doc_range }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Section: {{ doc.doc_section }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Base: {{ doc.doc_base }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Other Location Info: {{ doc.doc_location }}
+              </td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Exempt Status</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exministerial %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Ministerial
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exdeclared %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Declared Emergency
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exemergency %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Emergency Project
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_excategorical %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Categorical Exemption
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {% if doc.doc_exstatutory %}
+            <img src="{% static "ceqanet/img/check1.gif" %}"> 
+          {% else %}
+            <img src="{% static "ceqanet/img/check0.gif" %}">
+          {% endif %}
+          &nbsp;Statutory Exemption
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Type, Section or Code Number:</b> {{ doc.doc_exnumber }}  
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <b>Reasons for Exemption</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ doc.doc_exreasons }}
+        </td>
+      </tr>
+      <tr>
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Date Received:</b> {{ doc.doc_received }}
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <hr width="100%">
+        </td>
+      </tr>
+    </table>
+{% endblock listing %}

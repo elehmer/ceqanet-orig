@@ -24,23 +24,37 @@
  	  	</TH>
  	  </TR> 
     {% for prjdoc in prjdocs %}
-      <TR>
-      	<TD align="center">
-    	  {{ prjdoc.doc_city }}
-    	</TD>
-      	<TD align="center">
-    	  {{ prjdoc.doc_xstreets }}
-    	</TD>
-      	<TD align="center">
-          <a href="/docdescription/{{ prjdoc.doc_pk }}/?doctype={{ prjdoc.doc_doctype }}">{{ prjdoc.doc_docname }}</a>
-        </TD>
-      	<TD align="center">
-    	  {{ prjdoc.doc_description }}
-    	</TD>
-      	<TD align="center">
-    	  {{ prjdoc.doc_received }}
-    	</TD>
-      </TR>
+    <TR>
+    	<TD align="center">
+  	    {{ prjdoc.doc_city }}
+  	  </TD>
+    	<TD align="center">
+  	    {{ prjdoc.doc_xstreets }}
+  	  </TD>
+      {% if prjdoc.doc_doctype = 'NOE' or prjdoc.doc_docname.strip = 'Notice of Exemption' %}
+    	<TD align="center" valign="center">
+        <a href="{% url 'docdesp_noe' prjdoc.doc_pk %}">{{ prjdoc.doc_docname }}</a>
+      </TD>
+      {% elif prjdoc.doc_doctype = 'NOD' or prjdoc.doc_docname.strip = 'Notice of Determination' %}
+      <TD align="center" valign="center">
+        <a href="{% url 'docdesp_nod' prjdoc.doc_pk %}">{{ prjdoc.doc_docname }}</a>
+      </TD>
+      {% elif prjdoc.doc_doctype = 'NOP' or prjdoc.doc_docname.strip = 'Notice of Preperation' %}
+      <TD align="center" valign="center">
+        <a href="{% url 'docdesp_nop' prjdoc.doc_pk %}">{{ prjdoc.doc_docname }}</a>
+      </TD>
+      {% else %}
+      <TD align="center">
+        {{ prjdoc.doc_docname }}
+      </TD>
+      {% endif %}
+    	<TD align="center">
+  	    {{ prjdoc.doc_description }}
+  	  </TD>
+    	<TD align="center">
+        {{ prjdoc.doc_received }}
+  	  </TD>
+    </TR>
   	{% endfor %}
     </TABLE>
   {% endif %}

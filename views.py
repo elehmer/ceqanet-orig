@@ -7,9 +7,8 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import FormView,UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
-from ceqanet.forms import QueryForm,SubmitForm,AddPrjForm,AddDocForm,InputForm,nocform,nodform,noeform,nopform,NOEeditForm,DocReviewForm,usersettingsform,reviewdetailform,pendingdetailform,commentdetailform
+from ceqanet.forms import QueryForm,SubmitForm,AddDocForm,nocform,nodform,noeform,nopform,NOEeditForm,DocReviewForm,usersettingsform,reviewdetailform,pendingdetailform,commentdetailform
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords
-from django.contrib.auth.models import User
 from datetime import datetime
 
 # Create your views here.
@@ -37,24 +36,19 @@ class submit(FormView):
     form_class = SubmitForm
 
     def get_success_url(self):
-        user_id = self.request.POST.get('user_id')
-        lag_pk = self.request.POST.get('lag_pk')
         doctype = self.request.POST.get('doctype')
         prjtoggle = self.request.POST.get('prjtoggle')
 
         if prjtoggle == "yes":
-            success_url = "%s?prj_schno=&lag_pk=%s&user_id=%s&doctype=%s" % (reverse_lazy('findproject'),lag_pk,user_id,doctype)
+            success_url = "%s?prj_schno=&doctype=%s" % (reverse_lazy('findproject'),doctype)
         elif prjtoggle == "no":
-            success_url = "%s?prj_pk=-9999&lag_pk=%s&user_id=%s&doctype=%s" % (reverse_lazy('adddocument'),lag_pk,user_id,doctype)
+            success_url = "%s?prj_pk=-9999&doctype=%s" % (reverse_lazy('docadd_'+doctype.lower()),doctype)
         return success_url
 
     def get_context_data(self, **kwargs):
         context = super(submit, self).get_context_data(**kwargs)
-        user_id = self.request.GET.get('user_id')
-        set_lag_fk = UserProfile.objects.get(user_id__exact=user_id).set_lag_fk.lag_pk
 
-        context['user_id'] = user_id
-        context['laginfo'] = leadagencies.objects.get(pk=set_lag_fk)
+        context['laginfo'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
         return context
 
 class findproject(ListView):
@@ -79,10 +73,10 @@ class findproject(ListView):
         if "whichpk" in qsminuspage:
             qsminuspage.pop('whichpk')
 
-        context['user_id'] = self.request.GET.get('user_id')
         context['prj_schno'] = self.request.GET.get('prj_schno')
         context['lag_pk'] = self.request.GET.get('lag_pk')
         context['doctype'] = self.request.GET.get('doctype')
+        context['formurl'] = 'docadd_'+self.request.GET.get('doctype').lower()
         context['restofqs'] = qsminuspage.urlencode()
 
         return context
@@ -92,11 +86,6 @@ def ClearinghouseQuery(request):
 
     queryset = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).order_by('-prj_schno')
     return queryset
-
-
-class addproject(FormView):
-    template_name="ceqanet/addproject.html"
-    form_class = AddPrjForm
 
 class adddocument(FormView):
     template_name="ceqanet/adddocument.html"
@@ -110,7 +99,6 @@ class adddocument(FormView):
         context = super(adddocument, self).get_context_data(**kwargs)
 
         context['prj_pk'] = self.request.GET.get("prj_pk")
-        context['lag_pk'] = self.request.GET.get("lag_pk")
         context['doctype'] = self.request.GET.get("doctype")
         if self.request.GET.get('doctype') in ['NOC','NOP']:
             context['actions'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001).order_by('keyw_longname')
@@ -118,18 +106,17 @@ class adddocument(FormView):
             #context['issues'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname')
         if self.request.GET.get("prj_pk") != '-9999':
             context['prjinfo'] = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
-        context['laglist'] = leadagencies.objects.get(lag_pk__exact=self.request.GET.get('lag_pk'))
+        context['laglist'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
 
         return context
     
     def get_initial(self):
         initial = super(adddocument, self).get_initial()
 
-        user_query = User.objects.get(pk=self.request.GET.get('user_id'))
-        initial['doc_conname'] = user_query.first_name + " " + user_query.last_name
-        initial['doc_conemail'] = user_query.email
+        initial['doc_conname'] = self.request.user.first_name + " " + self.request.user.last_name
+        initial['doc_conemail'] = self.request.user.email
 
-        la_query = leadagencies.objects.get(lag_pk__exact=self.request.GET.get('lag_pk'))
+        la_query = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
         initial['doc_conaddress1'] = la_query.lag_address1.strip
         initial['doc_conaddress2'] = la_query.lag_address2.strip
         initial['doc_concity'] = la_query.lag_city.strip
@@ -141,7 +128,7 @@ class adddocument(FormView):
         data = form.cleaned_data
         today = datetime.now()
         doc_received = today
-        lag = leadagencies.objects.get(pk=self.request.POST.get('lag_pk'))
+        lag = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
         doc = documents.objects.get(pk=0)
         cnty = counties.objects.get(pk=data['doc_county'].pk)
         doct = doctypes.objects.get(keyw_shortname__startswith=self.request.POST.get('doctype'))
@@ -336,94 +323,132 @@ class docadd_noe(FormView):
     template_name="ceqanet/docadd_noe.html"
     form_class = noeform
 
+    def get_success_url(self):
+        success_url = "%s" % (reverse_lazy('accept'))
+        return success_url
+
     def get_initial(self):
         initial = super(docadd_noe, self).get_initial()
 
-        la_query = leadagencies.objects.get(lag_pk__exact=self.request.GET.get('lag_pk'))
-        initial['doc_lagaddress1'] = la_query.lag_address1
-        initial['doc_lagaddress2'] = la_query.lag_address2
-        initial['doc_lagcity'] = la_query.lag_city
-        initial['doc_lagstate'] = la_query.lag_state
-        initial['doc_lagzip'] = la_query.lag_zip
-        return initial
+        if self.request.GET.get("prj_pk") != '-9999':
+            prjinfo = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
+            initial['prj_title'] = prjinfo.prj_title
+            initial['prj_description'] = prjinfo.prj_description
 
-    def get_success_url(self):
-        success_url = "%s" % (reverse_lazy('submit'))
-        return success_url
+        initial['doc_conname'] = self.request.user.first_name + " " + self.request.user.last_name
+        initial['doc_conemail'] = self.request.user.email
+        initial['doc_conphone'] = self.request.user.get_profile().conphone
+
+        la_query = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
+        initial['doc_conaddress1'] = la_query.lag_address1.strip
+        initial['doc_conaddress2'] = la_query.lag_address2.strip
+        initial['doc_concity'] = la_query.lag_city.strip
+        initial['doc_constate'] = la_query.lag_state.strip
+        initial['doc_conzip'] = la_query.lag_zip.strip
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super(docadd_noe, self).get_context_data(**kwargs)
-        context['lag_pk'] = self.request.GET.get('lag_pk')
-        context['laglist'] = leadagencies.objects.get(lag_pk__exact=self.request.GET.get('lag_pk'))
-        context['citylist'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname')
-        context['countylist'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname')
+
+        context['prj_pk'] = self.request.GET.get("prj_pk")
+        context['doctype'] = self.request.GET.get("doctype")
+        if self.request.GET.get("prj_pk") != '-9999':
+            context['prjinfo'] = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
+        context['laglist'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
         return context
-
-    #def clean_prj_schno(self):
-    #    prj_schno = self.cleaned_data['prj_schno']
-    #    prjtoggle = self.cleaned_data['prjtoggle']
-
-    #    if prjtoggle == "yes":
-    #        if prj_schno == '':
-    #            raise forms.ValidationError("Clearing House Number Required")
-            #else
-                #projects.objects.filter(prj_schno__startswith=prj_schno)
-    #    else:
-    #        prj_schno = "-99999"
-
-    #    return prj_schno
-
-
-    #def clean(self):
-    #    cleaned_data = super(docadd_noe,self).clean()
-    #    prjtoggle = cleaned_data.get("prjtoggle")
-
-    #    if prjtoggle == "yes":
-    #        pass
-    #    else
 
     def form_valid(self,form):
         data = form.cleaned_data
-        lag = leadagencies.objects.get(pk=self.request.POST.get('lag_pk'))
+        today = datetime.now()
+        doc_received = today
+        lag = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
         doc = documents.objects.get(pk=0)
-        addproject = projects(prj_title=data['prj_title'],prj_lag_fk=lag,prj_doc_fk=doc)
-        addproject.save()
-        return super(docadd_noc,self).form_valid(form)
+        cnty = counties.objects.get(pk=data['doc_county'].pk)
+        doct = doctypes.objects.get(keyw_shortname__startswith=self.request.POST.get('doctype'))
+        if data['doc_conaddress2'] == '':
+            doc_conaddress2 = None
+        else:
+            doc_conaddress2 = data['doc_conaddress2']
+
+        doc_exministerial = False
+        doc_exdeclared = False
+        doc_exemergency = False
+        doc_excategorical = False
+        doc_exstatutory = False
+        doc_exnumber = ""
+        status = ""
+        rdoexemptstatus = self.request.POST.get('rdoexemptstatus')
+        if rdoexemptstatus == '1':
+            doc_exministerial = True
+            status = "Ministerial"
+        elif rdoexemptstatus == '2':
+            doc_exdeclared = True
+            status = "Declared Emergency"
+        elif rdoexemptstatus == '3':
+            doc_exemergency = True
+            status = "Emergency Project"
+        elif rdoexemptstatus == '4':
+            doc_excategorical = True
+            doc_exnumber = self.request.POST.get('strsectionnumber')
+            status = "Categorical Exemption, Section " + doc_exnumber
+        elif rdoexemptstatus == '5':
+            doc_exstatutory = True
+            doc_exnumber = self.request.POST.get('strcodenumber')
+            status = "Statutory Exemptions, State Code " + doc_exnumber
+
+        if self.request.POST.get('prj_pk') == '-9999':
+            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
+            prj.save()
+        else:
+            prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
+
+        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber,doc_exreasons=data['doc_exreasons'])
+        adddoc.save()
+        prj.prj_doc_fk=adddoc
+        prj.save()
+
+        coords = latlongs(doc_pk=adddoc.pk,doc_prj_fk=prj,doc_doctype=self.request.POST.get('doctype'),doc_latitude=data['doc_latitude'],doc_longitude=data['doc_longitude'])
+        coords.save()
+
+        strFrom = "ceqanet@opr.ca.gov"
+        ToList = [data['doc_conemail']]
+        strSubject = "Confirmation of Submittal - " + doct.keyw_longname
+        strBody = "This confirms receipt of your electronic " + doct.keyw_longname + " form submission on " + doc_received.strftime('%m/%d/%Y') + ".  \n \n"
+        strBody = strBody + "The State Clearinghouse will review your submittal and provide a State Clearinghouse Number and filing date within one business day. \n \n"
+        strBody = strBody + "If you have questions about the form submittal process, please reply to this email.  Thank you for using CEQAnet. \n"
+        strBody = strBody + "\n \n" + "--- Information Submitted ---" + "\n"
+        strBody = strBody + "Document Type: " + self.request.POST.get('doctype') + "\n"        
+        if self.request.POST.get('prj_pk') == '-9999':
+            strBody = strBody + "Project Title: " + data['prj_title'] + "\n"
+        else:
+            strBody = strBody + "Project Title: " + prj.prj_title + "\n"            
+        strBody = strBody + "Project Location: " + data['doc_location'] + "\n"
+        strBody = strBody + "    City: " + data['doc_city'].geow_shortname + "\n"
+        strBody = strBody + "    County: " + data['doc_county'].geow_shortname + "\n"
+        strBody = strBody + "    Latitude: " + data['doc_latitude'] + "\n"
+        strBody = strBody + "    Longitude: " + data['doc_longitude'] + "\n"
+        if self.request.POST.get('prj_pk') == '-9999':
+            strBody = strBody + "Project Description: " + data['prj_description'] + "\n"
+        else:
+            strBody = strBody + "Project Description: " + prj.prj_description + "\n"
+        #strBody = strBody + "Person or Agency Carrying out Project: " & prj_otheragency + "\n"
+        strBody = strBody + "Agency Approving Project: " + lag.lag_name + "\n"
+        strBody = strBody + "Primary Contact:  " + "\n"
+        strBody = strBody + "    Name: " + data['doc_conname'] + "\n"
+        strBody = strBody + "    Phone: " + data['doc_conphone'] + "\n"
+        strBody = strBody + "    E-mail: " + data['doc_conemail'] + "\n"
+        if self.request.POST.get('doctype') == 'NOE':
+            strBody = strBody + "Exempt Status: " + status + "\n"
+            strBody = strBody + "Reason for Exemption: " + data['doc_exreasons'] + "\n"
+        strBody = strBody + "DATE: " + doc_received.strftime('%m/%d/%Y') + "\n"
+
+        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
+
+        return super(docadd_noe,self).form_valid(form)
 
 class docadd_nop(FormView):
     template_name="ceqanet/docadd_nop.html"
     form_class = nopform
-
-class inputform(FormView):
-    template_name="ceqanet/inputform.html"
-    form_class = InputForm
-    success_url = "/docaccept/"
-
-    def get_initial(self):
-        initial = super(inputform, self).get_initial()
-
-        la_query = leadagencies.objects.get(lag_pk__exact=self.request.GET.get('lag_pk'))
-        initial['doc_lagaddress1'] = la_query.lag_address1
-        initial['doc_lagaddress2'] = la_query.lag_address2
-        initial['doc_lagcity'] = la_query.lag_city
-        initial['doc_lagstate'] = la_query.lag_state
-        initial['doc_lagzip'] = la_query.lag_zip
-        return initial
-
-    def get_context_data(self, **kwargs):
-        context = super(inputform, self).get_context_data(**kwargs)
-        context['doctype'] = self.request.GET.get('doctype')
-        context['laglist'] = leadagencies.objects.get(lag_pk__exact=self.request.GET.get('lag_pk'))
-        context['citylist'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname')
-        context['countylist'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname')
-        return context
-
-    def form_valid(self,form):
-        data = self.cleaned_data
-        docs = counties(geow_shortname=data['doc_lagaddress1'],geow_longname=data['doc_lagaddress1'])
-        docs.save()
-        return super(inputform,self).form_valid(form)
-
 
 class projectlist(ListView):
     template_name="ceqanet/projectlist.html"
@@ -514,6 +539,41 @@ def ProjDocListQuery(request):
 
     queryset = documents.objects.filter(doc_visible=True).filter(doc_prj_fk__exact=prj_pk).order_by('-doc_received')
     return queryset
+
+class docdesp_noe(DetailView):
+    model = documents
+    template_name="ceqanet/docdesp_noe.html"
+    context_object_name = "doc"
+
+    def get_context_data(self, **kwargs):
+        context = super(docdesp_noe, self).get_context_data(**kwargs)
+        context['latlongs'] = latlongs.objects.filter(doc_pk=self.kwargs['pk'])
+        return context
+
+class docdesp_nod(DetailView):
+    model = documents
+    template_name="ceqanet/docdesp_nod.html"
+    context_object_name = "doc"
+
+    def get_context_data(self, **kwargs):
+        context = super(docdesp_nod, self).get_context_data(**kwargs)
+        context['latlongs'] = latlongs.objects.filter(doc_pk=self.kwargs['pk'])
+        return context
+
+class docdesp_nop(DetailView):
+    model = documents
+    template_name="ceqanet/docdesp_nop.html"
+    context_object_name = "doc"
+
+    def get_context_data(self, **kwargs):
+        context = super(docdesp_nop, self).get_context_data(**kwargs)
+        doc_pk = self.kwargs['pk']
+        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
+        context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
+        context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
+        context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        return context
 
 class docdescription(DetailView):
     model = documents
@@ -633,20 +693,17 @@ class review(ListView):
     def get_context_data(self, **kwargs):
         context = super(review, self).get_context_data(**kwargs)
 
-        user_id = self.request.GET.get('user_id')
         qsminuspage = self.request.GET.copy()
         
         if "page" in qsminuspage:
             qsminuspage.pop('page')
 
         context['restofqs'] = qsminuspage.urlencode()
-        context['user_id'] = user_id
 
         return context
 
 def ReviewListQuery(request):
-    user_id = request.GET.get('user_id')
-    region = UserProfile.objects.get(user_id__exact=user_id).region 
+    region = request.user.get_profile().region 
     queryset = documents.objects.filter(doc_plannerregion=region).filter(doc_plannerreview=True).order_by('-doc_received')
     return queryset
 
@@ -660,7 +717,6 @@ class reviewdetail(FormView):
 
         doc_pk = self.request.GET.get('doc_pk')
         context['doc_pk'] = doc_pk
-        context['user_id'] = self.request.GET.get('user_id')
         context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
         context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
         context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
@@ -671,7 +727,7 @@ class reviewdetail(FormView):
         return context
 
     def get_success_url(self):
-        success_url = "%s?user_id=%s" % (reverse_lazy('review'),self.request.GET.get('user_id'))
+        success_url = "%s" % (reverse_lazy('review'))
         return success_url
 
     def form_valid(self,form):
@@ -720,20 +776,17 @@ class comment(ListView):
     def get_context_data(self, **kwargs):
         context = super(comment, self).get_context_data(**kwargs)
 
-        user_id = self.request.GET.get('user_id')
         qsminuspage = self.request.GET.copy()
         
         if "page" in qsminuspage:
             qsminuspage.pop('page')
 
         context['restofqs'] = qsminuspage.urlencode()
-        context['user_id'] = user_id
 
         return context
 
 def CommentListQuery(request):
-    user_id = request.GET.get('user_id')
-    set_rag_fk = UserProfile.objects.get(user_id__exact=user_id).set_rag_fk.rag_pk
+    set_rag_fk = request.user.get_profile().set_rag_fk.rag_pk
     queryset = docreviews.objects.filter(drag_rag_fk__rag_pk=set_rag_fk).filter(drag_doc_fk__doc_review=True).order_by('-drag_doc_fk__doc_received')
     return queryset
 
@@ -747,7 +800,6 @@ class commentdetail(FormView):
 
         doc_pk = self.request.GET.get('doc_pk')
         context['doc_pk'] = doc_pk
-        context['user_id'] = self.request.GET.get('user_id')
         context['drag_pk'] = self.request.GET.get('drag_pk')
         context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
         context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
@@ -766,7 +818,7 @@ class commentdetail(FormView):
         return initial
 
     def get_success_url(self):
-        success_url = "%s?user_id=%s" % (reverse_lazy('comment'),self.request.GET.get('user_id'))
+        success_url = "%s" % (reverse_lazy('comment'))
         return success_url
 
     def form_valid(self,form):
@@ -795,23 +847,20 @@ class usersettings(FormView):
     def get_initial(self):
         initial = super(usersettings, self).get_initial()
 
-        us_query = UserProfile.objects.get(user_id__exact=self.request.GET.get('user_id'))
+        us_query = self.request.user.get_profile()
         initial['region'] = us_query.region
         initial['set_lag_fk'] = us_query.set_lag_fk.lag_pk
         initial['set_rag_fk'] = us_query.set_rag_fk.rag_pk
+        initial['conphone'] = us_query.conphone
         return initial
 
     def get_context_data(self, **kwargs):
         context = super(usersettings, self).get_context_data(**kwargs)
 
-        user_id = self.request.GET.get('user_id')
-
-        context['user_id'] = user_id
-        user = User.objects.get(pk=user_id)
         islead = False
         isplanner = False
         isreview = False
-        for g in user.groups.all():
+        for g in self.request.user.groups.all():
             if g.name == 'leads':
                 islead = True
             if g.name == 'planners':
@@ -839,10 +888,13 @@ class usersettings(FormView):
         if set_rag_fk == None:
             set_rag_fk = reviewingagencies.objects.get(pk=0)
 
-        us = UserProfile.objects.get(user_id__exact=self.request.POST.get('user_id'))
+        conphone = data['conphone']
+
+        us = self.request.user.get_profile()
         us.region = region
         us.set_lag_fk = set_lag_fk
         us.set_rag_fk = set_rag_fk
+        us.conphone = conphone
         us.save()
 
         return super(usersettings,self).form_valid(form)

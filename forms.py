@@ -1,17 +1,14 @@
 from django import forms
 from django.forms import ModelForm
 from datetime import datetime, date, timedelta
-from ceqanet.models import projects,documents,geowords,reviewingagencies,UserProfile,leadagencies
+from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies
+from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
 
 class QueryForm(forms.Form):
 	prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)
 
 	date_from = forms.DateField(label="From", initial=lambda: (date.today() - timedelta(days=14)).strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
 	date_to = forms.DateField(label="To", initial=date.today().strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
-
-class AddPrjForm(forms.Form):
-	prj_title = forms.CharField(label="Project Title:",max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-	prj_description = forms.CharField(label="Project Description:",widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
 
 class AddDocForm(forms.Form):
 	prj_title = forms.CharField(label="Project Title:",required=False,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
@@ -90,28 +87,63 @@ class nodform(forms.Form):
 	pass
 
 class noeform(forms.Form):
-	doc_lagaddress1 = forms.CharField(label="Street Address1:",max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-	doc_lagaddress2 = forms.CharField(label="Street Address2:",max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-	doc_lagcity = forms.CharField(label="City:",max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
-	doc_lagstate = forms.CharField(label="State:",max_length=2,widget=forms.TextInput(attrs={'size':'2'}))
-	doc_lagzip = forms.CharField(label="Zip:",max_length=10,widget=forms.TextInput(attrs={'size':'10'}))
-	doc_location = forms.CharField(label="Project Location:",widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-	doc_latitude = forms.CharField(label="Project Latitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
-	doc_longitude = forms.CharField(label="Project Longitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
-	prj_description = forms.CharField(label="Project Description:",widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-	strsectionnumber = forms.CharField(label="Section Number:",max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-	strcodenumber = forms.CharField(label="Code Number:",max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-	txtreason = forms.CharField(label="Reasons why project is exempt:",widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
-	strlagcontact = forms.CharField(label="Lead Agency Contact Person:",max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-	stremail = forms.EmailField(label="E-mail:",max_length=50)
-	strphone1 = forms.CharField(max_length=3,widget=forms.TextInput(attrs={'size':'3'}))
-	strphone2 = forms.CharField(max_length=3,widget=forms.TextInput(attrs={'size':'3'}))
-	strphone3 = forms.CharField(max_length=3,widget=forms.TextInput(attrs={'size':'3'}))
+	EXMINISTERIAL = 1
+	EXDECLARED = 2
+	EXEMERGENCY = 3
+	EXCATEGORICAL = 4
+	EXSTATUTORY = 5
+
+	EXEMPT_STATUS_CHOICES = (
+		(EXMINISTERIAL,'Ministerial (Sec.21080(b)(1); 15268);'),
+		(EXDECLARED,'Declared Emergency (Sec. 21080(b)(3);15269(a));'),
+		(EXEMERGENCY,'Emergency Project (Sec. 21080(b)(4); 15269(b)(c));'),
+		(EXCATEGORICAL,'Categorical Exemption. State type and section number:'),
+		(EXSTATUTORY,'Statutory Exemptions. State code number:')
+	)
+
+	prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+	doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conemail = forms.EmailField(label="E-mail:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conphone = USPhoneNumberField(label="Phone:",required=True)
+	doc_conaddress1 = forms.CharField(label="Street Address1:",required=True,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_concity = forms.CharField(label="City:",required=True,max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
+	doc_constate = USStateField(label="State:",required=True)
+	doc_conzip = USZipCodeField(label="Zip:",required=True)
+	doc_location = forms.CharField(label="Document Location:",widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_latitude = forms.CharField(label="Document Latitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_longitude = forms.CharField(label="Document Longitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_city = forms.ModelChoiceField(label="City:",queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+	doc_county = forms.ModelChoiceField(label="County:",queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
+	strleadagency2 = forms.CharField(label="Person or Agency Carrying Out Project:",required=False,max_length=45,widget=forms.TextInput(attrs={'size':'45'}))
+	rdoexemptstatus = forms.ChoiceField(required=True,choices=EXEMPT_STATUS_CHOICES,initial=EXCATEGORICAL,widget=forms.RadioSelect())
+	strsectionnumber = forms.CharField(label="Section Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	strcodenumber = forms.CharField(label="Code Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_exreasons = forms.CharField(label="Reasons why project is exempt:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+
+	def clean(self):
+		cleaned_data = super(noeform, self).clean()
+
+		msg_strsectionnumber = u"Section Number is required for Categorical Exemption."
+		msg_strcodenumber = u"Code Number is required for Statutory Exemption."
+
+		if cleaned_data.get('rdoexemptstatus') == '4':
+			strsectionnumber = cleaned_data.get('strsectionnumber')
+			if strsectionnumber == '':
+				self._errors['strsectionnumber'] = self.error_class([msg_strsectionnumber])
+				del cleaned_data['rdoexemptstatus']
+				del cleaned_data['strsectionnumber']
+		if cleaned_data.get('rdoexemptstatus') == '5':
+			strcodenumber = cleaned_data.get('strcodenumber')
+			if strcodenumber == '':
+				self._errors['strcodenumber'] = self.error_class([msg_strcodenumber])
+				del cleaned_data['rdoexemptstatus']
+				del cleaned_data['strcodenumber']
+
+		return cleaned_data
 
 class nopform(forms.Form):
-	pass
-
-class InputForm(forms.Form):
 	pass
 
 class DocReviewForm(forms.Form):
@@ -133,3 +165,4 @@ class usersettingsform(forms.Form):
 	region = forms.IntegerField(required=False)
 	set_lag_fk = forms.ModelChoiceField(label="Lead Agency:",required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'))
 	set_rag_fk = forms.ModelChoiceField(label="Reviewing Agency:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_name'))
+	conphone = USPhoneNumberField(label="Phone Number:",required=False)
