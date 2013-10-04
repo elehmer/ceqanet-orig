@@ -84,7 +84,69 @@ class nocform(ModelForm):
 		fields = ('prj_title','prj_schno')
 
 class nodform(forms.Form):
-	pass
+	prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+	doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conemail = forms.EmailField(label="E-mail:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conphone = USPhoneNumberField(label="Phone:",required=True)
+	doc_conaddress1 = forms.CharField(label="Street Address1:",required=True,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_concity = forms.CharField(label="City:",required=True,max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
+	doc_constate = USStateField(label="State:",required=True)
+	doc_conzip = USZipCodeField(label="Zip:",required=True)
+	doc_location = forms.CharField(label="Document Location:",widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_latitude = forms.CharField(label="Document Latitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_longitude = forms.CharField(label="Document Longitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_city = forms.ModelChoiceField(label="City:",queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+	doc_county = forms.ModelChoiceField(label="County:",queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
+	doc_nodbylead = forms.BooleanField(required=False)
+	doc_nodbyresp = forms.BooleanField(required=False)
+	doc_nodagency = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_nod = forms.DateField(required=False,input_formats=['%Y-%m-%d'])
+	doc_detsigeffect = forms.BooleanField(required=False)
+	doc_detnotsigeffect = forms.BooleanField(required=False)
+	doc_deteir = forms.BooleanField(required=False)
+	doc_detnegdec = forms.BooleanField(required=False)
+	doc_detmitigation = forms.BooleanField(required=False)
+	doc_detnotmitigation = forms.BooleanField(required=False)
+	doc_detconsider = forms.BooleanField(required=False)
+	doc_detnotconsider = forms.BooleanField(required=False)
+	doc_detfindings = forms.BooleanField(required=False)
+	doc_detnotfindings = forms.BooleanField(required=False)
+	doc_eiravailableat = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+
+class editnodform(forms.Form):
+	prj_title = forms.CharField(label="Project Title:",required=False,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	prj_description = forms.CharField(label="Project Description:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+	doc_conagency = forms.CharField(label="Contact Agency:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conname = forms.CharField(label="Contact Person:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conemail = forms.EmailField(label="E-mail:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conphone = USPhoneNumberField(label="Phone:",required=False)
+	doc_conaddress1 = forms.CharField(label="Street Address1:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_concity = forms.CharField(label="City:",required=False,max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
+	doc_constate = USStateField(label="State:",required=False)
+	doc_conzip = USZipCodeField(label="Zip:",required=False)
+	doc_location = forms.CharField(label="Document Location:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_latitude = forms.CharField(label="Document Latitude:",required=False,max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_longitude = forms.CharField(label="Document Longitude:",required=False,max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_city = forms.ModelChoiceField(label="City:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+	doc_county = forms.ModelChoiceField(label="County:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
+	doc_nodbylead = forms.BooleanField(required=False)
+	doc_nodbyresp = forms.BooleanField(required=False)
+	doc_nodagency = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_nod = forms.DateField(required=False,input_formats=['%Y-%m-%d'])
+	doc_detsigeffect = forms.BooleanField(required=False)
+	doc_detnotsigeffect = forms.BooleanField(required=False)
+	doc_deteir = forms.BooleanField(required=False)
+	doc_detnegdec = forms.BooleanField(required=False)
+	doc_detmitigation = forms.BooleanField(required=False)
+	doc_detnotmitigation = forms.BooleanField(required=False)
+	doc_detconsider = forms.BooleanField(required=False)
+	doc_detnotconsider = forms.BooleanField(required=False)
+	doc_detfindings = forms.BooleanField(required=False)
+	doc_detnotfindings = forms.BooleanField(required=False)
+	doc_eiravailableat = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
 
 class noeform(forms.Form):
 	EXMINISTERIAL = 1
@@ -103,7 +165,7 @@ class noeform(forms.Form):
 
 	prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
 	prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
-	doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
 	doc_conemail = forms.EmailField(label="E-mail:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
 	doc_conphone = USPhoneNumberField(label="Phone:",required=True)
 	doc_conaddress1 = forms.CharField(label="Street Address1:",required=True,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
@@ -142,6 +204,82 @@ class noeform(forms.Form):
 				del cleaned_data['strcodenumber']
 
 		return cleaned_data
+
+class editnoeform(forms.Form):
+	EXMINISTERIAL = 1
+	EXDECLARED = 2
+	EXEMERGENCY = 3
+	EXCATEGORICAL = 4
+	EXSTATUTORY = 5
+
+	EXEMPT_STATUS_CHOICES = (
+		(EXMINISTERIAL,'Ministerial (Sec.21080(b)(1); 15268);'),
+		(EXDECLARED,'Declared Emergency (Sec. 21080(b)(3);15269(a));'),
+		(EXEMERGENCY,'Emergency Project (Sec. 21080(b)(4); 15269(b)(c));'),
+		(EXCATEGORICAL,'Categorical Exemption. State type and section number:'),
+		(EXSTATUTORY,'Statutory Exemptions. State code number:')
+	)
+
+	prj_title = forms.CharField(label="Project Title:",required=False,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	prj_description = forms.CharField(label="Project Description:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+	doc_conagency = forms.CharField(label="Contact Agency:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conname = forms.CharField(label="Contact Person:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conemail = forms.EmailField(label="E-mail:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conphone = USPhoneNumberField(label="Phone:",required=False)
+	doc_conaddress1 = forms.CharField(label="Street Address1:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_concity = forms.CharField(label="City:",required=False,max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
+	doc_constate = USStateField(label="State:",required=False)
+	doc_conzip = USZipCodeField(label="Zip:",required=False)
+	doc_location = forms.CharField(label="Document Location:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_latitude = forms.CharField(label="Document Latitude:",required=False,max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_longitude = forms.CharField(label="Document Longitude:",required=False,max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_city = forms.ModelChoiceField(label="City:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+	doc_county = forms.ModelChoiceField(label="County:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
+	strleadagency2 = forms.CharField(label="Person or Agency Carrying Out Project:",required=False,max_length=45,widget=forms.TextInput(attrs={'size':'45'}))
+	rdoexemptstatus = forms.ChoiceField(required=False,choices=EXEMPT_STATUS_CHOICES,widget=forms.RadioSelect())
+	strsectionnumber = forms.CharField(label="Section Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	strcodenumber = forms.CharField(label="Code Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_exreasons = forms.CharField(label="Reasons why project is exempt:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+
+	def clean(self):
+		cleaned_data = super(editnoeform, self).clean()
+
+		msg_strsectionnumber = u"Section Number is required for Categorical Exemption."
+		msg_strcodenumber = u"Code Number is required for Statutory Exemption."
+
+		if cleaned_data.get('rdoexemptstatus') == '4':
+			strsectionnumber = cleaned_data.get('strsectionnumber')
+			if strsectionnumber == '':
+				self._errors['strsectionnumber'] = self.error_class([msg_strsectionnumber])
+				del cleaned_data['rdoexemptstatus']
+				del cleaned_data['strsectionnumber']
+		if cleaned_data.get('rdoexemptstatus') == '5':
+			strcodenumber = cleaned_data.get('strcodenumber')
+			if strcodenumber == '':
+				self._errors['strcodenumber'] = self.error_class([msg_strcodenumber])
+				del cleaned_data['rdoexemptstatus']
+				del cleaned_data['strcodenumber']
+
+		return cleaned_data
+
+class editnopform(forms.Form):
+	prj_title = forms.CharField(label="Project Title:",required=False,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	prj_description = forms.CharField(label="Project Description:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+	doc_conagency = forms.CharField(label="Contact Agency:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conname = forms.CharField(label="Contact Person:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conemail = forms.EmailField(label="E-mail:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conphone = USPhoneNumberField(label="Phone:",required=False)
+	doc_conaddress1 = forms.CharField(label="Street Address1:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_concity = forms.CharField(label="City:",required=False,max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
+	doc_constate = USStateField(label="State:",required=False)
+	doc_conzip = USZipCodeField(label="Zip:",required=False)
+	doc_location = forms.CharField(label="Document Location:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_latitude = forms.CharField(label="Document Latitude:",required=False,max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_longitude = forms.CharField(label="Document Longitude:",required=False,max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_city = forms.ModelChoiceField(label="City:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+	doc_county = forms.ModelChoiceField(label="County:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
 
 class nopform(forms.Form):
 	pass

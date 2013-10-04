@@ -130,13 +130,13 @@
               <td align="left">
                 Cross Streets: {{ doc.doc_xstreets }}
               </td>
-            </tr> 
+            </tr>
             <tr>
               <td align="left">
                 {% if latlongs.exists %}
-                  {% for ll in latlongs %}
-                    Latitude/Longitude: {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
-                  {% endfor %}
+                {% for ll in latlongs %}
+                  Latitude/Longitude: {{ ll.doc_latitude }} / {{ ll.doc_longitude }}
+                {% endfor %}
                 {% else %}
                   Latitude/Longitude:
                 {% endif %}
@@ -325,6 +325,11 @@
       <tr>
         <td>
           <hr width="100%">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button onclick="window.location = '{% url 'docedit_nod' %}?doc_pk={{ doc_pk }}'">Edit Database Record</button>
         </td>
       </tr>
     </table>

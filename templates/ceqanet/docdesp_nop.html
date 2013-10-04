@@ -348,5 +348,10 @@
           <hr width="100%">
         </td>
       </tr>
+      <tr>
+        <td>
+          <button onclick="window.location = '{% url 'docedit_nop' %}?doc_pk={{ doc_pk }}'">Edit Database Record</button>
+        </td>
+      </tr>
     </table>
 {% endblock listing %}

@@ -135,7 +135,7 @@
               <td align="left">
                 {% if latlongs.exists %}
                   {% for ll in latlongs %}
-                    Latitude/Longitude: {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
+                    Latitude/Longitude: {{ ll.doc_latitude }} / {{ ll.doc_longitude }}
                   {% endfor %}
                 {% else %}
                   Latitude/Longitude:
@@ -263,6 +263,11 @@
       <tr>
         <td>
           <hr width="100%">
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <button onclick="window.location = '{% url 'docedit_noe' %}?doc_pk={{ doc_pk }}'">Edit Database Record</button>
         </td>
       </tr>
     </table>
