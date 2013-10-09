@@ -1,7 +1,7 @@
 from django import forms
 from django.forms import ModelForm
 from datetime import datetime, date, timedelta
-from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies
+from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
 
 class QueryForm(forms.Form):
@@ -64,24 +64,101 @@ class AddDocForm(forms.Form):
 	# 		del cleaned_data["prj_description"]
 	# 	return cleaned_data
 
-class NOEeditForm(ModelForm):
-	formID = "NOEeditForm"
+class submitform(forms.Form):
+	NOC = 'NOC'
+	NOD = 'NOD'
+	NOE = 'NOE'
+	NOP = 'NOP'
 
-	class Meta:
-		model = documents
-		fields = ('doc_schno','doc_doctype','doc_conname','doc_conemail','doc_conaddress1','doc_conaddress2','doc_concity','doc_constate','doc_conzip','doc_county','doc_city','doc_region','doc_xstreets','doc_parcelno','doc_township','doc_range','doc_section','doc_base','doc_location','doc_exreasons')
+	DOCUMENT_TYPES = (
+		(NOC,'NOC'),
+		(NOD,'NOD'),
+		(NOE,'NOE'),
+		(NOP,'NOP')
+	)
 
+	YES = 'yes'
+	NO = 'no'
 
-class SubmitForm(forms.Form):
-	pass
+	PROJECT_EXISTS = (
+		(YES,'Yes'),
+		(NO,'No')
+	)
 
-class nocform(ModelForm):
-	prj_title = forms.CharField(label="Project Title:",max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-	prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)
+	doctype = forms.ChoiceField(required=True,choices=DOCUMENT_TYPES,initial=NOE)
+	prjtoggle = forms.ChoiceField(required=True,choices=PROJECT_EXISTS,initial=NO,widget=forms.RadioSelect())
 
-	class Meta:
-		model = projects
-		fields = ('prj_title','prj_schno')
+class nocform(forms.Form):
+	prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+	doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conemail = forms.EmailField(label="E-mail:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conphone = USPhoneNumberField(label="Phone:",required=True)
+	doc_conaddress1 = forms.CharField(label="Street Address1:",required=True,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_concity = forms.CharField(label="City:",required=True,max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
+	doc_constate = USStateField(label="State:",required=True)
+	doc_conzip = USZipCodeField(label="Zip:",required=True)
+	doc_location = forms.CharField(label="Document Location:",widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_latitude = forms.CharField(label="Document Latitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_longitude = forms.CharField(label="Document Longitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_city = forms.ModelChoiceField(label="City:",queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+	doc_county = forms.ModelChoiceField(label="County:",queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
+	doc_parcelno = forms.CharField(label='Parcel No.:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
+	doc_xstreets = forms.CharField(label='Cross Streets:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
+	doc_township = forms.CharField(label='Township:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
+	doc_range = forms.CharField(label='Range:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
+	doc_section = forms.CharField(label='Section:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
+	doc_base = forms.CharField(label='Base:',required=False,max_length=8,widget=forms.TextInput(attrs={'size':'8'}))
+	doc_highways = forms.CharField(label="State Hwy #:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_airports = forms.CharField(label="Airports:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_railways = forms.CharField(label="Railways:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_waterways = forms.CharField(label="Waterways:",required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
+	doc_landuse = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_schools = forms.CharField(label="Schools:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doctypeid = forms.ModelChoiceField(required=True,queryset=doctypes.objects.filter(inlookup=True).filter(storfed__gt=0).order_by('ordinal'),empty_label=None,widget=forms.RadioSelect())
+	dev6001_val1 = forms.CharField(label="Units",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6001_val2 = forms.CharField(label="Acres",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6002_val1 = forms.CharField(label="SqFt",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6002_val2 = forms.CharField(label="Acres",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6002_val3 = forms.CharField(label="Employees",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6003_val1 = forms.CharField(label="SqFt",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6003_val2 = forms.CharField(label="Acres",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6003_val3 = forms.CharField(label="Employees",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6004_val1 = forms.CharField(label="SqFt",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6004_val2 = forms.CharField(label="Acres",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6004_val3 = forms.CharField(label="Employees",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev7001_val1 = forms.CharField(label="Type",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev8001_val1 = forms.CharField(label="Type",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev10001_val1 = forms.CharField(label="Mineral",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	devtrans_id = forms.ModelChoiceField(required=False,queryset=keywords.objects.filter(keyw_pk__gt=4000).filter(keyw_pk__lt=5000),empty_label=None)
+	devpower_id = forms.ModelChoiceField(required=False,queryset=keywords.objects.filter(keyw_pk__gt=3000).filter(keyw_pk__lt=4000),empty_label=None)
+	devpower_val1 = forms.CharField(label="Watts",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	devwaste_id = forms.ModelChoiceField(required=False,queryset=keywords.objects.filter(keyw_pk__gt=5000).filter(keyw_pk__lt=6000),empty_label=None)
+	dev9001_val1 = forms.CharField(label="Type",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev9001_val2 = forms.CharField(label="MGD",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev11001_val1 = forms.CharField(label="Other",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	doc_actionnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_issuesnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
+
+class editnocform(forms.Form):
+	prj_title = forms.CharField(label="Project Title:",required=False,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	prj_description = forms.CharField(label="Project Description:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+	doc_conagency = forms.CharField(label="Contact Agency:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conname = forms.CharField(label="Contact Person:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conemail = forms.EmailField(label="E-mail:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conphone = USPhoneNumberField(label="Phone:",required=False)
+	doc_conaddress1 = forms.CharField(label="Street Address1:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_concity = forms.CharField(label="City:",required=False,max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
+	doc_constate = USStateField(label="State:",required=False)
+	doc_conzip = USZipCodeField(label="Zip:",required=False)
+	doc_location = forms.CharField(label="Document Location:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_latitude = forms.CharField(label="Document Latitude:",required=False,max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_longitude = forms.CharField(label="Document Longitude:",required=False,max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_city = forms.ModelChoiceField(label="City:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+	doc_county = forms.ModelChoiceField(label="County:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
 
 class nodform(forms.Form):
 	prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
@@ -263,6 +340,59 @@ class editnoeform(forms.Form):
 
 		return cleaned_data
 
+class nopform(forms.Form):
+	prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+	doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conemail = forms.EmailField(label="E-mail:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	doc_conphone = USPhoneNumberField(label="Phone:",required=True)
+	doc_conaddress1 = forms.CharField(label="Street Address1:",required=True,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
+	doc_concity = forms.CharField(label="City:",required=True,max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
+	doc_constate = USStateField(label="State:",required=True)
+	doc_conzip = USZipCodeField(label="Zip:",required=True)
+	doc_location = forms.CharField(label="Document Location:",widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_latitude = forms.CharField(label="Document Latitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_longitude = forms.CharField(label="Document Longitude:",max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
+	doc_city = forms.ModelChoiceField(label="City:",queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+	doc_county = forms.ModelChoiceField(label="County:",queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
+	doc_parcelno = forms.CharField(label='Parcel No.:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
+	doc_xstreets = forms.CharField(label='Cross Streets:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
+	doc_township = forms.CharField(label='Township:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
+	doc_range = forms.CharField(label='Range:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
+	doc_section = forms.CharField(label='Section:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
+	doc_base = forms.CharField(label='Base:',required=False,max_length=8,widget=forms.TextInput(attrs={'size':'8'}))
+	doc_highways = forms.CharField(label="State Hwy #:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_airports = forms.CharField(label="Airports:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_railways = forms.CharField(label="Railways:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_waterways = forms.CharField(label="Waterways:",required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
+	doc_landuse = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+	doc_schools = forms.CharField(label="Schools:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+	dev6001_val1 = forms.CharField(label="Units",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6001_val2 = forms.CharField(label="Acres",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6002_val1 = forms.CharField(label="SqFt",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6002_val2 = forms.CharField(label="Acres",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6002_val3 = forms.CharField(label="Employees",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6003_val1 = forms.CharField(label="SqFt",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6003_val2 = forms.CharField(label="Acres",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6003_val3 = forms.CharField(label="Employees",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6004_val1 = forms.CharField(label="SqFt",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6004_val2 = forms.CharField(label="Acres",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev6004_val3 = forms.CharField(label="Employees",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev7001_val1 = forms.CharField(label="Type",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev8001_val1 = forms.CharField(label="Type",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev10001_val1 = forms.CharField(label="Mineral",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	devtrans_id = forms.ModelChoiceField(required=False,queryset=keywords.objects.filter(keyw_pk__gt=4000).filter(keyw_pk__lt=5000),empty_label=None)
+	devpower_id = forms.ModelChoiceField(required=False,queryset=keywords.objects.filter(keyw_pk__gt=3000).filter(keyw_pk__lt=4000),empty_label=None)
+	devpower_val1 = forms.CharField(label="Watts",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	devwaste_id = forms.ModelChoiceField(required=False,queryset=keywords.objects.filter(keyw_pk__gt=5000).filter(keyw_pk__lt=6000),empty_label=None)
+	dev9001_val1 = forms.CharField(label="Type",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev9001_val2 = forms.CharField(label="MGD",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	dev11001_val1 = forms.CharField(label="Other",required=False,max_length=16,widget=forms.TextInput(attrs={'size':'8'}))
+	doc_actionnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	doc_issuesnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
+	ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
+
 class editnopform(forms.Form):
 	prj_title = forms.CharField(label="Project Title:",required=False,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
 	prj_description = forms.CharField(label="Project Description:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
@@ -280,9 +410,6 @@ class editnopform(forms.Form):
 	doc_longitude = forms.CharField(label="Document Longitude:",required=False,max_length=20,widget=forms.TextInput(attrs={'size':'20'}))
 	doc_city = forms.ModelChoiceField(label="City:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
 	doc_county = forms.ModelChoiceField(label="County:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
-
-class nopform(forms.Form):
-	pass
 
 class DocReviewForm(forms.Form):
 	pass

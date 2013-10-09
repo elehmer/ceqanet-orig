@@ -7,7 +7,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import FormView,UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
-from ceqanet.forms import QueryForm,SubmitForm,AddDocForm,nocform,nodform,noeform,nopform,editnoeform,editnodform,editnopform,DocReviewForm,usersettingsform,reviewdetailform,pendingdetailform,commentdetailform
+from ceqanet.forms import QueryForm,submitform,AddDocForm,nocform,nodform,noeform,nopform,editnocform,editnoeform,editnodform,editnopform,DocReviewForm,usersettingsform,reviewdetailform,pendingdetailform,commentdetailform
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords
 from datetime import datetime
 
@@ -33,7 +33,7 @@ class query(FormView):
 
 class submit(FormView):
     template_name="ceqanet/submit.html"
-    form_class = SubmitForm
+    form_class = submitform
 
     def get_success_url(self):
         doctype = self.request.POST.get('doctype')
@@ -294,25 +294,180 @@ def ProjectInfoQuery(request):
     return queryset
 
 class docadd_noc(FormView):
-    model = projects
     template_name="ceqanet/docadd_noc.html"
     form_class = nocform
 
     def get_success_url(self):
-        success_url = "%s" % (reverse_lazy('submit'))
+        success_url = "%s" % (reverse_lazy('accept'))
         return success_url
 
     def get_context_data(self, **kwargs):
         context = super(docadd_noc, self).get_context_data(**kwargs)
-        context['lag_pk'] = self.request.GET.get('lag_pk')
+
+        context['prj_pk'] = self.request.GET.get("prj_pk")
+        context['doctype'] = self.request.GET.get("doctype")
+        context['actions'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001).order_by('keyw_longname')
+        context['issues'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname')
+        if self.request.GET.get("prj_pk") != '-9999':
+            context['prjinfo'] = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
+        context['laglist'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
+
         return context
+    
+    def get_initial(self):
+        initial = super(docadd_noc, self).get_initial()
+
+        initial['doc_conname'] = self.request.user.first_name + " " + self.request.user.last_name
+        initial['doc_conemail'] = self.request.user.email
+
+        la_query = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
+        initial['doc_conaddress1'] = la_query.lag_address1.strip
+        initial['doc_conaddress2'] = la_query.lag_address2.strip
+        initial['doc_concity'] = la_query.lag_city.strip
+        initial['doc_constate'] = la_query.lag_state.strip
+        initial['doc_conzip'] = la_query.lag_zip.strip
+        return initial
 
     def form_valid(self,form):
         data = form.cleaned_data
-        lag = leadagencies.objects.get(pk=self.request.POST.get('lag_pk'))
+        today = datetime.now()
+        doc_received = today
+        lag = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
         doc = documents.objects.get(pk=0)
-        addproject = projects(prj_title=data['prj_title'],prj_lag_fk=lag,prj_doc_fk=doc)
-        addproject.save()
+        cnty = counties.objects.get(pk=data['doc_county'].pk)
+        doct = doctypes.objects.get(keyw_shortname__startswith=self.request.POST.get('doctype'))
+        if data['doc_conaddress2'] == '':
+            doc_conaddress2 = None
+        else:
+            doc_conaddress2 = data['doc_conaddress2']
+        if data['doc_parcelno'] == '':
+            doc_parcelno = None
+        else:
+            doc_parcelno = data['doc_parcelno']
+        if data['doc_xstreets'] == '':
+            doc_xstreets = None
+        else:
+            doc_xstreets = data['doc_xstreets']
+        if data['doc_township'] == '':
+            doc_township = None
+        else:
+            doc_township = data['doc_township']
+        if data['doc_range'] == '':
+            doc_range = None
+        else:
+            doc_range = data['doc_range']
+        if data['doc_section'] == '':
+            doc_section = None
+        else:
+            doc_section = data['doc_section']
+        if data['doc_base'] == '':
+            doc_base = None
+        else:
+            doc_base = data['doc_base']
+        if data['doc_highways'] == '':
+            doc_highways = None
+        else:
+            doc_highways = data['doc_highways']
+        if data['doc_airports'] == '':
+            doc_airports = None
+        else:
+            doc_airports = data['doc_airports']
+        if data['doc_railways'] == '':
+            doc_railways = None
+        else:
+            doc_railways = data['doc_railways']
+        if data['doc_waterways'] == '':
+            doc_waterways = None
+        else:
+            doc_waterways = data['doc_waterways']
+        if data['doc_landuse'] == '':
+            doc_landuse = None
+        else:
+            doc_landuse = data['doc_landuse']
+        if data['doc_schools'] == '':
+            doc_schools = None
+        else:
+            doc_schools = data['doc_schools']
+
+        if self.request.POST.get('prj_pk') == '-9999':
+            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
+            prj.save()
+        else:
+            prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
+
+        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools)
+        adddoc.save()
+        actions = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001)
+        for a in actions:
+            if self.request.POST.get('lat'+str(a.keyw_pk)) == "1":
+                if a.keyw_pk == 1018:
+                    adddoc.doc_actionnotes = data['doc_actionnotes']
+                    adddoc.save()
+                adockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=a,dkey_rank=0)
+                adockeyw.save()
+        devtypes = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010)
+        for d in devtypes:
+            if self.request.POST.get('dev'+str(d.keyw_pk)) == "1":
+                ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=d,dkey_value1=self.request.POST.get('dev'+str(d.keyw_pk)+'_val1'),dkey_value2=self.request.POST.get('dev'+str(d.keyw_pk)+'_val2'),dkey_value3=self.request.POST.get('dev'+str(d.keyw_pk)+'_val3'),dkey_rank=0)
+                ddockeyw.save()
+        if self.request.POST.get('devtrans') == "1":
+            ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=data['devtrans_id'],dkey_value1=None,dkey_value2=None,dkey_value3=None,dkey_rank=0)
+            ddockeyw.save()
+        if self.request.POST.get('devpower') == "1":
+            ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=data['devpower_id'],dkey_value1=self.request.POST.get('devpower_val1'),dkey_value2=None,dkey_value3=None,dkey_rank=0)
+            ddockeyw.save()
+        if self.request.POST.get('devwaste') == "1":
+            ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=data['devwaste_id'],dkey_value1=None,dkey_value2=None,dkey_value3=None,dkey_rank=0)
+            ddockeyw.save()
+
+        issues = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002)
+        for i in issues:
+            if self.request.POST.get('issue'+str(i.keyw_pk)) == "1":
+                if i.keyw_pk == 2034:
+                    adddoc.doc_issuesnotes = data['doc_issuesnotes']
+                    adddoc.save()
+                idockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=i,dkey_rank=0)
+                idockeyw.save()
+        for ra in data['ragencies']:
+            docrev = docreviews(drag_doc_fk=adddoc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
+            docrev.save()
+
+        prj.prj_doc_fk=adddoc
+        prj.save()
+
+        coords = latlongs(doc_pk=adddoc.pk,doc_prj_fk=prj,doc_doctype=self.request.POST.get('doctype'),doc_latitude=data['doc_latitude'],doc_longitude=data['doc_longitude'])
+        coords.save()
+
+        strFrom = "ceqanet@opr.ca.gov"
+        ToList = [data['doc_conemail']]
+        strSubject = "Confirmation of Submittal - " + doct.keyw_longname
+        strBody = "This confirms receipt of your electronic " + doct.keyw_longname + " form submission on " + doc_received.strftime('%m/%d/%Y') + ".  \n \n"
+        strBody = strBody + "The State Clearinghouse will review your submittal and provide a State Clearinghouse Number and filing date within one business day. \n \n"
+        strBody = strBody + "If you have questions about the form submittal process, please reply to this email.  Thank you for using CEQAnet. \n"
+        strBody = strBody + "\n \n" + "--- Information Submitted ---" + "\n"
+        strBody = strBody + "Document Type: " + self.request.POST.get('doctype') + "\n"        
+        if self.request.POST.get('prj_pk') == '-9999':
+            strBody = strBody + "Project Title: " + data['prj_title'] + "\n"
+        else:
+            strBody = strBody + "Project Title: " + prj.prj_title + "\n"            
+        strBody = strBody + "Project Location: " + data['doc_location'] + "\n"
+        strBody = strBody + "    City: " + data['doc_city'].geow_shortname + "\n"
+        strBody = strBody + "    County: " + data['doc_county'].geow_shortname + "\n"
+        strBody = strBody + "    Latitude: " + data['doc_latitude'] + "\n"
+        strBody = strBody + "    Longitude: " + data['doc_longitude'] + "\n"
+        if self.request.POST.get('prj_pk') == '-9999':
+            strBody = strBody + "Project Description: " + data['prj_description'] + "\n"
+        else:
+            strBody = strBody + "Project Description: " + prj.prj_description + "\n"
+        strBody = strBody + "Agency Approving Project: " + lag.lag_name + "\n"
+        strBody = strBody + "Primary Contact:  " + "\n"
+        strBody = strBody + "    Name: " + data['doc_conname'] + "\n"
+        strBody = strBody + "    Phone: " + data['doc_conphone'] + "\n"
+        strBody = strBody + "    E-mail: " + data['doc_conemail'] + "\n"
+        strBody = strBody + "DATE: " + doc_received.strftime('%m/%d/%Y') + "\n"
+
+        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
+
         return super(docadd_noc,self).form_valid(form)
 
 class docadd_nod(FormView):
@@ -543,6 +698,179 @@ class docadd_nop(FormView):
     template_name="ceqanet/docadd_nop.html"
     form_class = nopform
 
+    def get_success_url(self):
+        success_url = "%s" % (reverse_lazy('accept'))
+        return success_url
+
+    def get_context_data(self, **kwargs):
+        context = super(docadd_nop, self).get_context_data(**kwargs)
+
+        context['prj_pk'] = self.request.GET.get("prj_pk")
+        context['doctype'] = self.request.GET.get("doctype")
+        context['actions'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001).order_by('keyw_longname')
+        context['issues'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname')
+        if self.request.GET.get("prj_pk") != '-9999':
+            context['prjinfo'] = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
+        context['laglist'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
+
+        return context
+    
+    def get_initial(self):
+        initial = super(docadd_nop, self).get_initial()
+
+        initial['doc_conname'] = self.request.user.first_name + " " + self.request.user.last_name
+        initial['doc_conemail'] = self.request.user.email
+
+        la_query = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
+        initial['doc_conaddress1'] = la_query.lag_address1.strip
+        initial['doc_conaddress2'] = la_query.lag_address2.strip
+        initial['doc_concity'] = la_query.lag_city.strip
+        initial['doc_constate'] = la_query.lag_state.strip
+        initial['doc_conzip'] = la_query.lag_zip.strip
+        return initial
+
+    def form_valid(self,form):
+        data = form.cleaned_data
+        today = datetime.now()
+        doc_received = today
+        lag = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
+        doc = documents.objects.get(pk=0)
+        cnty = counties.objects.get(pk=data['doc_county'].pk)
+        doct = doctypes.objects.get(keyw_shortname__startswith=self.request.POST.get('doctype'))
+        if data['doc_conaddress2'] == '':
+            doc_conaddress2 = None
+        else:
+            doc_conaddress2 = data['doc_conaddress2']
+        if data['doc_parcelno'] == '':
+            doc_parcelno = None
+        else:
+            doc_parcelno = data['doc_parcelno']
+        if data['doc_xstreets'] == '':
+            doc_xstreets = None
+        else:
+            doc_xstreets = data['doc_xstreets']
+        if data['doc_township'] == '':
+            doc_township = None
+        else:
+            doc_township = data['doc_township']
+        if data['doc_range'] == '':
+            doc_range = None
+        else:
+            doc_range = data['doc_range']
+        if data['doc_section'] == '':
+            doc_section = None
+        else:
+            doc_section = data['doc_section']
+        if data['doc_base'] == '':
+            doc_base = None
+        else:
+            doc_base = data['doc_base']
+        if data['doc_highways'] == '':
+            doc_highways = None
+        else:
+            doc_highways = data['doc_highways']
+        if data['doc_airports'] == '':
+            doc_airports = None
+        else:
+            doc_airports = data['doc_airports']
+        if data['doc_railways'] == '':
+            doc_railways = None
+        else:
+            doc_railways = data['doc_railways']
+        if data['doc_waterways'] == '':
+            doc_waterways = None
+        else:
+            doc_waterways = data['doc_waterways']
+        if data['doc_landuse'] == '':
+            doc_landuse = None
+        else:
+            doc_landuse = data['doc_landuse']
+        if data['doc_schools'] == '':
+            doc_schools = None
+        else:
+            doc_schools = data['doc_schools']
+
+        if self.request.POST.get('prj_pk') == '-9999':
+            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
+            prj.save()
+        else:
+            prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
+
+        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools)
+        adddoc.save()
+        actions = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001)
+        for a in actions:
+            if self.request.POST.get('lat'+str(a.keyw_pk)) == "1":
+                if a.keyw_pk == 1018:
+                    adddoc.doc_actionnotes = data['doc_actionnotes']
+                    adddoc.save()
+                adockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=a,dkey_rank=0)
+                adockeyw.save()
+        devtypes = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010)
+        for d in devtypes:
+            if self.request.POST.get('dev'+str(d.keyw_pk)) == "1":
+                ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=d,dkey_value1=self.request.POST.get('dev'+str(d.keyw_pk)+'_val1'),dkey_value2=self.request.POST.get('dev'+str(d.keyw_pk)+'_val2'),dkey_value3=self.request.POST.get('dev'+str(d.keyw_pk)+'_val3'),dkey_rank=0)
+                ddockeyw.save()
+        if self.request.POST.get('devtrans') == "1":
+            ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=data['devtrans_id'],dkey_value1=None,dkey_value2=None,dkey_value3=None,dkey_rank=0)
+            ddockeyw.save()
+        if self.request.POST.get('devpower') == "1":
+            ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=data['devpower_id'],dkey_value1=self.request.POST.get('devpower_val1'),dkey_value2=None,dkey_value3=None,dkey_rank=0)
+            ddockeyw.save()
+        if self.request.POST.get('devwaste') == "1":
+            ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=data['devwaste_id'],dkey_value1=None,dkey_value2=None,dkey_value3=None,dkey_rank=0)
+            ddockeyw.save()
+
+        issues = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002)
+        for i in issues:
+            if self.request.POST.get('issue'+str(i.keyw_pk)) == "1":
+                if i.keyw_pk == 2034:
+                    adddoc.doc_issuesnotes = data['doc_issuesnotes']
+                    adddoc.save()
+                idockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=i,dkey_rank=0)
+                idockeyw.save()
+        for ra in data['ragencies']:
+            docrev = docreviews(drag_doc_fk=adddoc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
+            docrev.save()
+
+        prj.prj_doc_fk=adddoc
+        prj.save()
+
+        coords = latlongs(doc_pk=adddoc.pk,doc_prj_fk=prj,doc_doctype=self.request.POST.get('doctype'),doc_latitude=data['doc_latitude'],doc_longitude=data['doc_longitude'])
+        coords.save()
+
+        strFrom = "ceqanet@opr.ca.gov"
+        ToList = [data['doc_conemail']]
+        strSubject = "Confirmation of Submittal - " + doct.keyw_longname
+        strBody = "This confirms receipt of your electronic " + doct.keyw_longname + " form submission on " + doc_received.strftime('%m/%d/%Y') + ".  \n \n"
+        strBody = strBody + "The State Clearinghouse will review your submittal and provide a State Clearinghouse Number and filing date within one business day. \n \n"
+        strBody = strBody + "If you have questions about the form submittal process, please reply to this email.  Thank you for using CEQAnet. \n"
+        strBody = strBody + "\n \n" + "--- Information Submitted ---" + "\n"
+        strBody = strBody + "Document Type: " + self.request.POST.get('doctype') + "\n"        
+        if self.request.POST.get('prj_pk') == '-9999':
+            strBody = strBody + "Project Title: " + data['prj_title'] + "\n"
+        else:
+            strBody = strBody + "Project Title: " + prj.prj_title + "\n"            
+        strBody = strBody + "Project Location: " + data['doc_location'] + "\n"
+        strBody = strBody + "    City: " + data['doc_city'].geow_shortname + "\n"
+        strBody = strBody + "    County: " + data['doc_county'].geow_shortname + "\n"
+        strBody = strBody + "    Latitude: " + data['doc_latitude'] + "\n"
+        strBody = strBody + "    Longitude: " + data['doc_longitude'] + "\n"
+        if self.request.POST.get('prj_pk') == '-9999':
+            strBody = strBody + "Project Description: " + data['prj_description'] + "\n"
+        else:
+            strBody = strBody + "Project Description: " + prj.prj_description + "\n"
+        strBody = strBody + "Agency Approving Project: " + lag.lag_name + "\n"
+        strBody = strBody + "Primary Contact:  " + "\n"
+        strBody = strBody + "    Name: " + data['doc_conname'] + "\n"
+        strBody = strBody + "    Phone: " + data['doc_conphone'] + "\n"
+        strBody = strBody + "    E-mail: " + data['doc_conemail'] + "\n"
+        strBody = strBody + "DATE: " + doc_received.strftime('%m/%d/%Y') + "\n"
+
+        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
+
+        return super(docadd_nop,self).form_valid(form)
+
 class projectlist(ListView):
     template_name="ceqanet/projectlist.html"
     context_object_name = "docs"
@@ -633,6 +961,22 @@ def ProjDocListQuery(request):
     queryset = documents.objects.filter(doc_visible=True).filter(doc_prj_fk__exact=prj_pk).order_by('-doc_received')
     return queryset
 
+class docdesp_noc(DetailView):
+    model = documents
+    template_name="ceqanet/docdesp_noc.html"
+    context_object_name = "doc"
+
+    def get_context_data(self, **kwargs):
+        context = super(docdesp_noc, self).get_context_data(**kwargs)
+        doc_pk = self.kwargs['pk']
+        context['doc_pk'] = doc_pk
+        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
+        context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
+        context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
+        context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        return context
+
 class docdesp_noe(DetailView):
     model = documents
     template_name="ceqanet/docdesp_noe.html"
@@ -695,6 +1039,102 @@ class docdescription(DetailView):
             context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
             context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
         return context
+
+class docedit_noc(FormView):
+    form_class = editnocform
+    template_name="ceqanet/docedit_noc.html"
+
+    def get_success_url(self):
+        success_url = reverse_lazy('docdesp_noc', args=[self.request.POST.get('doc_pk')])
+        return success_url
+    
+    def get_initial(self):
+        initial = super(docedit_noc, self).get_initial()
+
+        docinfo = documents.objects.get(pk=self.request.GET.get('doc_pk'))
+        latlonginfo = latlongs.objects.filter(doc_pk=self.request.GET.get('doc_pk'))
+
+        initial['prj_title'] = docinfo.doc_prj_fk.prj_title.strip
+        initial['prj_description'] = docinfo.doc_prj_fk.prj_description.strip
+        initial['doc_conagency'] = docinfo.doc_conagency.strip
+        initial['doc_conname'] = docinfo.doc_conname.strip
+        initial['doc_conemail'] = docinfo.doc_conemail.strip
+        initial['doc_conphone'] = docinfo.doc_conphone.strip
+        initial['doc_conaddress1'] = docinfo.doc_conaddress1.strip
+        initial['doc_conaddress2'] = docinfo.doc_conaddress2.strip
+        initial['doc_concity'] = docinfo.doc_concity.strip
+        initial['doc_constate'] = docinfo.doc_constate.strip
+        initial['doc_conzip'] = docinfo.doc_conzip.strip
+        initial['doc_location'] = docinfo.doc_location.strip
+        initial['doc_conzip'] = docinfo.doc_conzip.strip
+        if latlonginfo.exists():
+            initial['doc_latitude'] = latlonginfo[0].doc_latitude.strip
+            initial['doc_longitude'] = latlonginfo[0].doc_longitude.strip
+
+        if docinfo.doc_city != None:
+            cityinfo = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_city.strip)
+            if cityinfo.count() == 1:
+                initial['doc_city'] = cityinfo[0].geow_pk
+
+        if docinfo.doc_county != None:
+            countyinfo = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_county.strip)
+            if countyinfo.count() == 1:
+                initial['doc_county'] = countyinfo[0].geow_pk
+
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(docedit_noc, self).get_context_data(**kwargs)
+        context['doc_pk'] = self.request.GET.get('doc_pk')
+
+        return context
+
+    def form_valid(self,form):
+        data = form.cleaned_data
+        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
+        prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
+
+        if data['doc_city'] != None:
+            cityname = geowords.objects.get(pk=data['doc_city'].pk)
+        else:
+            cityname = None
+        if data['doc_county'] != None:
+            countyname = geowords.objects.get(pk=data['doc_county'].pk)
+        else:
+            countyname = None
+
+        doc.doc_conagency = data['doc_conagency']
+        doc.doc_conname = data['doc_conname']
+        doc.doc_conemail = data['doc_conemail']
+        doc.doc_conphone = data['doc_conphone']
+        doc.doc_conaddress1 = data['doc_conaddress1']
+        doc.doc_conaddress2 = data['doc_conaddress2']
+        doc.doc_concity = data['doc_concity']
+        doc.doc_constate = data['doc_constate']
+        doc.doc_conzip = data['doc_conzip']
+        doc.doc_location = data['doc_location']
+        if data['doc_city'] != None:
+            doc.doc_city = cityname.geow_shortname
+        else:
+            doc.doc_city = ''
+        if data['doc_county'] != None:
+            doc.doc_county = countyname.geow_shortname
+        else:
+            doc.doc_county = ''
+        doc.save()
+        prj.prj_title = data['prj_title']
+        prj.prj_description = data['prj_description']
+        prj.save()
+
+        try:
+            coords = latlongs.objects.get(pk=doc.pk)
+            coords.doc_latitude = data['doc_latitude']
+            coords.doc_longitude = data['doc_longitude']
+        except latlongs.DoesNotExist:
+            coords = latlongs(doc_pk=doc.pk,doc_prj_fk=prj,doc_doctype="NOE",doc_latitude=data['doc_latitude'],doc_longitude=data['doc_longitude'])
+        coords.save()
+
+        return super(docedit_noc,self).form_valid(form)
 
 class docedit_noe(FormView):
     form_class = editnoeform

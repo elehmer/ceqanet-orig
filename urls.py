@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,docedit_noe,docedit_nod,docedit_nop,pending,pendingdetail,accept,review,reviewdetail,usersettings,comment,commentdetail,docdesp_noe,docdesp_nod,docdesp_nop
+from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,docedit_noc,docedit_noe,docedit_nod,docedit_nop,pending,pendingdetail,accept,review,reviewdetail,usersettings,comment,commentdetail,docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
 
 urlpatterns = patterns('ceqanet.views',
 	url(r'^$','index',name='index'),
@@ -10,6 +10,8 @@ urlpatterns = patterns('ceqanet.views',
 	url(r'^docdescription/(?P<pk>\d+)/$',docdescription.as_view(),name='docdescription'),
 	url(r'^submit/$',submit.as_view(),name='submit'),
 	url(r'^findproject/$',findproject.as_view(),name='findproject'),
+	url(r'^docdesp_noc/(?P<pk>\d+)/$',docdesp_noc.as_view(),name='docdesp_noc'),
+	url(r'^docedit_noc/$',docedit_noc.as_view(),name='docedit_noc'),
 	url(r'^docdesp_noe/(?P<pk>\d+)/$',docdesp_noe.as_view(),name='docdesp_noe'),
 	url(r'^docedit_noe/$',docedit_noe.as_view(),name='docedit_noe'),
 	url(r'^docdesp_nod/(?P<pk>\d+)/$',docdesp_nod.as_view(),name='docdesp_nod'),

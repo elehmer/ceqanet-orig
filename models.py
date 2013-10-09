@@ -11,6 +11,11 @@ class doctypes(models.Model):
 	keyw_shortname = models.CharField(max_length=32)
 	keyw_longname = models.CharField(max_length=64)
 	inlookup = models.BooleanField(default=True)
+	storfed = models.IntegerField()
+	ordinal = models.IntegerField()
+
+	def __unicode__(self):
+		return self.keyw_longname	
 class docgeowords(models.Model):
 	dgeo_pk = models.AutoField(primary_key=True)
 	dgeo_geow_fk = models.ForeignKey("geowords",db_column="dgeo_geow_fk")
@@ -183,6 +188,9 @@ class keywords(models.Model):
 	keyw_caption3 = models.CharField(max_length=10)
 	keyw_originalcontrolid = models.CharField(max_length=10)
 	keyw_recordsource = models.CharField(max_length=10)
+
+	def __unicode__(self):
+		return self.keyw_longname		
 class latlongs(models.Model):
 	doc_pk = models.AutoField(primary_key=True)
 	doc_prj_fk = models.ForeignKey("projects",db_column="doc_prj_fk")

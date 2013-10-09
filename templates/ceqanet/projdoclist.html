@@ -44,8 +44,8 @@
         <a href="{% url 'docdesp_nop' prjdoc.doc_pk %}">{{ prjdoc.doc_docname }}</a>
       </TD>
       {% else %}
-      <TD align="center">
-        {{ prjdoc.doc_docname }}
+      <TD align="center" valign="center">
+        <a href="{% url 'docdesp_noc' prjdoc.doc_pk %}">{{ prjdoc.doc_docname }}</a>
       </TD>
       {% endif %}
     	<TD align="center">

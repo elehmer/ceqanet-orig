@@ -5,7 +5,7 @@
 {% block content %}
 
 {{ form.media }}
-<FORM name="adddoc" method="post" action="">
+<FORM name="editdoc" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
@@ -29,16 +29,6 @@
         {{ form.prj_description }} {{ form.prj_description.errors }}
       </TD>
     </TR>
-    {% if prj_pk != '-9999' %}
-    <TR>
-      <TH width="25%" align="left" valign="top">
-        Project Clearinghouse Number:
-      </TH>
-      <TD colspan="2">
-        {{ prjinfo.prj_schno }}
-      </TD>
-    </TR>
-    {% endif %}    
     <TR> 
       <TH align="left" colspan="3">
         <h3>Document Information:</h3>
@@ -50,11 +40,11 @@
       </TH>
     </TR>
     <tr>
-      <td width="25%" valign="top">
-        <b>From <font color="#000066">(Lead Agency)</font>:</b>
-      </td>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conagency.label }}
+      </TH>
       <td colspan="2"> 
-        {{ laglist.lag_name }}
+        {{ form.doc_conagency }}
       </td>
     </tr>
     <TR>
@@ -166,98 +156,13 @@
         {{ form.doc_county }} {{ form.doc_county.errors }}
       </td>
     </TR>
-    <tr> 
-      <td colspan="3">
-        <h5>Determinations:</h5>
-      </td>
-    </tr>
-    <tr> 
-      <td colspan="3">
-        This is to advise that the 
-        {{ form.doc_nodbylead }}
-        Lead Agency &nbsp; 
-        {{ form.doc_nodbyresp }}
-        Responsible Agency &nbsp; 
-        {{ form.doc_nodagency }}
-        has approved the project described above on 
-        {{ form.doc_nod }}
-        and has made the following determinations regarding the project described 
-        above.
-      </td>
-    </tr>
-    <tr> 
-      <td colspan="3">
-        1. The project 
-        {{ form.doc_detsigeffect }}
-        will &nbsp; 
-        {{ form.doc_detnotsigeffect }}
-        will not have a significant effect on the environment.
-      </td>
-    </tr>
-    <tr> 
-      <td colspan="3">
-        2. 
-        {{ form.doc_deteir }}
-        An Environmental Impact Report was prepared for this project pursuant to 
-        the provisions of CEQA.
-      </td>
-    </tr>
-    <tr> 
-      <td colspan="3">
-        &nbsp;&nbsp;&nbsp;
-        {{ form.doc_detnegdec }}
-        A Negative Declaration was prepared for this project pursuant to the provisions 
-        of CEQA.
-      </td>
-    </tr>
-    <tr> 
-      <td colspan="3">
-        3. Mitigation measures 
-        {{ form.doc_detmitigation }}
-        were &nbsp; 
-        {{ form.doc_detnotmitigation }}
-        were not made a condition of the approval of the project.
-      </td>
-    </tr>
-    <tr> 
-      <td colspan="3">
-        4. A Statement of Overriding Considerations 
-        {{ form.doc_detconsider }}
-        was &nbsp; 
-        {{ form.doc_detnotconsider }}
-        was not adopted for this project.
-      </td>
-    </tr>
-    <tr> 
-      <td colspan="3">
-        5. Findings 
-        {{ form.doc_detfindings }}
-        were &nbsp; 
-        {{ form.doc_detnotfindings }}
-        were not made pursuant to the provisions of CEQA.
-      </td>
-    </tr>
-    <tr> 
-      <td colspan="3">
-        <b>Final EIR Available at:</b> {{ form.doc_eiravailableat }}
-      </td>
-    </tr>
     <TR> 
-      <TD width="25%" valign="top">
-        <B>Entry Date:</B>
-      </TD>
-      <TD colspan="2">
-        {% now "F j, Y" %}
-      </TD>
-    </TR>
-    <TR> 
-      <TD align="center" colspan="3"> 
-        <input type="submit" value="Submit to OPR for review...">
+      <TD align="left" colspan="3"> 
+        <input type="submit" value="Update">
       </TD>
     </TR>
   </TABLE>
-  <input type="hidden" name="prj_pk" value="{{ prj_pk }}">
-  <input type="hidden" name="doctype" value="{{ doctype }}">
+  <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
 </FORM>
 
 {% endblock content %}
