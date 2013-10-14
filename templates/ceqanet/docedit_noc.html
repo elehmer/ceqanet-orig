@@ -156,6 +156,530 @@
         {{ form.doc_county }} {{ form.doc_county.errors }}
       </td>
     </TR>
+    <tr> 
+      <td colspan="3">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="3"> 
+        <B>{{ form.doc_parcelno.label }}</B> {{ form.doc_parcelno }} {{ form.doc_parcelno.errors }}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3"> 
+        <B>{{ form.doc_xstreets.label }}</B> {{ form.doc_xstreets }} {{ form.doc_xstreets.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_township.label }}</B> {{ form.doc_township }} {{ form.doc_township.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_range.label }}</B> {{ form.doc_range }} {{ form.doc_range.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_section.label }}</B> {{ form.doc_section }} {{ form.doc_section.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_base.label }}</B> {{ form.doc_base }} {{ form.doc_base.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">&nbsp;</td>
+    </tr>
+    <tr> 
+      <td colspan="3" align="left"><b>Within 2 Miles:</b></td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_highways.label }}</B> {{ form.doc_highways }} {{ form.doc_highways.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_railways.label }}</B> {{ form.doc_railways }}{{ form.doc_railways.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_airports.label }}</B> {{ form.doc_airports }} {{ form.doc_airports.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_schools.label }}</B> {{ form.doc_schools }} {{ form.doc_schools.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_waterways.label }}</B> {{ form.doc_waterways }} {{ form.doc_waterways.errors }}
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3" align="left">
+        <B>Present Land Use/Zoning/General Plan Designation:</B>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="3"> 
+        {{ form.doc_landuse }} {{ form.doc_landuse.errors }}
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Document Type:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3">
+        {{ form.doctypeid.errors }}
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <TR> 
+            <TH width="33%">CEQA:</TH>
+            <TH width="33%">NEPA:</TH>
+            <TH width="33%">Joint Document:</TH>
+          </TR>
+          <TR>
+            <TD>
+              <table>
+              {% for dt in form.doctypeid %}
+                {% if forloop.counter < 12 %}
+                <tr>
+                  <td>
+                    {{ dt }}
+                  </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              </table>
+            </TD>
+            <TD>
+              <table>
+              {% for dt in form.doctypeid %}
+                {% if forloop.counter > 11 and forloop.counter < 20 %}
+                <tr>
+                  <td>
+                    {{ dt }}
+                  </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              </table>
+            </TD>
+            <TD>
+              <table>
+              {% for dt in form.doctypeid %}
+                {% if forloop.counter = 20 %}
+                <tr>
+                  <td>
+                    {{ dt }}
+                  </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              </table>
+            </TD>
+          </TR>
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Local Action Type:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3"> 
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          {% for pk, choice in form.actions.field.widget.choices %}
+            {% if choice.strip != 'Other Action' %}
+              <tr>
+                <td>
+                  <label for="id_actions_{{ forloop.counter0 }}">
+                    <input {% for action in app.actions.all %}{% if action.pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
+                  </label>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}     
+          {% for pk, choice in form.actions.field.widget.choices %}
+            {% if choice.strip = 'Other Action' %}
+              <tr>
+                <td>
+                  <label for="id_actions_{{ forloop.counter0 }}">
+                    <input {% for action in app.actions.all %}{% if action.pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
+                  </label>
+                  {{ form.doc_actionnotes }} {{ form.doc_actionnotes.errors }}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}     
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Development Type:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3"> 
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="dev6001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Residential:</td>
+            <td width="25%" class="content"><i>{{ form.dev6001_val1.label }}</i> 
+              {{ form.dev6001_val1 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6001_val2.label }}</i> 
+              {{ form.dev6001_val2 }}
+            </td>
+            <td width="11%">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="dev6002" value="1">
+            </td>
+            <td width="15%" class="subtitle">Office:</td>
+            <td width="25%" class="content"><i>{{ form.dev6002_val1.label }}</i> 
+              {{ form.dev6002_val1 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6002_val2.label }}</i> 
+              {{ form.dev6002_val2 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6002_val3.label }}</i> 
+              {{ form.dev6002_val3 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="dev6003" value="1">
+            </td>
+            <td width="15%" class="subtitle">Commercial:</td>
+            <td width="25%" class="content"><i>{{ form.dev6003_val1.label }}</i> 
+              {{ form.dev6003_val1 }}
+            <td width="25%" class="content"><i>{{ form.dev6003_val2.label }}</i> 
+              {{ form.dev6003_val2 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6003_val3.label }}</i> 
+              {{ form.dev6003_val3 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="dev6004" value="1">
+            </td>
+            <td width="15%" class="subtitle">Industrial:</td>
+            <td width="25%" class="content"><i>{{ form.dev6004_val1.label }}</i> 
+              {{ form.dev6004_val1 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6004_val2.label }}</i> 
+              {{ form.dev6004_val2 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6004_val3.label }}</i> 
+              {{ form.dev6004_val3 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="dev7001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Educational</td>
+            <td width="25%" class="content"><i>{{ form.dev7001_val1.label }}</i> 
+              {{ form.dev7001_val1 }}
+            </td>
+            <td width="25%" class="content">&nbsp; </td>
+            <td width="25%" class="content">&nbsp; </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="dev8001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Recreational</td>
+            <td width="25%" class="content"><i>{{ form.dev8001_val1.label }}</i> 
+              {{ form.dev8001_val1 }}
+            </td>
+            <td width="25%" class="content">&nbsp; </td>
+            <td width="25%" class="content">&nbsp; </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="devtrans" value="1">
+            </td>
+            <td width="15%" class="subtitle">
+              {{ form.devtrans_id }}
+            </td>
+            <td width="25%" class="content">
+              &nbsp;
+            </td>
+            <td width="11%">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="devpower" value="1">
+            </td>
+            <td width="15%" class="subtitle">
+              {{ form.devpower_id }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.devpower_val1.label }}</i>
+              {{ form.devpower_val1 }}
+            </td>
+            <td width="25%" class="content"><i>&nbsp;</i> 
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="devwaste" value="1">
+            </td>
+            <td width="15%" class="subtitle">
+              {{ form.devwaste_id}}
+            </td>
+            <td width="25%" class="content">
+              &nbsp;
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="dev9001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Water Facilities:</td>
+            <td width="25%" class="content"><i>{{ form.dev9001_val1.label }}</i> 
+              {{ form.dev9001_val1 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev9001_val2.label }}</i> 
+              {{ form.dev9001_val2 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="dev10001" value="1">
+            </td>
+            <td width="15%" class="subtitle">Mining:</td>
+            <td width="25%" class="content"><i>{{ form.dev10001_val1.label }}</i> 
+              {{ form.dev10001_val1 }}
+            </td>
+            <td width="11%">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="dev11001" value="1">
+            </td>
+            <td width="15%" class="subtitle">{{ form.dev11001_val1.label }}:</td>
+            <td width="25%"> 
+              {{ form.dev11001_val1 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%">&nbsp; </td>
+            <td width="15%" class="subtitle">&nbsp;</td>
+            <td width="25%">&nbsp; </td>
+          </tr>
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Project Issues Discussed in Document:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3">
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2004" value="1">
+            </td>
+            <td width=" 44%" class="content">Aesthetic/Visual </td>
+            <td width="5%"> 
+              <input type="checkbox" name="issue2015" value="1">
+            </td>
+            <td width=" 44%" class="content">Schools/Universities </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2003" value="1">
+            </td>
+            <td width=" 44%" class="content">Agricultural Land </td>
+            <td width="5%"> 
+              <input type="checkbox" name="issue2016" value="1">
+            </td>
+            <td width=" 44%" class="content">Septic Systems </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2002" value="1">
+            </td>
+            <td width=" 44%" class="content">Air Quality </td>
+            <td width="6%" height="19"> 
+              <input type="checkbox" name="issue2017" value="1">
+            </td>
+            <td width=" 44%" height="19" class="content">Sewer Capacity </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2001" value="1">
+            </td>
+            <td width=" 44%" class="content">Archeological/Historical </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2019" value="1">
+            </td>
+            <td width=" 44%" class="content">Soil Erosion/Compaction/Grading </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue500002" value="1">
+            </td>
+            <td width=" 44%" class="content">Biological Resources </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2020" value="1">
+            </td>
+            <td width=" 44%" class="content">Solid Waste </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2005" value="1">
+            </td>
+            <td width=" 44%"  class="content">Coastal Zone </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2021" value="1">
+            </td>
+            <td width=" 44%" class="content">Toxic/Hazardous </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2035" value="1">
+            </td>
+            <td width=" 44%" class="content">Drainage/Absorbtion </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2022" value="1">
+            </td>
+            <td width=" 44%" class="content">Traffic/Circulation </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2006" value="1">
+            </td>
+            <td width=" 44%" class="content"> Economic/Jobs </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2023" value="1">
+            </td>
+            <td width=" 44%" class="content">Vegetation </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox"name="issue2031" value="1">
+            </td>
+            <td width=" 44%" class="content">Fiscal Impacts</td>
+            <td width="5%">
+              <input type="checkbox" name="issue2024" value="1">
+            </td>
+            <td width=" 44%" class="content">Water Quality </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2008" value="1">
+            </td>
+            <td width=" 44%" class="content">Flood Plain/Flooding </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2025" value="1">
+            </td>
+            <td width=" 44%" class="content">Water Supply/Ground Water </td>
+          </tr>
+          <tr> 
+            <td width="5%">
+              <input type="checkbox" name="issue2007" value="1">
+            </td>
+            <td width=" 44%" class="content">Forest Land /Fire Hazard </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2026" value="1">
+            </td>
+            <td width=" 44%" class="content">Wetland/Riparian </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2009" value="1">
+            </td>
+            <td width=" 44%" class="content">Geologic/Seismic </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2028" value="1">
+            </td>
+            <td width=" 44%" class="content">Growth Inducing </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2012" value="1">
+            </td>
+            <td width=" 44%" class="content">Minerals</td>
+            <td width="6%" >
+              <input type="checkbox" name="issue2029" value="1">
+            </td>
+            <td width=" 44%" class="content">Land Use </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2013" value="1">
+            </td>
+            <td width=" 44%" class="content">Noise </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2030" value="1">
+            </td>
+            <td width=" 44%" class="content">Cumulative Effects </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2032" value="1">
+            </td>
+            <td width=" 44%" class="content"> Population/Jobs/Housing Balance 
+            </td>
+            <td width="5%">
+              <input type="checkbox" name="issue2034" value="1">
+            </td>
+            <td width=" 44%" class="content">Other </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2014" value="1">
+            </td>
+            <td width=" 44%" class="content">Public Services/Facilities </td>
+            <td width="5%">&nbsp; </td>
+            <td width=" 44%" class="content">
+              {{ form.doc_issuesnotes }} {{ form.doc_issuesnotes.errors }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              <input type="checkbox" name="issue2033" value="1">
+            </td>
+            <td width=" 44%" class="content">Recreation/Parks </td>
+            <td colspan="2">
+              &nbsp;
+            </td>
+          </tr>
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Reviewing Agencies Checklist:</h5>
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        <B>Reviewing Agencies (Ctrl+Click to select multiple):</B>
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        {{ form.ragencies }}
+      </td>
+    </tr>
     <TR> 
       <TD align="left" colspan="3"> 
         <input type="submit" value="Update">

@@ -307,7 +307,7 @@ class docadd_noc(FormView):
         context['prj_pk'] = self.request.GET.get("prj_pk")
         context['doctype'] = self.request.GET.get("doctype")
         context['actions'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001).order_by('keyw_longname')
-        context['issues'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname')
+        #context['issues'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname')
         if self.request.GET.get("prj_pk") != '-9999':
             context['prjinfo'] = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
         context['laglist'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
@@ -335,7 +335,6 @@ class docadd_noc(FormView):
         lag = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
         doc = documents.objects.get(pk=0)
         cnty = counties.objects.get(pk=data['doc_county'].pk)
-        doct = doctypes.objects.get(keyw_shortname__startswith=self.request.POST.get('doctype'))
         if data['doc_conaddress2'] == '':
             doc_conaddress2 = None
         else:
@@ -395,7 +394,7 @@ class docadd_noc(FormView):
         else:
             prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
 
-        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools)
+        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=data['doctypeid'],doc_doctype=data['doctypeid'].keyw_shortname,doc_docname=data['doctypeid'].keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools)
         adddoc.save()
         actions = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001)
         for a in actions:
@@ -440,12 +439,12 @@ class docadd_noc(FormView):
 
         strFrom = "ceqanet@opr.ca.gov"
         ToList = [data['doc_conemail']]
-        strSubject = "Confirmation of Submittal - " + doct.keyw_longname
-        strBody = "This confirms receipt of your electronic " + doct.keyw_longname + " form submission on " + doc_received.strftime('%m/%d/%Y') + ".  \n \n"
+        strSubject = "Confirmation of Submittal - " + data['doctypeid'].keyw_longname
+        strBody = "This confirms receipt of your electronic " + data['doctypeid'].keyw_longname + " form submission on " + doc_received.strftime('%m/%d/%Y') + ".  \n \n"
         strBody = strBody + "The State Clearinghouse will review your submittal and provide a State Clearinghouse Number and filing date within one business day. \n \n"
         strBody = strBody + "If you have questions about the form submittal process, please reply to this email.  Thank you for using CEQAnet. \n"
         strBody = strBody + "\n \n" + "--- Information Submitted ---" + "\n"
-        strBody = strBody + "Document Type: " + self.request.POST.get('doctype') + "\n"        
+        strBody = strBody + "Document Type: " + data['doctypeid'].keyw_shortname + "\n"        
         if self.request.POST.get('prj_pk') == '-9999':
             strBody = strBody + "Project Title: " + data['prj_title'] + "\n"
         else:
@@ -796,7 +795,7 @@ class docadd_nop(FormView):
         else:
             prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
 
-        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools)
+        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools)
         adddoc.save()
         actions = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001)
         for a in actions:
@@ -1081,11 +1080,29 @@ class docedit_noc(FormView):
             if countyinfo.count() == 1:
                 initial['doc_county'] = countyinfo[0].geow_pk
 
+        initial['doc_parcelno'] = docinfo.doc_parcelno.strip
+        initial['doc_xstreets'] = docinfo.doc_xstreets.strip
+        initial['doc_township'] = docinfo.doc_township.strip
+        initial['doc_range'] = docinfo.doc_range.strip
+        initial['doc_section'] = docinfo.doc_section.strip
+        initial['doc_base'] = docinfo.doc_base.strip
+        initial['doc_highways'] = docinfo.doc_highways.strip
+        initial['doc_railways'] = docinfo.doc_railways.strip
+        initial['doc_airports'] = docinfo.doc_airports.strip
+        initial['doc_schools'] = docinfo.doc_schools.strip
+        initial['doc_waterways'] = docinfo.doc_waterways.strip
+        initial['doc_parcelno'] = docinfo.doc_parcelno.strip
+        initial['doc_landuse'] = docinfo.doc_landuse.strip
+
+        initial['doctypeid'] = docinfo.doc_doct_fk.keyw_pk
+        initial['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
+
         return initial
 
     def get_context_data(self, **kwargs):
         context = super(docedit_noc, self).get_context_data(**kwargs)
         context['doc_pk'] = self.request.GET.get('doc_pk')
+        #ontext['actions'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001).order_by('keyw_longname')
 
         return context
 

@@ -246,7 +246,8 @@
       </td>
     </tr>
     <TR> 
-      <TD colspan="3"> 
+      <TD colspan="3">
+        {{ form.doctypeid.errors }}
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
           <TR> 
             <TH width="33%">CEQA:</TH>
@@ -303,28 +304,31 @@
       </td>
     </tr>
     <TR> 
-      <TD colspan="3"> 
+      <TD colspan="3">
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
-          {% for a in actions %}
-              {% if a.keyw_longname.strip != 'Other Action' %}
-          <TR>
-            <td width="5%"> 
-              <input type="checkbox" name="lat{{ a.keyw_pk }}" value="1">
-            </td>
-            <td width="95%">
-                {{ a.keyw_longname }}
-            </TD>
-          </TR>
-              {% endif %}
-          {% endfor %}
-          <TR>
-            <td width="5%"> 
-              <input type="checkbox" name="lat1018" value="1">
-            </td>
-            <td width="95%">
-              Other {{ form.doc_actionnotes }}  {{ form.doc_actionnotes.errors }}
-            </TD>
-          </TR>
+          {% for pk, choice in form.actions.field.widget.choices %}
+            {% if choice.strip != 'Other Action' %}
+              <tr>
+                <td>
+                  <label for="id_actions_{{ forloop.counter0 }}">
+                    <input {% for action in app.actions.all %}{% if action.pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
+                  </label>
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}     
+          {% for pk, choice in form.actions.field.widget.choices %}
+            {% if choice.strip = 'Other Action' %}
+              <tr>
+                <td>
+                  <label for="id_actions_{{ forloop.counter0 }}">
+                    <input {% for action in app.actions.all %}{% if action.pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
+                  </label>
+                  {{ form.dkey_comment_actions }} {{ form.dkey_comment_actions.errors }}
+                </td>
+              </tr>
+            {% endif %}
+          {% endfor %}     
         </table>
       </TD>
     </TR>
@@ -477,9 +481,9 @@
             <td width="5%"> 
               <input type="checkbox" name="dev11001" value="1">
             </td>
-            <td width="15%" class="subtitle">{{ form.dev11001_val1.label }}:</td>
+            <td width="15%" class="subtitle">{{ form.dkey_comment_dev.label }}:</td>
             <td width="25%"> 
-              {{ form.dev11001_val1 }}
+              {{ form.dkey_comment_dev }}
             </td>
           </tr>
           <tr> 
@@ -656,7 +660,7 @@
             <td width=" 44%" class="content">Public Services/Facilities </td>
             <td width="5%">&nbsp; </td>
             <td width=" 44%" class="content">
-              {{ form.doc_issuesnotes }} {{ form.doc_issuesnotes.errors }}
+              {{ form.dkey_comment_issues }} {{ form.dkey_comment_issues.errors }}
             </td>
           </tr>
           <tr> 
