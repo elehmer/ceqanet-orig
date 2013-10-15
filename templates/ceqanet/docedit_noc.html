@@ -5,7 +5,7 @@
 {% block content %}
 
 {{ form.media }}
-<FORM name="adddoc" method="post" action="">
+<FORM name="editdoc" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
@@ -29,16 +29,6 @@
         {{ form.prj_description }} {{ form.prj_description.errors }}
       </TD>
     </TR>
-    {% if prj_pk != '-9999' %}
-    <TR>
-      <TH width="25%" align="left" valign="top">
-        Project Clearinghouse Number:
-      </TH>
-      <TD colspan="2">
-        {{ prjinfo.prj_schno }}
-      </TD>
-    </TR>
-    {% endif %}    
     <TR> 
       <TH align="left" colspan="3">
         <h3>Document Information:</h3>
@@ -50,11 +40,11 @@
       </TH>
     </TR>
     <tr>
-      <td width="25%" valign="top">
-        <b>From <font color="#000066">(Lead Agency)</font>:</b>
-      </td>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conagency.label }}
+      </TH>
       <td colspan="2"> 
-        {{ laglist.lag_name }}
+        {{ form.doc_conagency }}
       </td>
     </tr>
     <TR>
@@ -304,7 +294,7 @@
       </td>
     </tr>
     <TR> 
-      <TD colspan="3">
+      <TD colspan="3"> 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
           {% for pk, choice in form.actions.field.widget.choices %}
             {% if choice.strip != 'Other Action' %}
@@ -324,7 +314,7 @@
                   <label for="id_actions_{{ forloop.counter0 }}">
                     <input {% for action in app.actions.all %}{% if action.pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
                   </label>
-                  {{ form.dkey_comment_actions }} {{ form.dkey_comment_actions.errors }}
+                  {{ form.doc_actionnotes }} {{ form.doc_actionnotes.errors }}
                 </td>
               </tr>
             {% endif %}
@@ -481,9 +471,9 @@
             <td width="5%"> 
               <input type="checkbox" name="dev11001" value="1">
             </td>
-            <td width="15%" class="subtitle">{{ form.dkey_comment_dev.label }}:</td>
+            <td width="15%" class="subtitle">{{ form.dev11001_val1.label }}:</td>
             <td width="25%"> 
-              {{ form.dkey_comment_dev }}
+              {{ form.dev11001_val1 }}
             </td>
           </tr>
           <tr> 
@@ -660,7 +650,7 @@
             <td width=" 44%" class="content">Public Services/Facilities </td>
             <td width="5%">&nbsp; </td>
             <td width=" 44%" class="content">
-              {{ form.dkey_comment_issues }} {{ form.dkey_comment_issues.errors }}
+              {{ form.doc_issuesnotes }} {{ form.doc_issuesnotes.errors }}
             </td>
           </tr>
           <tr> 
@@ -691,21 +681,12 @@
       </td>
     </tr>
     <TR> 
-      <TD width="25%" valign="top">
-        <B>Entry Date:</B>
-      </TD>
-      <TD colspan="2">
-        {% now "F j, Y" %}
-      </TD>
-    </TR>
-    <TR> 
-      <TD align="center" colspan="3"> 
-        <input type="submit" value="Submit to OPR for review...">
+      <TD align="left" colspan="3"> 
+        <input type="submit" value="Update">
       </TD>
     </TR>
   </TABLE>
-  <input type="hidden" name="prj_pk" value="{{ prj_pk }}">
-  <input type="hidden" name="doctype" value="{{ doctype }}">
+  <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
 </FORM>
 
 {% endblock content %}

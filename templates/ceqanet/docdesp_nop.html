@@ -1,32 +1,35 @@
 {% extends "ceqanet/listpage.html" %}
 
-{% block title %}OPR Data Clearinghouse Document Review Detail{% endblock title %}
+{% block title %}OPR Data Clearinghouse Document Listing{% endblock title %}
 
 {% block listing %}
   {% load staticfiles %}
-<FORM name="commentdetailform" method="post" action="">
-  {% csrf_token %}
     <table width="767" border="0" cellpadding="3">
       <tr>
         <td align="center">
-          <h3>{{ detail.doc_prj_fk.prj_title }}</h3>
+          <h3>{{ doc.doc_prj_fk.prj_title }}</h3>
         </td>
       </tr>
       <tr> 
         <td> 
-          <b>Document Type:</b> {{ detail.doc_doctype }}  - {{ detail.doc_docname }}
+          <b>SCH Number:</b> {{ doc.doc_prj_fk.prj_schno }}
         </td>
       </tr>
-      {% if detail.doc_title.strip.length > 0 %}
       <tr> 
         <td> 
-          <b>Alternate Title:</b> {{ detail.doc_title }}
+          <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
+        </td>
+      </tr>
+      {% if doc.doc_title.strip.length > 0 %}
+      <tr> 
+        <td> 
+          <b>Alternate Title:</b> {{ doc.doc_title }}
         </td>
       </tr>
       {% endif %}
       <tr> 
         <td> 
-          <b>Project Lead Agency:</b> {{ detail.doc_prj_fk.prj_leadagency }}
+          <b>Project Lead Agency:</b> {{ doc.doc_prj_fk.prj_leadagency }}
         </td>
       </tr>
       <tr>
@@ -41,7 +44,7 @@
       </tr>
       <tr> 
         <td>
-          {{ detail.doc_prj_fk.prj_description }}
+          {{ doc.doc_description }}
         </td>
       </tr>
       <tr> 
@@ -58,43 +61,38 @@
         <td>
           <table border="0">
             <tr>
-              <td align="left">
-               <b>Contact Person:</b> {{ detail.doc_conname }}
+              <th align="left">
+                Primary Contact:
               </td>
             </tr>
             <tr>
               <td align="left">
-                <b>Lead Agency:</b> {{ detail.doc_conagency }}
+               {{ doc.doc_conname }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                <B>Phone:</B> {{ detail.doc_conphone }}
+                {{ doc.doc_conagency }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                <b>Street Address1:</B> {{ detail.doc_conaddress1 }}
+                {{ doc.doc_conphone }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                <b>Street Address2:</B> {{ detail.doc_conaddress2 }}
+                {{ doc.doc_conaddress1 }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                <B>City:</B> {{ detail.doc_concity }}
+                {{ doc.doc_conaddress2 }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                <B>State:</B> {{ detail.doc_constate }}
-              </td>
-            </tr>
-            <tr>
-              <td align="left">
-                <B>Zip:</B> {{ detail.doc_conzip }}
+                {{ doc.doc_concity }}, {{ doc.doc_constate }} {{ doc.doc_conzip }}
               </td>
             </tr>
           </table>
@@ -115,67 +113,65 @@
           <table border="0">
             <tr>
               <td align="left">
-                <B>County:</b> {{ detail.doc_county }}
+                County: {{ doc.doc_county }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                <B>City:</b> {{ detail.doc_city }}
+                City: {{ doc.doc_city }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Region: {{ doc.doc_region }}
+              </td>
+            </tr> 
+            <tr>
+              <td align="left">
+                Cross Streets: {{ doc.doc_xstreets }}
               </td>
             </tr> 
             <tr>
               <td align="left">
                 {% if latlongs.exists %}
                   {% for ll in latlongs %}
-                    <B>Latitude/Longitude:</b> {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
+                    Latitude/Longitude: {{ ll.doc_latitude}} / {{ ll.doc_longitude }}
                   {% endfor %}
                 {% else %}
-                  <B>Latitude/Longitude:</B>
+                  Latitude/Longitude:
                 {% endif %}
               </td>
             </tr> 
-            {% if detail.doc_doctype = 'NOC' or detail.doc_doctype = 'NOP' %}
             <tr>
               <td align="left">
-                <B>Region:</b> {{ detail.doc_region }}
+                Parcel No: {{ doc.doc_parcelno }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                <B>Cross Streets:</b> {{ detail.doc_xstreets }}
+                Township: {{ doc.doc_township }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                <B>Parcel No:</b> {{ detail.doc_parcelno }}
+                Range: {{ doc.doc_range }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                <B>Township:</b> {{ detail.doc_township }}
+                Section: {{ doc.doc_section }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                <B>Range:</b> {{ detail.doc_range }}
+                Base: {{ doc.doc_base }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                <B>Section:</b> {{ detail.doc_section }}
-              </td>
-            </tr> 
-            <tr>
-              <td align="left">
-                <B>Base:</b> {{ detail.doc_base }}
-              </td>
-            </tr> 
-            <tr>
-              <td align="left">
-                <B>Other Location Info:</b> {{ detail.doc_location }}
+                Other Location Info: {{ doc.doc_location }}
               </td>
             </tr>
-            {% endif %}
           </table>
         </td>
       </tr>
@@ -184,7 +180,6 @@
           <hr width="100%">
         </td>
       </tr>
-      {% if detail.doc_doctype = 'NOC' or detail.doc_doctype = 'NOP' %}
       <tr> 
         <td>
           <b>Proximity To</b>
@@ -195,63 +190,35 @@
           <table border="0">
             <tr>
               <td align="left">
-                <B>Highways:</b> {{ detail.doc_highways }}
-              </td>
-            </tr>
-
-            <tr>
-              <td align="left">
-                <B>Airports:</b> {{ detail.doc_airports }}
+                Highways: {{ doc.doc_highways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                <B>Railways:</b> {{ detail.doc_railways }}
+                Airports: {{ doc.doc_airports }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                <B>Waterways:</b> {{ detail.doc_waterways }}
+                Railways: {{ doc.doc_railways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                <B>Schools:</b> {{ detail.doc_schools }}
+                Waterways: {{ doc.doc_waterways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                <B>Land Use:</b> {{ detail.doc_landuse }}
+                Schools: {{ doc.doc_schools }}
+              </td>
+            </tr>
+            <tr>
+              <td align="left">
+                Land Use: {{ doc.doc_landuse }}
               </td>
             </tr>
           </table>
-        </td>
-      </tr>
-      <tr> 
-        <td> 
-          <hr width="100%">
-        </td>
-      </tr>
-      <tr> 
-        <td> 
-          <b>Local Action</b>
-        </td>
-      </tr>
-      <tr> 
-        <td class="content">
-          <ul>
-            {% for a in actions %}
-              <li>{{ a.dkey_keyw_fk.keyw_longname }}
-              {% if a.dkey_comment.strip != None %}
-                ({{ a.dkey_comment }})
-              {% endif %}
-              {% if a.dkey_keyw_fk.keyw_longname.strip = "Other Action" %}
-                {% if a.dkey_doc_fk.doc_actionnotes.strip != None %}
-                  ({{ a.dkey_doc_fk.doc_actionnotes }}) 
-                {% endif %}
-              {% endif %}</li>
-            {% endfor %}
-          </ul>
         </td>
       </tr>
       <tr> 
@@ -269,12 +236,39 @@
           <ul>
             {% for d in dev %}
               <li>{{ d.dkey_keyw_fk.keyw_longname }}
-              {% if d.dkey_comment.strip != None %}
+              {% if d.dkey_comment.strip != '' %}
                 ({{ d.dkey_comment }})
               {% endif %} 
-              {% if d.dkey_keyw_fk.keyw_longname.strip = "Other" %}
-                {% if d.dkey_doc_fk.doc_devnotes.strip != None %}
+              {% if d.dkey_keyw_fk.keyw_longname = "Other" %}
+                {% if d.dkey_doc_fk.doc_devnotes.strip != '' %}
                   ({{ d.dkey_doc_fk.doc_devnotes }})
+                {% endif %}
+              {% endif %}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Local Action</b>
+        </td>
+      </tr>
+      <tr> 
+        <td class="content">
+          <ul>
+            {% for a in actions %}
+              <li>{{ a.dkey_keyw_fk.keyw_longname }}
+              {% if a.dkey_comment.strip != '' %}
+                ({{ a.dkey_comment }})
+              {% endif %}
+              {% if a.dkey_keyw_fk.keyw_longname = "Other Action" %}
+                {% if a.dkey_doc_fk.doc_actionnotes.strip != '' %}
+                  ({{ a.dkey_doc_fk.doc_actionnotes }}) 
                 {% endif %}
               {% endif %}</li>
             {% endfor %}
@@ -315,31 +309,38 @@
       </tr>
       <tr> 
         <td> 
-          <b>Reviewing Agencies</b>
+          <b>Reviewing Agencies</b>  (Agencies in <b>Bold Type</b> submitted comment letters to the State Clearinghouse) 
         </td>
       </tr>
       <tr> 
         <td>
           <ul> 
-            {% for l in lag %}
-              {% if l.drag_received = None %}
-                <li>{{ l.drag_rag_fk.rag_name }}
+            {% for rev in reviews %}
+              {% if rev.drag_received = None %}
+                <li>{{ rev.drag_rag_fk.rag_name }}
               {% else %}
-                <li><B>{{ l.drag_rag_fk.rag_name }}</B>
+                <li><B>{{ rev.drag_rag_fk.rag_name }}</B>
               {% endif %}</li>
             {% endfor %}
           </ul>
         </td>
       </tr>
-      {% endif %}
       <tr> 
         <td> 
           <hr width="100%">
         </td>
       </tr>
       <tr> 
-        <td>
-          <B>{{ form.drag_ragcomment.label }}</B> {{ form.drag_ragcomment }}
+        <td> 
+          <b>Date Received:</b> {{ doc.doc_received }}&nbsp; 
+          <b>Start of Review:</b>
+          {% if doc.doc_dept != None %} 
+            {{ doc.doc_dept }}&nbsp; 
+          {% endif %}&nbsp;&nbsp;&nbsp; 
+          <b>End of Review:</b> 
+          {% if doc.doc_clear != None %} 
+            {{ doc.doc_clear }} 
+          {% endif %}
         </td>
       </tr>
       <tr>
@@ -347,13 +348,10 @@
           <hr width="100%">
         </td>
       </tr>
-      <TR> 
-        <TD align="center" colspan="3"> 
-          <input type="submit" value="Add Comment">
-        </TD>
-      </TR>
+      <tr>
+        <td>
+          <button onclick="window.location = '{% url 'docedit_nop' %}?doc_pk={{ doc_pk }}'">Edit Database Record</button>
+        </td>
+      </tr>
     </table>
-    <input type="hidden" name="drag_pk" value="{{ drag_pk }}">
-    <input type="hidden" name="user_id" value="{{ user_id }}">
-  </form>
 {% endblock listing %}

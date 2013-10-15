@@ -29,12 +29,7 @@
           Document Type:
         </td>
         <td colspan="2">
-          <select name="doctype">
-            <option value="NOC">NOC</option>
-            <option value="NOD">NOD</option>
-            <option value="NOE" selected>NOE</option>
-            <option value="NOP">NOP</option>
-          </select>
+          {{ form.doctype }}
         </td>
       </tr>
       <TR>
@@ -43,12 +38,11 @@
         </TD>
       </TR>
       <TR>
-        <tD>
-          <input type="radio" name="prjtoggle" class="prjtoggle" value="yes" checked>Yes
-        </TD>
+        {% for r in form.prjtoggle %}
         <TD>
-          <input type="radio" name="prjtoggle" class="prjtoggle" value="no">No
+          {{ r }}
         </TD>
+        {% endfor %}
         <TD>
           &nbsp;
         </TD>
@@ -59,8 +53,6 @@
         </td>
       </tr>
     </table>
-    <input type="hidden" name="user_id" value="{{user_id}}">
-    <input type="hidden" name="lag_pk" value="{{laginfo.lag_pk}}">
   </FORM>
 
 {% endblock content %}

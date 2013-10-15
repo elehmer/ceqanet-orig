@@ -13,6 +13,11 @@ class doctypes(models.Model):
 	keyw_shortname = models.CharField(max_length=32)
 	keyw_longname = models.CharField(max_length=64)
 	inlookup = models.BooleanField(default=True)
+	storfed = models.IntegerField()
+	ordinal = models.IntegerField()
+
+	def __unicode__(self):
+		return self.keyw_longname	
 
 class docgeowords(models.Model):
 	dgeo_pk = models.AutoField(primary_key=True)
@@ -145,6 +150,7 @@ class documents(models.Model):
 	doc_review = models.BooleanField()
 	doc_plannerregion = models.IntegerField(null=True,blank=True)
 	doc_plannerreview = models.BooleanField()
+    doc_exstatus = models.IntegerField()
 
     def __unicode__(self):
         return self.doc_pk    
@@ -195,6 +201,9 @@ class keywords(models.Model):
 	keyw_caption3 = models.CharField(max_length=10)
 	keyw_originalcontrolid = models.CharField(max_length=10)
 	keyw_recordsource = models.CharField(max_length=10)
+
+	def __unicode__(self):
+		return self.keyw_longname		
 
 class latlongs(models.Model):
 	doc_pk = models.AutoField(primary_key=True)
@@ -293,6 +302,7 @@ class UserProfile(models.Model):
 	region = models.IntegerField(blank=True)
 	set_lag_fk = models.ForeignKey("leadagencies",blank=True,null=True,db_column="set_lag_fk")
 	set_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="set_rag_fk")
+	conphone = models.CharField(null=True,blank=True,max_length=32)
 
 class clearinghouse(models.Model):
 	schnoprefix = models.CharField(max_length=6)

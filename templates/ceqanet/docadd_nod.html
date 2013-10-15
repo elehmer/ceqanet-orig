@@ -166,51 +166,80 @@
         {{ form.doc_county }} {{ form.doc_county.errors }}
       </td>
     </TR>
-    <TR> 
-      <TD width="25%" valign="top">
-        <B>Person or Agency Carrying Out Project:</b>
-      </td>
-      <td colspan="2"> 
-        {{ form.strleadagency2 }} {{ form.strleadagency2.errors }}
+    <tr> 
+      <td colspan="3">
+        <h5>Determinations:</h5>
       </td>
     </tr>
     <tr> 
       <td colspan="3">
-        <B>Exempt Status <font color="#000066">(check one)</font>:</B>
+        This is to advise that the 
+        {{ form.doc_nodbylead }}
+        Lead Agency &nbsp; 
+        {{ form.doc_nodbyresp }}
+        Responsible Agency &nbsp; 
+        {{ form.doc_nodagency }}
+        has approved the project described above on 
+        {{ form.doc_nod }}
+        and has made the following determinations regarding the project described 
+        above.
       </td>
     </tr>
-    {% for radio in form.rdoexemptstatus %}
     <tr> 
-      <TD width="25%" valign="top">
-        {{ radio.tag }}
+      <td colspan="3">
+        1. The project 
+        {{ form.doc_detsigeffect }}
+        will &nbsp; 
+        {{ form.doc_detnotsigeffect }}
+        will not have a significant effect on the environment.
       </td>
-      {% if forloop.counter = 4 %}
-      <td>
-        {{ radio.choice_label }}
-      </td>
-      <td>
-        {{ form.strsectionnumber }} {{ form.strsectionnumber.errors }}
-      </td>
-      {% elif forloop.counter = 5 %}
-      <td>
-        {{ radio.choice_label }}
-      </td>
-      <td>
-        {{ form.strcodenumber }} {{ form.strcodenumber.errors }}
-      </td>
-      {% else %}
-      <td colspan="2">
-        {{ radio.choice_label }}
-      </td>
-      {% endif %}
     </tr>
-    {% endfor %}
-    <TR> 
-      <TH width="25%" align="left" valign="top">
-        {{ form.doc_exreasons.label }}
-      </TH>
-      <td colspan="2">
-        {{ form.doc_exreasons }} {{ form.doc_exreasons.errors }}
+    <tr> 
+      <td colspan="3">
+        2. 
+        {{ form.doc_deteir }}
+        An Environmental Impact Report was prepared for this project pursuant to 
+        the provisions of CEQA.
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        &nbsp;&nbsp;&nbsp;
+        {{ form.doc_detnegdec }}
+        A Negative Declaration was prepared for this project pursuant to the provisions 
+        of CEQA.
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        3. Mitigation measures 
+        {{ form.doc_detmitigation }}
+        were &nbsp; 
+        {{ form.doc_detnotmitigation }}
+        were not made a condition of the approval of the project.
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        4. A Statement of Overriding Considerations 
+        {{ form.doc_detconsider }}
+        was &nbsp; 
+        {{ form.doc_detnotconsider }}
+        was not adopted for this project.
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        5. Findings 
+        {{ form.doc_detfindings }}
+        were &nbsp; 
+        {{ form.doc_detnotfindings }}
+        were not made pursuant to the provisions of CEQA.
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        <b>Final EIR Available at:</b> {{ form.doc_eiravailableat }}
       </td>
     </tr>
     <TR> 

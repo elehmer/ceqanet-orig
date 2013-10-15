@@ -120,14 +120,10 @@ $('.whichpk').change(function() {
       </TR>
     </TABLE>
   {% endif %}
-  <INPUT type="hidden" name="lag_pk" value="{{ lag_pk }}">
-  <INPUT type="hidden" name="user_id" value="{{ user_id }}">
   <INPUT type="hidden" name="doctype" value="{{ doctype }}">
 </FORM>
-<FORM id="foundproject" name="foundproject" method="get" action="{% url 'adddocument' %}">
+<FORM id="foundproject" name="foundproject" method="get" action="{% url formurl %}">
   <INPUT type="hidden" id="prj_pk" name="prj_pk" value="-9999">
-  <INPUT type="hidden" name="lag_pk" value="{{ lag_pk }}">
-  <INPUT type="hidden" name="user_id" value="{{ user_id }}">
   <INPUT type="hidden" name="doctype" value="{{ doctype }}">
 </FORM>
 {% endblock content %}

@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,addproject,inputform,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,NOEedit,pending,pendingdetail,accept,review,reviewdetail,usersettings,comment,commentdetail
+from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,docedit_noc,docedit_noe,docedit_nod,docedit_nop,pending,pendingdetail,accept,review,reviewdetail,usersettings,comment,commentdetail,docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
 
 urlpatterns = patterns('ceqanet.views',
 	url(r'^$','index',name='index'),
@@ -8,11 +8,16 @@ urlpatterns = patterns('ceqanet.views',
 	url(r'^projectlist/$',projectlist.as_view(),name='projectlist'),
 	url(r'^projdoclist/$',projdoclist.as_view(),name='projdoclist'),
 	url(r'^docdescription/(?P<pk>\d+)/$',docdescription.as_view(),name='docdescription'),
-	url(r'^docdescription/(?P<pk>\d+)/edit$',NOEedit.as_view(),name='NOEedit'),
 	url(r'^submit/$',submit.as_view(),name='submit'),
 	url(r'^findproject/$',findproject.as_view(),name='findproject'),
-	url(r'^addproject/$',addproject.as_view(),name='addproject'),
-	url(r'^inputform/$',inputform.as_view(),name='inputform'),
+	url(r'^docdesp_noc/(?P<pk>\d+)/$',docdesp_noc.as_view(),name='docdesp_noc'),
+	url(r'^docedit_noc/$',docedit_noc.as_view(),name='docedit_noc'),
+	url(r'^docdesp_noe/(?P<pk>\d+)/$',docdesp_noe.as_view(),name='docdesp_noe'),
+	url(r'^docedit_noe/$',docedit_noe.as_view(),name='docedit_noe'),
+	url(r'^docdesp_nod/(?P<pk>\d+)/$',docdesp_nod.as_view(),name='docdesp_nod'),
+	url(r'^docedit_nod/$',docedit_nod.as_view(),name='docedit_nod'),
+	url(r'^docdesp_nop/(?P<pk>\d+)/$',docdesp_nop.as_view(),name='docdesp_nop'),
+	url(r'^docedit_nop/$',docedit_nop.as_view(),name='docedit_nop'),
 	url(r'^docadd_noc/$',docadd_noc.as_view(),name='docadd_noc'),
 	url(r'^docadd_nod/$',docadd_nod.as_view(),name='docadd_nod'),
 	url(r'^docadd_noe/$',docadd_noe.as_view(),name='docadd_noe'),
