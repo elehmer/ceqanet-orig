@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,docedit_noc,docedit_noe,docedit_nod,docedit_nop,pending,pendingdetail,accept,review,reviewdetail,usersettings,comment,commentdetail,docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
+from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,docedit_noc,docedit_noe,docedit_nod,docedit_nop,pending,pendingdetail,accept,review,reviewdetail,usersettings,comment,commentdetail,docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop,locations_geojson
 
 urlpatterns = patterns('ceqanet.views',
 	url(r'^$','index',name='index'),
@@ -31,6 +31,9 @@ urlpatterns = patterns('ceqanet.views',
 	url(r'^comment/$',comment.as_view(),name='comment'),
 	url(r'^commentdetail/$',commentdetail.as_view(),name='commentdetail'),
 	url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
+	url(r'^map/all/geojson/$','locations_geojson',name="locations"),
+	url(r'^map/all/geojson/(?P<limit>\d+)/$','locations_geojson',name="locations"),
+
 )
 
 urlpatterns += patterns('',

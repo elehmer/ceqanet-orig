@@ -9,7 +9,15 @@ from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
 from ceqanet.forms import QueryForm,submitform,AddDocForm,nocform,nodform,noeform,nopform,editnocform,editnoeform,editnodform,editnopform,DocReviewForm,usersettingsform,reviewdetailform,pendingdetailform,commentdetailform
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords
+#split geo imports for simplicity
+from ceqanet.models import Locations
+from django.contrib.auth.models import User
 from datetime import datetime
+#vectorformats trick
+from vectorformats.Formats import Django, GeoJSON, KML
+#import simplejson
+from django.utils import simplejson
+
 
 # Create your views here.
 def index(request):
@@ -1797,3 +1805,13 @@ class usersettings(FormView):
         us.save()
 
         return super(usersettings,self).form_valid(form)
+        
+def locations_geojson(request,limit):
+	locations_qs = Locations.objects.all()[:limit]
+	#locations_qs = list(Locations.objects.values('pk','id','geom','document__doc_title')[:10])
+	#djf = Django.Django(geodjango="geom", properties=['documents__doc_title'])
+	djf = Django.Django(geodjango="geom")
+	geoj = GeoJSON.GeoJSON()
+	string = geoj.encode(djf.decode(locations_qs))
+	#string = locations_qs
+	return HttpResponse(string)
