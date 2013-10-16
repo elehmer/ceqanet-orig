@@ -62,8 +62,8 @@ FROM (
 WHERE ST_GeometryType(geom) ='ST_Point';
 
 --A view of points 1000
-Drop VIEW ceqadoc_locations1000;
-CREATE VIEW ceqadoc_locations1000 AS
+Drop VIEW doc_location_points1000;
+CREATE VIEW doc_location_points1000 AS
 SELECT id,doc_pk,geom::geometry(Point,4326) as geom 
 FROM (
 	SELECT id,doc_pk,((ST_dump(geom)).geom) as geom FROM ceqanet_locations LIMIT 1000
@@ -71,10 +71,13 @@ FROM (
 WHERE ST_GeometryType(geom) ='ST_Point';
 
 --A view of all points, how make gid unique?
-Drop VIEW ceqadoc_locations;
-CREATE VIEW ceqadoc_locations AS
+Drop VIEW doc_location_points;
+CREATE VIEW doc_location_points AS
 SELECT id,doc_pk,geom::geometry(Point,4326) as geom 
 FROM (
 	SELECT id,doc_pk,((ST_dump(geom)).geom) as geom FROM ceqanet_locations
 ) as a
 WHERE ST_GeometryType(geom) ='ST_Point';
+
+--Tilemill
+--host=localhost port=5483 user=django password=PegnafGiatsyeGha dbname=ceqanet
