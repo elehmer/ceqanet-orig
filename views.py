@@ -404,18 +404,21 @@ class docadd_noc(FormView):
 
         adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=data['doctypeid'],doc_doctype=data['doctypeid'].keyw_shortname,doc_docname=data['doctypeid'].keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools)
         adddoc.save()
-        actions = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001)
-        for a in actions:
-            if self.request.POST.get('lat'+str(a.keyw_pk)) == "1":
-                if a.keyw_pk == 1018:
-                    adddoc.doc_actionnotes = data['doc_actionnotes']
-                    adddoc.save()
+
+        for a in data['actions']:
+            if a.keyw_pk == 1018:
+                adockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=a,dkey_comment=data['dkey_comment_actions'],dkey_rank=0)
+            else:
                 adockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=a,dkey_rank=0)
-                adockeyw.save()
+            adockeyw.save()
+
         devtypes = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010)
         for d in devtypes:
             if self.request.POST.get('dev'+str(d.keyw_pk)) == "1":
-                ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=d,dkey_value1=self.request.POST.get('dev'+str(d.keyw_pk)+'_val1'),dkey_value2=self.request.POST.get('dev'+str(d.keyw_pk)+'_val2'),dkey_value3=self.request.POST.get('dev'+str(d.keyw_pk)+'_val3'),dkey_rank=0)
+                if d.keyw_pk == 11001:
+                    ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=d,dkey_comment=data['dkey_comment_dev'],dkey_value1=self.request.POST.get('dev'+str(d.keyw_pk)+'_val1'),dkey_value2=self.request.POST.get('dev'+str(d.keyw_pk)+'_val2'),dkey_value3=self.request.POST.get('dev'+str(d.keyw_pk)+'_val3'),dkey_rank=0)
+                else:
+                    ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=d,dkey_value1=self.request.POST.get('dev'+str(d.keyw_pk)+'_val1'),dkey_value2=self.request.POST.get('dev'+str(d.keyw_pk)+'_val2'),dkey_value3=self.request.POST.get('dev'+str(d.keyw_pk)+'_val3'),dkey_rank=0)
                 ddockeyw.save()
         if self.request.POST.get('devtrans') == "1":
             ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=data['devtrans_id'],dkey_value1=None,dkey_value2=None,dkey_value3=None,dkey_rank=0)
@@ -431,9 +434,9 @@ class docadd_noc(FormView):
         for i in issues:
             if self.request.POST.get('issue'+str(i.keyw_pk)) == "1":
                 if i.keyw_pk == 2034:
-                    adddoc.doc_issuesnotes = data['doc_issuesnotes']
-                    adddoc.save()
-                idockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=i,dkey_rank=0)
+                    idockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=i,dkey_comment=data['dkey_comment_issues'],dkey_rank=0)
+                else:
+                    idockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=i,dkey_rank=0)
                 idockeyw.save()
         for ra in data['ragencies']:
             docrev = docreviews(drag_doc_fk=adddoc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
@@ -1060,7 +1063,11 @@ class docedit_noc(FormView):
 
         docinfo = documents.objects.get(pk=self.request.GET.get('doc_pk'))
         latlonginfo = latlongs.objects.filter(doc_pk=self.request.GET.get('doc_pk'))
-
+        devinfo = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
+        dkey_comment_actions = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_pk=1018)
+        dkey_comment_dev = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_pk=11001)
+        dkey_comment_issues = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_pk=2034)
+        
         initial['prj_title'] = docinfo.doc_prj_fk.prj_title.strip
         initial['prj_description'] = docinfo.doc_prj_fk.prj_description.strip
         initial['doc_conagency'] = docinfo.doc_conagency.strip
@@ -1103,14 +1110,53 @@ class docedit_noc(FormView):
         initial['doc_landuse'] = docinfo.doc_landuse.strip
 
         initial['doctypeid'] = docinfo.doc_doct_fk.keyw_pk
-        initial['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
+        if dkey_comment_actions.exists():
+            initial['dkey_comment_actions'] = dkey_comment_actions[0].dkey_comment.strip
+        if dkey_comment_dev.exists():
+            initial['dkey_comment_dev'] = dkey_comment_dev[0].dkey_comment.strip
+        if dkey_comment_issues.exists():
+            initial['dkey_comment_issues'] = dkey_comment_issues[0].dkey_comment.strip
+
+        for dev in devinfo:
+            if dev.dkey_keyw_fk.keyw_pk > 4000 and dev.dkey_keyw_fk.keyw_pk < 5000:
+                initial['devtrans_id'] = dev.dkey_keyw_fk.keyw_pk
+                initial['devtrans_comment'] = dev.dkey_comment.strip
+            if dev.dkey_keyw_fk.keyw_pk > 3000 and dev.dkey_keyw_fk.keyw_pk < 4000:
+                initial['devpower_id'] = dev.dkey_keyw_fk.keyw_pk
+                initial['devpower_comment'] = dev.dkey_comment.strip
+            if dev.dkey_keyw_fk.keyw_pk == 6001:
+                initial['dev6001_val1'] = dev.dkey_value1
+                initial['dev6001_val2'] = dev.dkey_value2
+            elif dev.dkey_keyw_fk.keyw_pk == 6002:
+                initial['dev6002_val1'] = dev.dkey_value1
+                initial['dev6002_val2'] = dev.dkey_value2
+                initial['dev6002_val3'] = dev.dkey_value3
+            elif dev.dkey_keyw_fk.keyw_pk == 6003:
+                initial['dev6003_val1'] = dev.dkey_value1
+                initial['dev6003_val2'] = dev.dkey_value2
+                initial['dev6003_val3'] = dev.dkey_value3
+            elif dev.dkey_keyw_fk.keyw_pk == 6004:
+                initial['dev6004_val1'] = dev.dkey_value1
+                initial['dev6004_val2'] = dev.dkey_value2
+                initial['dev6004_val3'] = dev.dkey_value3
+            elif dev.dkey_keyw_fk.keyw_pk == 7001:
+                initial['dev7001_val1'] = dev.dkey_value1
+            elif dev.dkey_keyw_fk.keyw_pk == 8001:
+                initial['dev8001_val1'] = dev.dkey_value1
+            elif dev.dkey_keyw_fk.keyw_pk == 9001:
+                initial['dev9001_val1'] = dev.dkey_value1
+            elif dev.dkey_keyw_fk.keyw_pk == 10001:
+                initial['dev10001_val1'] = dev.dkey_value1
+
 
         return initial
 
     def get_context_data(self, **kwargs):
         context = super(docedit_noc, self).get_context_data(**kwargs)
         context['doc_pk'] = self.request.GET.get('doc_pk')
-        #ontext['actions'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001).order_by('keyw_longname')
+        context['lats'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
+        context['devs'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
+        context['isss'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
 
         return context
 
