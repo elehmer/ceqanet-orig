@@ -21,9 +21,9 @@ from django.utils import simplejson
 
 # Create your views here.
 def index(request):
-	t = loader.get_template("ceqanet/index.html")
-	c = RequestContext(request,{})
-	return HttpResponse(t.render(c))
+    t = loader.get_template("ceqanet/index.html")
+    c = RequestContext(request,{})
+    return HttpResponse(t.render(c))
 
 class query(FormView):
     template_name="ceqanet/query.html"
@@ -1853,11 +1853,11 @@ class usersettings(FormView):
         return super(usersettings,self).form_valid(form)
         
 def locations_geojson(request,limit):
-	locations_qs = Locations.objects.all()[:limit]
-	#locations_qs = list(Locations.objects.values('pk','id','geom','document__doc_title')[:10])
-	#djf = Django.Django(geodjango="geom", properties=['documents__doc_title'])
-	djf = Django.Django(geodjango="geom")
-	geoj = GeoJSON.GeoJSON()
-	string = geoj.encode(djf.decode(locations_qs))
-	#string = locations_qs
-	return HttpResponse(string)
+    locations_qs = Locations.objects.all()[:limit]
+    #locations_qs = list(Locations.objects.values('pk','id','geom','document__doc_title')[:10])
+    #djf = Django.Django(geodjango="geom", properties=['documents__doc_title'])
+    djf = Django.Django(geodjango="geom")
+    geoj = GeoJSON.GeoJSON()
+    string = geoj.encode(djf.decode(locations_qs))
+    #string = locations_qs
+    return HttpResponse(string)
