@@ -228,33 +228,6 @@
       </tr>
       <tr> 
         <td> 
-          <b>Development Type</b>
-        </td>
-      </tr>
-      <tr> 
-        <td>
-          <ul>
-            {% for d in dev %}
-              <li>{{ d.dkey_keyw_fk.keyw_longname }}
-              {% if d.dkey_comment.strip != '' %}
-                ({{ d.dkey_comment }})
-              {% endif %} 
-              {% if d.dkey_keyw_fk.keyw_longname = "Other" %}
-                {% if d.dkey_doc_fk.doc_devnotes.strip != '' %}
-                  ({{ d.dkey_doc_fk.doc_devnotes }})
-                {% endif %}
-              {% endif %}</li>
-            {% endfor %}
-          </ul>
-        </td>
-      </tr>
-      <tr> 
-        <td> 
-          <hr width="100%">
-        </td>
-      </tr>
-      <tr> 
-        <td> 
           <b>Local Action</b>
         </td>
       </tr>
@@ -269,6 +242,33 @@
               {% if a.dkey_keyw_fk.keyw_longname = "Other Action" %}
                 {% if a.dkey_doc_fk.doc_actionnotes.strip != '' %}
                   ({{ a.dkey_doc_fk.doc_actionnotes }}) 
+                {% endif %}
+              {% endif %}</li>
+            {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Development Type</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            {% for d in dev %}
+              <li>{{ d.dkey_keyw_fk.keyw_longname }}
+              {% if d.dkey_comment.strip != '' %}
+                ({{ d.dkey_comment }})
+              {% endif %} 
+              {% if d.dkey_keyw_fk.keyw_longname = "Other" %}
+                {% if d.dkey_doc_fk.doc_devnotes.strip != '' %}
+                  ({{ d.dkey_doc_fk.doc_devnotes }})
                 {% endif %}
               {% endif %}</li>
             {% endfor %}
