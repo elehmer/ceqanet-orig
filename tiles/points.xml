@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE Map[]>
+<Map srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over" maximum-extent="-20037508.34,-20037508.34,20037508.34,20037508.34">
+
+<Parameters>
+  <Parameter name="bounds">-124.9365,31.8029,-113.2471,42.6178</Parameter>
+  <Parameter name="center">-119.3802,36.9411,8</Parameter>
+  <Parameter name="format">png</Parameter>
+  <Parameter name="minzoom">0</Parameter>
+  <Parameter name="maxzoom">16</Parameter>
+  <Parameter name="name"><![CDATA[CEQA Documents]]></Parameter>
+  <Parameter name="description"><![CDATA[Locations of project who filed CEQA documents.]]></Parameter>
+</Parameters>
+
+
+<Style name="countries" filter-mode="first" >
+  <Rule>
+    <PolygonSymbolizer fill="#ffffff" />
+  </Rule>
+</Style>
+<Style name="countries-outline" filter-mode="first" >
+  <Rule>
+    <LineSymbolizer stroke="#85c5d3" stroke-width="2" stroke-linejoin="round" />
+  </Rule>
+</Style>
+<Layer name="countries"
+  status="off"
+  srs="+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0.0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +over">
+    <StyleName>countries-outline</StyleName>
+    <StyleName>countries</StyleName>
+    <Datasource>
+       <Parameter name="file"><![CDATA[/home/madadh/Documents/MapBox/project/ceqanet/layers/countries/82945364-10m-admin-0-countries.shp]]></Parameter>
+       <Parameter name="type"><![CDATA[shape]]></Parameter>
+    </Datasource>
+  </Layer>
+
+<Style name="ceqa-points" filter-mode="first" >
+  <Rule>
+    <MaxScaleDenominator>400000</MaxScaleDenominator>
+    <MarkersSymbolizer stroke="#008000" fill="#008000" height="6" width="6" />
+  </Rule>
+  <Rule>
+    <MaxScaleDenominator>25000000</MaxScaleDenominator>
+    <MinScaleDenominator>400000</MinScaleDenominator>
+    <MarkersSymbolizer stroke="#008000" fill="#008000" height="2" width="2" />
+  </Rule>
+</Style>
+<Layer name="ceqa-points"
+  srs="+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs">
+    <StyleName>ceqa-points</StyleName>
+    <Datasource>
+       <Parameter name="type"><![CDATA[postgis]]></Parameter>
+       <Parameter name="table"><![CDATA[doc_location_points]]></Parameter>
+       <Parameter name="key_field"><![CDATA[id]]></Parameter>
+       <Parameter name="geometry_field"><![CDATA[geom]]></Parameter>
+       <Parameter name="extent_cache"><![CDATA[auto]]></Parameter>
+       <Parameter name="extent"><![CDATA[-180.2167,11.6172,-110.1089,63.1353]]></Parameter>
+       <Parameter name="host"><![CDATA[localhost]]></Parameter>
+       <Parameter name="port"><![CDATA[5483]]></Parameter>
+       <Parameter name="user"><![CDATA[django]]></Parameter>
+       <Parameter name="password"><![CDATA[PegnafGiatsyeGha]]></Parameter>
+       <Parameter name="dbname"><![CDATA[ceqanet]]></Parameter>
+    </Datasource>
+  </Layer>
+
+</Map>
