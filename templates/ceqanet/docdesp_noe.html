@@ -20,12 +20,14 @@
           <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
         </td>
       </tr>
-      {% if doc.doc_title.strip.length > 0 %}
+      {% if doc.doc_title %}
+        {% if doc.doc_title.strip != '' %}
       <tr> 
         <td> 
           <b>Alternate Title:</b> {{ doc.doc_title }}
         </td>
       </tr>
+        {% endif %}
       {% endif %}
       <tr> 
         <td> 

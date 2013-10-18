@@ -296,17 +296,42 @@
     <TR> 
       <TD colspan="3"> 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
-          {% for pk, choice in form.actions.field.widget.choices %}
-            {% if choice.strip != 'Other Action' %}
-              <tr>
-                <td>
-                  <label for="id_actions_{{ forloop.counter0 }}">
-                    <input {% for lat in lats %}{% if lat.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
-                  </label>
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}     
+          <tr>
+            <td>
+              <table>
+                {% for pk, choice in form.actions.field.widget.choices %}
+                  {% if forloop.counter < 12 %}
+                    {% if choice.strip != 'Other Action' %}
+                      <tr>
+                        <td>
+                          <label for="id_actions_{{ forloop.counter0 }}">
+                            <input {% for lat in lats %}{% if lat.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
+                          </label>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </table>
+            </td>
+            <td>
+              <table>
+                {% for pk, choice in form.actions.field.widget.choices %}
+                  {% if forloop.counter > 11 %}
+                    {% if choice.strip != 'Other Action' %}
+                      <tr>
+                        <td>
+                          <label for="id_actions_{{ forloop.counter0 }}">
+                            <input {% for lat in lats %}{% if lat.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
+                          </label>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </table>
+            </td>
+          </tr>            
           {% for pk, choice in form.actions.field.widget.choices %}
             {% if choice.strip = 'Other Action' %}
               <tr>
@@ -484,17 +509,42 @@
     <TR> 
       <TD colspan="3"> 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
-          {% for pk, choice in form.issues.field.widget.choices %}
-            {% if choice.strip != 'Other Issues' %}
-              <tr>
-                <td>
-                  <label for="id_issues_{{ forloop.counter0 }}">
-                    <input {% for iss in isss %}{% if iss.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_issues_{{ forloop.counter0 }}" value="{{ pk }}" name="issues" />&nbsp;{{ choice }}
-                  </label>
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}     
+          <TR>
+            <TD>
+              <TABLE>
+                {% for pk, choice in form.issues.field.widget.choices %}
+                  {% if forloop.counter < 19 %}
+                    {% if choice.strip != 'Other Issues' %}
+                      <tr>
+                        <td>
+                          <label for="id_issues_{{ forloop.counter0 }}">
+                            <input {% for iss in isss %}{% if iss.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_issues_{{ forloop.counter0 }}" value="{{ pk }}" name="issues" />&nbsp;{{ choice }}
+                          </label>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </TABLE>
+            </TD>
+            <TD>
+              <TABLE>
+                {% for pk, choice in form.issues.field.widget.choices %}
+                  {% if forloop.counter > 18 %}
+                    {% if choice.strip != 'Other Issues' %}
+                      <tr>
+                        <td>
+                          <label for="id_issues_{{ forloop.counter0 }}">
+                            <input {% for iss in isss %}{% if iss.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_issues_{{ forloop.counter0 }}" value="{{ pk }}" name="issues" />&nbsp;{{ choice }}
+                          </label>
+                        </td>
+                      </tr>
+                    {% endif %}
+                  {% endif %}
+                {% endfor %}
+              </TABLE>
+            </TD>
+          </TR>     
           {% for pk, choice in form.issues.field.widget.choices %}
             {% if choice.strip = 'Other Issues' %}
               <tr>

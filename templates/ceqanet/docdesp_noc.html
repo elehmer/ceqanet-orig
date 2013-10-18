@@ -20,12 +20,14 @@
           <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
         </td>
       </tr>
-      {% if doc.doc_title.strip.length > 0 %}
+      {% if doc.doc_title %}
+        {% if doc.doc_title.strip != '' %}
       <tr> 
         <td> 
           <b>Alternate Title:</b> {{ doc.doc_title }}
         </td>
       </tr>
+        {% endif %}
       {% endif %}
       <tr> 
         <td> 
@@ -235,15 +237,14 @@
         <td class="content">
           <ul>
             {% for a in actions %}
-              <li>{{ a.dkey_keyw_fk.keyw_longname }}
-              {% if a.dkey_comment.strip != '' %}
-                ({{ a.dkey_comment }})
-              {% endif %}
-              {% if a.dkey_keyw_fk.keyw_longname = "Other Action" %}
-                {% if a.dkey_doc_fk.doc_actionnotes.strip != '' %}
-                  ({{ a.dkey_doc_fk.doc_actionnotes }}) 
+              <li>
+                {{ a.dkey_keyw_fk.keyw_longname }}
+                {% if a.dkey_comment %}
+                  {% if a.dkey_comment.strip != '' %}
+                    ({{ a.dkey_comment.strip }})
+                  {% endif %}
                 {% endif %}
-              {% endif %}</li>
+              </li>
             {% endfor %}
           </ul>
         </td>
@@ -262,15 +263,14 @@
         <td>
           <ul>
             {% for d in dev %}
-              <li>{{ d.dkey_keyw_fk.keyw_longname }}
-              {% if d.dkey_comment.strip != '' %}
-                ({{ d.dkey_comment }})
-              {% endif %} 
-              {% if d.dkey_keyw_fk.keyw_longname = "Other" %}
-                {% if d.dkey_doc_fk.doc_devnotes.strip != '' %}
-                  ({{ d.dkey_doc_fk.doc_devnotes }})
-                {% endif %}
-              {% endif %}</li>
+              <li>
+                {{ d.dkey_keyw_fk.keyw_longname }}
+                {% if d.dkey_comment %}
+                  {% if d.dkey_comment.strip != '' %}
+                    ({{ d.dkey_comment.strip }})
+                  {% endif %}
+                {% endif %} 
+              </li>
             {% endfor %}
           </ul>
         </td>
@@ -289,15 +289,14 @@
         <td>
           <ul> 
             {% for i in issues %}
-              <li>{{ i.dkey_keyw_fk.keyw_longname }}
-              {% if i.dkey_comment.strip != '' %}
-                ({{ i.dkey_comment }})
-              {% endif %}
-              {% if i.dkey_keyw_fk.keyw_longname = "Other Issues" %}
-                {% if i.dkey_doc_fk.doc_issuesnotes.strip != '' %}
-                  ({{ i.dkey_doc_fk.doc_issuesnotes }}) 
+              <li>
+                {{ i.dkey_keyw_fk.keyw_longname }}
+                {% if i.dkey_comment %}
+                  {% if i.dkey_comment.strip != '' %}
+                    ({{ i.dkey_comment.strip }})
+                  {% endif %}
                 {% endif %}
-              {% endif %}</li>
+              </li>
             {% endfor %}
           </ul>
         </td>
