@@ -56,7 +56,7 @@
        <Parameter name="extent_cache"><![CDATA[auto]]></Parameter>
        <Parameter name="extent"><![CDATA[-180.2167,11.6172,-110.1089,63.1353]]></Parameter>
        <Parameter name="host"><![CDATA[localhost]]></Parameter>
-       <Parameter name="port"><![CDATA[5483]]></Parameter>
+       <Parameter name="port"><![CDATA[5432]]></Parameter>
        <Parameter name="user"><![CDATA[django]]></Parameter>
        <Parameter name="password"><![CDATA[PegnafGiatsyeGha]]></Parameter>
        <Parameter name="dbname"><![CDATA[ceqanet]]></Parameter>
