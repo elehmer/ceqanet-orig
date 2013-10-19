@@ -1,0 +1,20 @@
+{% extends "ceqanet/base.html" %}
+{% load staticfiles %}
+
+{% block extrajs %}
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+{% endblock extrajs %}
+
+{% block onload %} 
+onload="init()"
+{% endblock onload %}
+
+{% block content %}
+    <div id="map">
+    </div>
+    Background Map Sources: 
+    <a href="http://maps.stamen.com/">Stamen Designs</a> and 
+    <a href="http://www.openstreetmap.org">©OpenStreetMap contributors.</a>
+{% endblock content %}
