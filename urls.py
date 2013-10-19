@@ -33,6 +33,7 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
     url(r'^map/all/geojson/$','locations_geojson',name="locations"),
     url(r'^map/all/geojson/(?P<limit>\d+)/$','locations_geojson',name="locations"),
+    url(r'^map$','map',name="map"),
 
 )
 

@@ -1861,3 +1861,8 @@ def locations_geojson(request,limit):
     string = geoj.encode(djf.decode(locations_qs))
     #string = locations_qs
     return HttpResponse(string)
+
+def map(request):
+    t = loader.get_template("ceqanet/map.html")
+    c = RequestContext(request,{})
+    return HttpResponse(t.render(c))
