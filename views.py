@@ -1068,62 +1068,62 @@ class docedit_noc(FormView):
         dkey_comment_dev = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_pk=11001)
         dkey_comment_issues = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_pk=2034)
         
-        initial['prj_title'] = docinfo.doc_prj_fk.prj_title.strip
-        initial['prj_description'] = docinfo.doc_prj_fk.prj_description.strip
-        initial['doc_conagency'] = docinfo.doc_conagency.strip
-        initial['doc_conname'] = docinfo.doc_conname.strip
-        initial['doc_conemail'] = docinfo.doc_conemail.strip
-        initial['doc_conphone'] = docinfo.doc_conphone.strip
-        initial['doc_conaddress1'] = docinfo.doc_conaddress1.strip
-        initial['doc_conaddress2'] = docinfo.doc_conaddress2.strip
-        initial['doc_concity'] = docinfo.doc_concity.strip
-        initial['doc_constate'] = docinfo.doc_constate.strip
-        initial['doc_conzip'] = docinfo.doc_conzip.strip
-        initial['doc_location'] = docinfo.doc_location.strip
-        initial['doc_conzip'] = docinfo.doc_conzip.strip
+        initial['prj_title'] = docinfo.doc_prj_fk.prj_title
+        initial['prj_description'] = docinfo.doc_prj_fk.prj_description
+        initial['doc_conagency'] = docinfo.doc_conagency
+        initial['doc_conname'] = docinfo.doc_conname
+        initial['doc_conemail'] = docinfo.doc_conemail
+        initial['doc_conphone'] = docinfo.doc_conphone
+        initial['doc_conaddress1'] = docinfo.doc_conaddress1
+        initial['doc_conaddress2'] = docinfo.doc_conaddress2
+        initial['doc_concity'] = docinfo.doc_concity
+        initial['doc_constate'] = docinfo.doc_constate
+        initial['doc_conzip'] = docinfo.doc_conzip
+        initial['doc_location'] = docinfo.doc_location
+        initial['doc_conzip'] = docinfo.doc_conzip
         if latlonginfo.exists():
-            initial['doc_latitude'] = latlonginfo[0].doc_latitude.strip
-            initial['doc_longitude'] = latlonginfo[0].doc_longitude.strip
+            initial['doc_latitude'] = latlonginfo[0].doc_latitude
+            initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
         if docinfo.doc_city != None:
-            cityinfo = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_city.strip)
+            cityinfo = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_city)
             if cityinfo.count() == 1:
                 initial['doc_city'] = cityinfo[0].geow_pk
 
         if docinfo.doc_county != None:
-            countyinfo = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_county.strip)
+            countyinfo = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_county)
             if countyinfo.count() == 1:
                 initial['doc_county'] = countyinfo[0].geow_pk
 
-        initial['doc_parcelno'] = docinfo.doc_parcelno.strip
-        initial['doc_xstreets'] = docinfo.doc_xstreets.strip
-        initial['doc_township'] = docinfo.doc_township.strip
-        initial['doc_range'] = docinfo.doc_range.strip
-        initial['doc_section'] = docinfo.doc_section.strip
-        initial['doc_base'] = docinfo.doc_base.strip
-        initial['doc_highways'] = docinfo.doc_highways.strip
-        initial['doc_railways'] = docinfo.doc_railways.strip
-        initial['doc_airports'] = docinfo.doc_airports.strip
-        initial['doc_schools'] = docinfo.doc_schools.strip
-        initial['doc_waterways'] = docinfo.doc_waterways.strip
-        initial['doc_parcelno'] = docinfo.doc_parcelno.strip
-        initial['doc_landuse'] = docinfo.doc_landuse.strip
+        initial['doc_parcelno'] = docinfo.doc_parcelno
+        initial['doc_xstreets'] = docinfo.doc_xstreets
+        initial['doc_township'] = docinfo.doc_township
+        initial['doc_range'] = docinfo.doc_range
+        initial['doc_section'] = docinfo.doc_section
+        initial['doc_base'] = docinfo.doc_base
+        initial['doc_highways'] = docinfo.doc_highways
+        initial['doc_railways'] = docinfo.doc_railways
+        initial['doc_airports'] = docinfo.doc_airports
+        initial['doc_schools'] = docinfo.doc_schools
+        initial['doc_waterways'] = docinfo.doc_waterways
+        initial['doc_parcelno'] = docinfo.doc_parcelno
+        initial['doc_landuse'] = docinfo.doc_landuse
 
         initial['doctypeid'] = docinfo.doc_doct_fk.keyw_pk
         if dkey_comment_actions.exists():
-            initial['dkey_comment_actions'] = dkey_comment_actions[0].dkey_comment.strip
+            initial['dkey_comment_actions'] = dkey_comment_actions[0].dkey_comment
         if dkey_comment_dev.exists():
-            initial['dkey_comment_dev'] = dkey_comment_dev[0].dkey_comment.strip
+            initial['dkey_comment_dev'] = dkey_comment_dev[0].dkey_comment
         if dkey_comment_issues.exists():
-            initial['dkey_comment_issues'] = dkey_comment_issues[0].dkey_comment.strip
+            initial['dkey_comment_issues'] = dkey_comment_issues[0].dkey_comment
 
         for dev in devinfo:
             if dev.dkey_keyw_fk.keyw_pk > 4000 and dev.dkey_keyw_fk.keyw_pk < 5000:
                 initial['devtrans_id'] = dev.dkey_keyw_fk.keyw_pk
-                initial['devtrans_comment'] = dev.dkey_comment.strip
+                initial['devtrans_comment'] = dev.dkey_comment
             if dev.dkey_keyw_fk.keyw_pk > 3000 and dev.dkey_keyw_fk.keyw_pk < 4000:
                 initial['devpower_id'] = dev.dkey_keyw_fk.keyw_pk
-                initial['devpower_comment'] = dev.dkey_comment.strip
+                initial['devpower_comment'] = dev.dkey_comment
             if dev.dkey_keyw_fk.keyw_pk == 6001:
                 initial['dev6001_val1'] = dev.dkey_value1
                 initial['dev6001_val2'] = dev.dkey_value2
@@ -1147,7 +1147,6 @@ class docedit_noc(FormView):
                 initial['dev9001_val1'] = dev.dkey_value1
             elif dev.dkey_keyw_fk.keyw_pk == 10001:
                 initial['dev10001_val1'] = dev.dkey_value1
-
 
         return initial
 
@@ -1174,12 +1173,65 @@ class docedit_noc(FormView):
         else:
             countyname = None
 
+        if data['doc_conaddress2'] == '':
+            doc_conaddress2 = None
+        else:
+            doc_conaddress2 = data['doc_conaddress2']
+        if data['doc_parcelno'] == '':
+            doc_parcelno = None
+        else:
+            doc_parcelno = data['doc_parcelno']
+        if data['doc_xstreets'] == '':
+            doc_xstreets = None
+        else:
+            doc_xstreets = data['doc_xstreets']
+        if data['doc_township'] == '':
+            doc_township = None
+        else:
+            doc_township = data['doc_township']
+        if data['doc_range'] == '':
+            doc_range = None
+        else:
+            doc_range = data['doc_range']
+        if data['doc_section'] == '':
+            doc_section = None
+        else:
+            doc_section = data['doc_section']
+        if data['doc_base'] == '':
+            doc_base = None
+        else:
+            doc_base = data['doc_base']
+        if data['doc_highways'] == '':
+            doc_highways = None
+        else:
+            doc_highways = data['doc_highways']
+        if data['doc_airports'] == '':
+            doc_airports = None
+        else:
+            doc_airports = data['doc_airports']
+        if data['doc_railways'] == '':
+            doc_railways = None
+        else:
+            doc_railways = data['doc_railways']
+        if data['doc_waterways'] == '':
+            doc_waterways = None
+        else:
+            doc_waterways = data['doc_waterways']
+        if data['doc_landuse'] == '':
+            doc_landuse = None
+        else:
+            doc_landuse = data['doc_landuse']
+        if data['doc_schools'] == '':
+            doc_schools = None
+        else:
+            doc_schools = data['doc_schools']
+
         doc.doc_conagency = data['doc_conagency']
         doc.doc_conname = data['doc_conname']
         doc.doc_conemail = data['doc_conemail']
         doc.doc_conphone = data['doc_conphone']
         doc.doc_conaddress1 = data['doc_conaddress1']
-        doc.doc_conaddress2 = data['doc_conaddress2']
+        doc.doc_conaddress2 = doc_conaddress2
         doc.doc_concity = data['doc_concity']
         doc.doc_constate = data['doc_constate']
         doc.doc_conzip = data['doc_conzip']
@@ -1192,6 +1244,21 @@ class docedit_noc(FormView):
             doc.doc_county = countyname.geow_shortname
         else:
             doc.doc_county = ''
+        doc.doc_parcelno = doc_parcelno
+        doc.doc_xstreets = doc_xstreets
+        doc.doc_township = doc_township
+        doc.doc_range = doc_range
+        doc.doc_section = doc_section
+        doc.doc_base = doc.doc_base
+        doc.doc_highways = doc_highways
+        doc.doc_airports = doc_airports
+        doc.doc_railways = doc_railways
+        doc.doc_waterways = doc_waterways
+        doc.doc_landuse = doc_landuse
+        doc.doc_schools = doc_schools
+        doc.doc_doct_fk = data['doctypeid']
+        doc.doc_doctype = data['doctypeid'].keyw_shortname
+        doc.doc_docname = data['doctypeid'].keyw_longname
         doc.save()
         prj.prj_title = data['prj_title']
         prj.prj_description = data['prj_description']
@@ -1204,6 +1271,53 @@ class docedit_noc(FormView):
         except latlongs.DoesNotExist:
             coords = latlongs(doc_pk=doc.pk,doc_prj_fk=prj,doc_doctype="NOE",doc_latitude=data['doc_latitude'],doc_longitude=data['doc_longitude'])
         coords.save()
+
+        dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001).delete()
+
+        for a in data['actions']:
+            if a.keyw_pk == 1018:
+                adockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=a,dkey_comment=data['dkey_comment_actions'],dkey_rank=0)
+            else:
+                adockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=a,dkey_rank=0)
+            adockeyw.save()
+        
+        dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010).delete()
+
+        devtypes = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010)
+        for d in devtypes:
+            if self.request.POST.get('dev'+str(d.keyw_pk)) == "1":
+                if d.keyw_pk == 11001:
+                    ddockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=d,dkey_comment=data['dkey_comment_dev'],dkey_value1=self.request.POST.get('dev'+str(d.keyw_pk)+'_val1'),dkey_value2=self.request.POST.get('dev'+str(d.keyw_pk)+'_val2'),dkey_value3=self.request.POST.get('dev'+str(d.keyw_pk)+'_val3'),dkey_rank=0)
+                else:
+                    ddockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=d,dkey_value1=self.request.POST.get('dev'+str(d.keyw_pk)+'_val1'),dkey_value2=self.request.POST.get('dev'+str(d.keyw_pk)+'_val2'),dkey_value3=self.request.POST.get('dev'+str(d.keyw_pk)+'_val3'),dkey_rank=0)
+                ddockeyw.save()
+        if self.request.POST.get('devtrans') == "1":
+            ddockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=data['devtrans_id'],dkey_comment=data['devtrans_comment'],dkey_value1=None,dkey_value2=None,dkey_value3=None,dkey_rank=0)
+            ddockeyw.save()
+        if self.request.POST.get('devpower') == "1":
+            ddockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=data['devpower_id'],dkey_comment=data['devpower_comment'],dkey_value1=self.request.POST.get('devpower_val1'),dkey_value2=None,dkey_value3=None,dkey_rank=0)
+            ddockeyw.save()
+        if self.request.POST.get('devwaste') == "1":
+            ddockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=data['devwaste_id'],dkey_comment=data['devwaste_comment'],dkey_value1=None,dkey_value2=None,dkey_value3=None,dkey_rank=0)
+            ddockeyw.save()
+
+        dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002).delete()
+        
+        issues = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002)
+
+        for i in data['issues']:
+            if i.keyw_pk == 2034:
+                idockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=i,dkey_comment=data['dkey_comment_issues'],dkey_rank=0)
+            else:
+                idockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=i,dkey_rank=0)
+            idockeyw.save()
+
+        docreviews.objects.filter(drag_doc_fk=doc.pk).delete()
+
+        for ra in data['ragencies']:
+            docrev = docreviews(drag_doc_fk=doc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
+            docrev.save()
+
 
         return super(docedit_noc,self).form_valid(form)
 
@@ -1221,30 +1335,30 @@ class docedit_noe(FormView):
         docinfo = documents.objects.get(pk=self.request.GET.get('doc_pk'))
         latlonginfo = latlongs.objects.filter(doc_pk=self.request.GET.get('doc_pk'))
 
-        initial['prj_title'] = docinfo.doc_prj_fk.prj_title.strip
-        initial['prj_description'] = docinfo.doc_prj_fk.prj_description.strip
-        initial['doc_conagency'] = docinfo.doc_conagency.strip
-        initial['doc_conname'] = docinfo.doc_conname.strip
-        initial['doc_conemail'] = docinfo.doc_conemail.strip
-        initial['doc_conphone'] = docinfo.doc_conphone.strip
-        initial['doc_conaddress1'] = docinfo.doc_conaddress1.strip
-        initial['doc_conaddress2'] = docinfo.doc_conaddress2.strip
-        initial['doc_concity'] = docinfo.doc_concity.strip
-        initial['doc_constate'] = docinfo.doc_constate.strip
-        initial['doc_conzip'] = docinfo.doc_conzip.strip
-        initial['doc_location'] = docinfo.doc_location.strip
-        initial['doc_conzip'] = docinfo.doc_conzip.strip
+        initial['prj_title'] = docinfo.doc_prj_fk.prj_title
+        initial['prj_description'] = docinfo.doc_prj_fk.prj_description
+        initial['doc_conagency'] = docinfo.doc_conagency
+        initial['doc_conname'] = docinfo.doc_conname
+        initial['doc_conemail'] = docinfo.doc_conemail
+        initial['doc_conphone'] = docinfo.doc_conphone
+        initial['doc_conaddress1'] = docinfo.doc_conaddress1
+        initial['doc_conaddress2'] = docinfo.doc_conaddress2
+        initial['doc_concity'] = docinfo.doc_concity
+        initial['doc_constate'] = docinfo.doc_constate
+        initial['doc_conzip'] = docinfo.doc_conzip
+        initial['doc_location'] = docinfo.doc_location
+        initial['doc_conzip'] = docinfo.doc_conzip
         if latlonginfo.exists():
-            initial['doc_latitude'] = latlonginfo[0].doc_latitude.strip
-            initial['doc_longitude'] = latlonginfo[0].doc_longitude.strip
+            initial['doc_latitude'] = latlonginfo[0].doc_latitude
+            initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
         if docinfo.doc_city != None:
-            cityinfo = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_city.strip)
+            cityinfo = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_city)
             if cityinfo.count() == 1:
                 initial['doc_city'] = cityinfo[0].geow_pk
 
         if docinfo.doc_county != None:
-            countyinfo = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_county.strip)
+            countyinfo = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(geow_shortname__startswith=docinfo.doc_county)
             if countyinfo.count() == 1:
                 initial['doc_county'] = countyinfo[0].geow_pk
 
@@ -1256,12 +1370,12 @@ class docedit_noe(FormView):
             initial['rdoexemptstatus'] = 3
         elif docinfo.doc_excategorical:
             initial['rdoexemptstatus'] = 4
-            initial['strsectionnumber'] = docinfo.doc_exnumber.strip
+            initial['strsectionnumber'] = docinfo.doc_exnumber
         elif docinfo.doc_exstatutory:
             initial['rdoexemptstatus'] = 5
-            initial['strcodenumber'] = docinfo.doc_exnumber.strip
+            initial['strcodenumber'] = docinfo.doc_exnumber
 
-        initial['doc_exreasons'] = docinfo.doc_exreasons.strip
+        initial['doc_exreasons'] = docinfo.doc_exreasons
 
         return initial
 
@@ -1284,6 +1398,7 @@ class docedit_noe(FormView):
             countyname = geowords.objects.get(pk=data['doc_county'].pk)
         else:
             countyname = None
+            
         doc_exministerial = False
         doc_exdeclared = False
         doc_exemergency = False

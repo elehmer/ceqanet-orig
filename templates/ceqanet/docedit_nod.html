@@ -2,6 +2,14 @@
 
 {% load staticfiles %}
 
+{% block extrajs %}
+  <script>
+    $(function() {
+        $( "#id_doc_nod" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+  </script>
+{% endblock extrajs %}
+
 {% block content %}
 
 {{ form.media }}

@@ -20,12 +20,14 @@
           <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
         </td>
       </tr>
-      {% if doc.doc_title.strip.length > 0 %}
+      {% if doc.doc_title %}
+        {% if doc.doc_title.strip != '' %}
       <tr> 
         <td> 
           <b>Alternate Title:</b> {{ doc.doc_title }}
         </td>
       </tr>
+        {% endif %}
       {% endif %}
       <tr> 
         <td> 
@@ -307,9 +309,14 @@
           were not made pursuant to the provisions of CEQA.
         </td>
       </tr>
-      <tr> 
+      <TR>
+        <TD>
+          &nbsp;
+        </TD>
+      </TR>
+      <tr>
         <td>
-          <b>Final EIR Available at:</b> {{ doc.doc_eiravailableat }}
+          <B>Final EIR Available at:</B> {{ doc.doc_eiravailableat }}
         </td>
       </tr>
       <tr> 

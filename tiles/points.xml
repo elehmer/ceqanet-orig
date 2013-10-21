@@ -6,23 +6,14 @@
   <Parameter name="bounds">-124.9365,31.8029,-113.2471,42.6178</Parameter>
   <Parameter name="center">-119.3802,36.9411,8</Parameter>
   <Parameter name="format">png</Parameter>
+  <Parameter name="interactivity_layer">ceqa-points</Parameter>
+  <Parameter name="interactivity_fields">doc_pk,id</Parameter>
   <Parameter name="minzoom">0</Parameter>
   <Parameter name="maxzoom">16</Parameter>
   <Parameter name="name"><![CDATA[CEQA Documents]]></Parameter>
   <Parameter name="description"><![CDATA[Locations of project who filed CEQA documents.]]></Parameter>
+  <Parameter name="template"><![CDATA[{{#__location__}}http://ceqa.ice.ucdavis.edu/docdesp_noc/{{{doc_pk}}}{{/__location__}}{{#__teaser__}}{{{doc_pk}}}{{/__teaser__}}{{#__full__}}{{/__full__}}]]></Parameter>
 </Parameters>
-
-
-<Style name="countries" filter-mode="first" >
-  <Rule>
-    <PolygonSymbolizer fill="#ffffff" />
-  </Rule>
-</Style>
-<Style name="countries-outline" filter-mode="first" >
-  <Rule>
-    <LineSymbolizer stroke="#85c5d3" stroke-width="2" stroke-linejoin="round" />
-  </Rule>
-</Style>
 
 
 <Style name="ceqa-points" filter-mode="first" >
