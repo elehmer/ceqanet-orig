@@ -69,7 +69,6 @@ map = new OpenLayers.Map('map',{
         isBaseLayer:false,sphericalMecator:true}
         );
 
-    
     var utfgrid = new OpenLayers.Layer.UTFGrid({
         url: "http://ceqa.ice.ucdavis.edu/tiles/docpoints/${z}/${x}/${y}.json",
         utfgridResolution: 4, // default is 2
@@ -80,6 +79,7 @@ map = new OpenLayers.Map('map',{
     for (var i=0; i<26; ++i) {
         matrixIds[i] = "EPSG:900913:" + i;
     }
+
 
 
     var callback = function(infoLookup) {
@@ -134,6 +134,7 @@ map = new OpenLayers.Map('map',{
     isBaseLayer: false,
     visibility: false
     });
+
 
 map.addLayers([tonerlite,toner,terrain,ceqapoints,utfgrid]);
 map.setCenter(center);
