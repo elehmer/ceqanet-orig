@@ -70,7 +70,7 @@ map = new OpenLayers.Map('map',{
         );
 
     var utfgrid = new OpenLayers.Layer.UTFGrid({
-        url: "http://ceqa.ice.ucdavis.edu/tiles/docpoints/${z}/${x}/${y}.json",
+        url: "http://ceqa.ice.ucdavis.edu/tiles/docgrid/${z}/${x}/${y}.json",
         utfgridResolution: 4, // default is 2
         displayInLayerSwitcher: false
     });
@@ -83,30 +83,30 @@ map = new OpenLayers.Map('map',{
 
 
     var callback = function(infoLookup) {
-    var msg = "";
-    if (infoLookup) {
-        var info;
-        for (var idx in infoLookup) {
+        var msg = "";
+        if (infoLookup) {
+            var info;
+            for (var idx in infoLookup) {
             // idx can be used to retrieve layer from map.layers[idx]
-            info = infoLookup[idx];
-            if (info && info.data) {
-                msg += "[" + info.id + "] <strong>In 2005, " + 
-                    info.data.doc_pk;
+                info = infoLookup[idx];
+                if (info && info.data) {
+                    msg += '<a href="/docdesp_noc/'+info.data.doc_pk+'">'+info.data.doc_pk+'</a>';
+                    document.getElementById("attributes").innerHTML = msg;
+                }
             }
         }
-    }
-    document.getElementById("attrs").innerHTML = msg;
-};    
+    
+    };    
     
     var controls = {
-    move: new OpenLayers.Control.UTFGrid({
-        callback: callback,
-        handlerMode: "move"
-        }),
-    hover: new OpenLayers.Control.UTFGrid({
-        callback: callback,
-        handlerMode: "hover"
-        }),
+    //move: new OpenLayers.Control.UTFGrid({
+    //    callback: callback,
+    //    handlerMode: "move"
+    //    }),
+    //hover: new OpenLayers.Control.UTFGrid({
+    //    callback: callback,
+    //    handlerMode: "hover"
+    //    }),
     click: new OpenLayers.Control.UTFGrid({
         callback: callback,
         handlerMode: "click"
@@ -118,7 +118,7 @@ map = new OpenLayers.Map('map',{
     }   
 
     // activate the control that responds to mousemove
-    toggleControl({value: "click"});
+    //toggleControl({value: "click"});
 
 
     //Example wmts for later
