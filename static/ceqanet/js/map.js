@@ -22,10 +22,11 @@ map = new OpenLayers.Map('map',{
 	//maxExtent: world,
 	//numZoomLevels: 10,
 	controls: [
-		new OpenLayers.Control.Navigation({}),
+		//new OpenLayers.Control.Navigation({}),
 		new OpenLayers.Control.LayerSwitcher({}),
 		//new OpenLayers.Control.ScaleLine(),
-		new OpenLayers.Control.PanZoomBar(),
+		//new OpenLayers.Control.PanZoomBar(),
+		new OpenLayers.Control.Zoom(),
 		new OpenLayers.Control.MousePosition(),
 		],
 	});

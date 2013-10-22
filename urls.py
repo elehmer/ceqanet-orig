@@ -33,13 +33,11 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^comment/$',comment.as_view(),name='comment'),
     url(r'^commentdetail/$',commentdetail.as_view(),name='commentdetail'),
     url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
-<<<<<<< HEAD
     url(r'^map/all/geojson/$','locations_geojson',name="locations"),
     url(r'^map/all/geojson/(?P<limit>\d+)/$','locations_geojson',name="locations"),
     url(r'^map/$','map',name="map"),
 
-=======
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
+
 )
 
 urlpatterns += patterns('',

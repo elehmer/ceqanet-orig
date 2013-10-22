@@ -7,10 +7,7 @@ class counties(models.Model):
     geow_pk = models.AutoField(primary_key=True)
     geow_shortname = models.CharField(max_length=32)
     geow_longname = models.CharField(max_length=64)
-<<<<<<< HEAD
 
-=======
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class doctypes(models.Model):
     keyw_pk = models.AutoField(primary_key=True)
     keyw_shortname = models.CharField(max_length=32)
@@ -18,16 +15,10 @@ class doctypes(models.Model):
     inlookup = models.BooleanField(default=True)
     storfed = models.IntegerField()
     ordinal = models.IntegerField()
-<<<<<<< HEAD
 
     def __unicode__(self):
         return self.keyw_longname
 
-=======
-
-    def __unicode__(self):
-        return self.keyw_longname    
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class docgeowords(models.Model):
     dgeo_pk = models.AutoField(primary_key=True)
     dgeo_geow_fk = models.ForeignKey("geowords",db_column="dgeo_geow_fk")
@@ -60,10 +51,7 @@ class docreviews(models.Model):
     dsloc = models.CharField(max_length=30)
     drag_lateletter = models.DateField()
     drag_ragcomment = models.TextField(null=True,blank=True)
-<<<<<<< HEAD
 
-=======
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class documents(models.Model):
     doc_pk = models.AutoField(primary_key=True)
     doc_prj_fk = models.ForeignKey("projects",null=True,blank=True,db_column="doc_prj_fk")
@@ -163,7 +151,6 @@ class documents(models.Model):
     doc_plannerregion = models.IntegerField(null=True,blank=True)
     doc_plannerreview = models.BooleanField()
     doc_exstatus = models.IntegerField()
-<<<<<<< HEAD
 
     class Meta:
         #ordering = ['name']
@@ -173,18 +160,14 @@ class documents(models.Model):
     def __unicode__(self):
         return self.doc_pk
 
-=======
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
+
 class geowordlists(models.Model):
     geol_pk = models.AutoField(primary_key=True)
     geol_shortname = models.CharField(null=True,blank=True,max_length=32)
     geol_longname = models.CharField(null=True,blank=True,max_length=64)
     geol_description = models.TextField(null=True,blank=True)
     geol_listsource = models.CharField(null=True,blank=True,max_length=10)
-<<<<<<< HEAD
 
-=======
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class geowords(models.Model):
     geow_pk = models.AutoField(primary_key=True)
     geow_geol_fk = models.ForeignKey("geowordlists",db_column="geow_geol_fk")
@@ -194,38 +177,24 @@ class geowords(models.Model):
     geow_originalcontrolid = models.CharField(max_length=10)
     geow_recordsource = models.CharField(max_length=10)
     inlookup = models.BooleanField(default=True)
-<<<<<<< HEAD
 
     def __unicode__(self):
         return self.geow_shortname        
-
+  
 class holidays(models.Model):
-
-=======
-
-    def __unicode__(self):
-        return self.geow_shortname        
-class holidays(models.Model):
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
     hday_pk = models.AutoField(primary_key=True)
     hday_name = models.CharField(max_length=40)
     hday_date = models.DateField()
     hday_dow = models.CharField(max_length=10)
     hday_note = models.TextField()
-<<<<<<< HEAD
 
-=======
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class keywordlists(models.Model):
     keyl_pk = models.AutoField(primary_key=True)
     keyl_shortname = models.CharField(max_length=32)
     keyl_longname = models.CharField(max_length=64)
     keyl_description = models.TextField()
     keyl_listsource = models.CharField(max_length=10)
-<<<<<<< HEAD
 
-=======
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class keywords(models.Model):
     keyw_pk = models.AutoField(primary_key=True)
     keyw_keyl_fk = models.ForeignKey("keywordlists",db_column="keyw_keyl_fk")
@@ -237,16 +206,11 @@ class keywords(models.Model):
     keyw_caption3 = models.CharField(max_length=10)
     keyw_originalcontrolid = models.CharField(max_length=10)
     keyw_recordsource = models.CharField(max_length=10)
-<<<<<<< HEAD
 
     def __unicode__(self):
         return self.keyw_longname        
 
-=======
 
-    def __unicode__(self):
-        return self.keyw_longname        
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class latlongs(models.Model):
     doc_pk = models.AutoField(primary_key=True)
     doc_prj_fk = models.ForeignKey("projects",db_column="doc_prj_fk")
@@ -261,10 +225,7 @@ class latlongs(models.Model):
     doc_latitude = models.CharField(max_length=30)
     doc_longitude = models.CharField(max_length=30)
     doc_map_link = models.CharField(null=True,blank=True,max_length=240)
-<<<<<<< HEAD
 
-=======
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class leadagencies(models.Model):
     lag_pk = models.AutoField(primary_key=True)
     lag_geow_fk = models.ForeignKey("geowords",db_column="lag_geow_fk")
@@ -286,7 +247,6 @@ class leadagencies(models.Model):
     lag_prjcnt = models.IntegerField()
     lag_note = models.CharField(max_length=60)
     inlookup = models.BooleanField(default=True)
-<<<<<<< HEAD
 
     def __unicode__(self):
         return self.lag_name
@@ -295,14 +255,6 @@ class prinfo(models.Model):
     info_prjdate = models.DateField()
     info_docdate = models.DateField()
 
-=======
-
-    def __unicode__(self):
-        return self.lag_name
-class prinfo(models.Model):
-    info_prjdate = models.DateField()
-    info_docdate = models.DateField()
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class projects(models.Model):
     prj_pk = models.AutoField(primary_key=True)
     prj_lag_fk = models.ForeignKey("leadagencies",db_column="prj_lag_fk")
@@ -328,10 +280,7 @@ class projects(models.Model):
     prj_pending = models.BooleanField()
     prj_visible = models.BooleanField()
     prj_plannerreview = models.BooleanField()
-<<<<<<< HEAD
 
-=======
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class reviewingagencies(models.Model):
     rag_pk = models.AutoField(primary_key=True)
     rag_name = models.CharField(max_length=90,db_index=True)
@@ -350,23 +299,18 @@ class reviewingagencies(models.Model):
     rag_acronym = models.CharField(max_length=10)
     rag_disable = models.BooleanField()
     inlookup = models.BooleanField(default=True)
-<<<<<<< HEAD
 
     def __unicode__(self):
         return self.rag_title
 
-=======
 
-    def __unicode__(self):
-        return self.rag_title
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
 class UserProfile(models.Model):
     user = models.ForeignKey(User,unique=True)
     region = models.IntegerField(blank=True)
     set_lag_fk = models.ForeignKey("leadagencies",blank=True,null=True,db_column="set_lag_fk")
     set_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="set_rag_fk")
     conphone = models.CharField(null=True,blank=True,max_length=32)
-<<<<<<< HEAD
+
 
 class clearinghouse(models.Model):
     schnoprefix = models.CharField(max_length=6)
@@ -382,9 +326,3 @@ class Locations(models.Model):
         verbose_name = "Location"
         verbose_name_plural = "Locations"
 
-
-=======
-class clearinghouse(models.Model):
-    schnoprefix = models.CharField(max_length=6)
-    currentid = models.IntegerField()
->>>>>>> 175f59ff6321935fe13c737a0f8caa0548fa1f0b
