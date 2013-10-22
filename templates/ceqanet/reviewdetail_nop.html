@@ -1,10 +1,23 @@
 {% extends "ceqanet/base.html" %}
 
+{% block title %}OPR Data Clearinghouse Pending Document Detail{% endblock title %}
+
+{% block extrajs %}
+
+  <script>
+    $(function() {
+        $( "#id_doc_dept" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+    $(function() {
+        $( "#id_doc_clear" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+  </script>
+
+{% endblock extrajs %}
+
 {% load staticfiles %}
 
 {% block content %}
-
-{{ form.media }}
 <FORM name="editdoc" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
@@ -517,13 +530,37 @@
         {{ form.ragencies }}
       </td>
     </tr>
+    <tr> 
+      <td> 
+        <hr width="100%">
+      </td>
+    </tr>
+    <tr> 
+      <td>
+        <table>
+          <tr>
+            <td>
+              <b>Start of Review:</b> {{ form.doc_dept }}
+            </td>
+            <td>
+              <b>End of Review:</b> {{ form.doc_clear }}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <hr width="100%">
+      </td>
+    </tr>
     <TR> 
-      <TD align="left" colspan="3"> 
-        <input type="submit" value="Update">
+      <TD align="center" colspan="3"> 
+        <input type="submit" value="Accept Document">
+        <input type="submit" value="Reject Document">
       </TD>
     </TR>
   </TABLE>
   <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
 </FORM>
-
 {% endblock content %}

@@ -1,10 +1,10 @@
 {% extends "ceqanet/base.html" %}
 
+{% block title %}OPR Data Clearinghouse Pending Document Detail{% endblock title %}
+
 {% load staticfiles %}
 
 {% block content %}
-
-{{ form.media }}
 <FORM name="editdoc" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
@@ -517,13 +517,29 @@
         {{ form.ragencies }}
       </td>
     </tr>
+    <tr> 
+      <td colspan="3"> 
+        <hr width="100%">
+      </td>
+    </tr>
+    <tr> 
+      <td> 
+        <b>{{ form.doc_plannerregion.label }}</b>
+        {{ form.doc_plannerregion }}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <hr width="100%">
+      </td>
+    </tr>
     <TR> 
-      <TD align="left" colspan="3"> 
-        <input type="submit" value="Update">
+      <TD align="center" colspan="3"> 
+        <input type="submit" value="Assign Document">
+        <input type="submit" value="Reject Document">
       </TD>
     </TR>
   </TABLE>
   <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
 </FORM>
-
 {% endblock content %}

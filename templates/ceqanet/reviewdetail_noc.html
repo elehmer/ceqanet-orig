@@ -1,10 +1,23 @@
 {% extends "ceqanet/base.html" %}
 
+{% block title %}OPR Data Clearinghouse Pending Document Detail{% endblock title %}
+
+{% block extrajs %}
+
+  <script>
+    $(function() {
+        $( "#id_doc_dept" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+    $(function() {
+        $( "#id_doc_clear" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+  </script>
+
+{% endblock extrajs %}
+
 {% load staticfiles %}
 
 {% block content %}
-
-{{ form.media }}
 <FORM name="editdoc" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
@@ -228,6 +241,64 @@
     <TR> 
       <TD colspan="3"> 
         {{ form.doc_landuse }} {{ form.doc_landuse.errors }}
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Document Type:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3">
+        {{ form.doctypeid.errors }}
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <TR> 
+            <TH width="33%">CEQA:</TH>
+            <TH width="33%">NEPA:</TH>
+            <TH width="33%">Joint Document:</TH>
+          </TR>
+          <TR>
+            <TD>
+              <table>
+              {% for dt in form.doctypeid %}
+                {% if forloop.counter < 12 %}
+                <tr>
+                  <td>
+                    {{ dt }}
+                  </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              </table>
+            </TD>
+            <TD>
+              <table>
+              {% for dt in form.doctypeid %}
+                {% if forloop.counter > 11 and forloop.counter < 20 %}
+                <tr>
+                  <td>
+                    {{ dt }}
+                  </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              </table>
+            </TD>
+            <TD>
+              <table>
+              {% for dt in form.doctypeid %}
+                {% if forloop.counter = 20 %}
+                <tr>
+                  <td>
+                    {{ dt }}
+                  </td>
+                </tr>
+                {% endif %}
+              {% endfor %}
+              </table>
+            </TD>
+          </TR>
+        </table>
       </TD>
     </TR>
     <tr> 
@@ -517,13 +588,37 @@
         {{ form.ragencies }}
       </td>
     </tr>
+    <tr> 
+      <td> 
+        <hr width="100%">
+      </td>
+    </tr>
+    <tr> 
+      <td>
+        <table>
+          <tr>
+            <td>
+              <b>Start of Review:</b> {{ form.doc_dept }}
+            </td>
+            <td>
+              <b>End of Review:</b> {{ form.doc_clear }}
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <hr width="100%">
+      </td>
+    </tr>
     <TR> 
-      <TD align="left" colspan="3"> 
-        <input type="submit" value="Update">
+      <TD align="center" colspan="3"> 
+        <input type="submit" value="Accept Document">
+        <input type="submit" value="Reject Document">
       </TD>
     </TR>
   </TABLE>
   <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
 </FORM>
-
 {% endblock content %}

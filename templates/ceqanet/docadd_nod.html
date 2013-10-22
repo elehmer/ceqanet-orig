@@ -2,6 +2,14 @@
 
 {% load staticfiles %}
 
+{% block extrajs %}
+  <script>
+    $(function() {
+        $( "#id_doc_nod" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+  </script>
+{% endblock extrajs %}
+
 {% block content %}
 
 {{ form.media }}
@@ -242,14 +250,6 @@
         <b>Final EIR Available at:</b> {{ form.doc_eiravailableat }}
       </td>
     </tr>
-    <TR> 
-      <TD width="25%" valign="top">
-        <B>Entry Date:</B>
-      </TD>
-      <TD colspan="2">
-        {% now "F j, Y" %}
-      </TD>
-    </TR>
     <TR> 
       <TD align="center" colspan="3"> 
         <input type="submit" value="Submit to OPR for review...">
