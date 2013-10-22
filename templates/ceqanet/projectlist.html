@@ -63,13 +63,21 @@
     	    {{ doc.doc_prj_fk.prj_leadagency }}
     	  </TD>
       	<TD align="center">
-    	    <a href="/projdoclist/?prj_pk={{ doc.doc_prj_fk.prj_pk }}"><i>{{ doc.doc_prj_fk.prj_title }}</i></a>
+          <a href="{% url 'projdoclist' %}?prj_pk={{ doc.doc_prj_fk.prj_pk }}"><i>{{ doc.doc_prj_fk.prj_title }}</i></a>
     	  </TD>
       	<TD align="center">
     	    {{ doc.doc_description }}
     	  </TD>
       	<TD align="center">
-    	    <a href="/docdescription/{{ doc.doc_pk }}/?doctype={{ doc.doc_doctype }}">{{ doc.doc_doctype }}</a>
+          {% if doc.doc_doctype = 'NOE' or doc.doc_docname.strip = 'Notice of Exemption' %}
+            <a href="{% url 'docdesp_noe' doc.doc_pk %}">{{ doc.doc_docname }}</a>
+          {% elif doc.doc_doctype = 'NOD' or doc.doc_docname.strip = 'Notice of Determination' %}
+            <a href="{% url 'docdesp_nod' doc.doc_pk %}">{{ doc.doc_docname }}</a>
+          {% elif doc.doc_doctype = 'NOP' or doc.doc_docname.strip = 'Notice of Preperation' %}
+            <a href="{% url 'docdesp_nop' doc.doc_pk %}">{{ doc.doc_docname }}</a>
+          {% else %}
+            <a href="{% url 'docdesp_noc' doc.doc_pk %}">{{ doc.doc_docname }}</a>
+          {% endif %}
       	</TD>
       	<TD align="center">
     	  {{ doc.doc_received }}
@@ -104,8 +112,15 @@
       </TD>
     </TR>
     {% endif %}
-
     </TABLE>
+  {% else %}
+  <TABLE>
+    <TR>
+      <TD ALIGN="middle">
+        Query Returned No Records. Please use the Back button on your browser and try again.
+      </TD>
+    </TR>
+  </TABLE>
   {% endif %}
 
 {% endblock listing %}

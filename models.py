@@ -38,18 +38,18 @@ class docreviews(models.Model):
     drag_pk = models.AutoField(primary_key=True)
     drag_doc_fk = models.ForeignKey("documents",db_column="drag_doc_fk")
     drag_rag_fk = models.ForeignKey("reviewingagencies",db_column="drag_rag_fk")
-    drag_comment = models.CharField(max_length=64)
-    drag_received = models.DateField()
-    drag_sentbysch = models.BooleanField()
-    drag_sentbylag = models.BooleanField()
-    drag_late = models.BooleanField()
+    drag_comment = models.CharField(null=True,blank=True,max_length=64)
+    drag_received = models.DateField(null=True,blank=True)
+    drag_sentbysch = models.NullBooleanField(null=True,blank=True)
+    drag_sentbylag = models.NullBooleanField(null=True,blank=True)
+    drag_late = models.NullBooleanField(null=True,blank=True)
     drag_rank = models.IntegerField()
     drag_copies = models.IntegerField()
-    sentbycode = models.CharField(max_length=1)
-    dsnum = models.CharField(max_length=10)
-    dscode = models.CharField(max_length=5)
-    dsloc = models.CharField(max_length=30)
-    drag_lateletter = models.DateField()
+    sentbycode = models.CharField(null=True,blank=True,max_length=1)
+    dsnum = models.CharField(null=True,blank=True,max_length=10)
+    dscode = models.CharField(null=True,blank=True,max_length=5)
+    dsloc = models.CharField(null=True,blank=True,max_length=30)
+    drag_lateletter = models.DateField(null=True,blank=True)
     drag_ragcomment = models.TextField(null=True,blank=True)
 
 class documents(models.Model):
@@ -160,7 +160,6 @@ class documents(models.Model):
     def __unicode__(self):
         return self.doc_pk
 
-
 class geowordlists(models.Model):
     geol_pk = models.AutoField(primary_key=True)
     geol_shortname = models.CharField(null=True,blank=True,max_length=32)
@@ -180,7 +179,7 @@ class geowords(models.Model):
 
     def __unicode__(self):
         return self.geow_shortname        
-  
+
 class holidays(models.Model):
     hday_pk = models.AutoField(primary_key=True)
     hday_name = models.CharField(max_length=40)
@@ -209,7 +208,6 @@ class keywords(models.Model):
 
     def __unicode__(self):
         return self.keyw_longname        
-
 
 class latlongs(models.Model):
     doc_pk = models.AutoField(primary_key=True)
@@ -303,15 +301,13 @@ class reviewingagencies(models.Model):
     def __unicode__(self):
         return self.rag_title
 
-
 class UserProfile(models.Model):
     user = models.ForeignKey(User,unique=True)
     region = models.IntegerField(blank=True)
     set_lag_fk = models.ForeignKey("leadagencies",blank=True,null=True,db_column="set_lag_fk")
     set_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="set_rag_fk")
     conphone = models.CharField(null=True,blank=True,max_length=32)
-
-
+    
 class clearinghouse(models.Model):
     schnoprefix = models.CharField(max_length=6)
     currentid = models.IntegerField()

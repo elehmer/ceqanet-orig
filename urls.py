@@ -1,5 +1,5 @@
 from django.conf.urls import patterns, url
-from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,docedit_noc,docedit_noe,docedit_nod,docedit_nop,pending,pendingdetail,accept,review,reviewdetail,usersettings,comment,commentdetail,docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
+from ceqanet.views import index,query,projectlist,projdoclist,docdescription,submit,findproject,docadd_noc,docadd_nod,docadd_noe,docadd_nop,adddocument,docedit_noc,docedit_noe,docedit_nod,docedit_nop,pending,pendingdetail_noc,pendingdetail_nod,pendingdetail_noe,pendingdetail_nop,accept,review,reviewdetail_noc,reviewdetail_nod,reviewdetail_noe,reviewdetail_nop,usersettings,comment,commentdetail,docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
 #map related views
 from ceqanet.views import locations_geojson, map
 
@@ -33,11 +33,21 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^comment/$',comment.as_view(),name='comment'),
     url(r'^commentdetail/$',commentdetail.as_view(),name='commentdetail'),
     url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
+    url(r'^pendingdetail_noc/$',pendingdetail_noc.as_view(),name='pendingdetail_noc'),
+    url(r'^pendingdetail_nod/$',pendingdetail_nod.as_view(),name='pendingdetail_nod'),
+    url(r'^pendingdetail_noe/$',pendingdetail_noe.as_view(),name='pendingdetail_noe'),
+    url(r'^pendingdetail_nop/$',pendingdetail_nop.as_view(),name='pendingdetail_nop'),
+    url(r'^review/$',review.as_view(),name='review'),
+    url(r'^reviewdetail_noc/$',reviewdetail_noc.as_view(),name='reviewdetail_noc'),
+    url(r'^reviewdetail_nod/$',reviewdetail_nod.as_view(),name='reviewdetail_nod'),
+    url(r'^reviewdetail_noe/$',reviewdetail_noe.as_view(),name='reviewdetail_noe'),
+    url(r'^reviewdetail_nop/$',reviewdetail_nop.as_view(),name='reviewdetail_nop'),
+    url(r'^comment/$',comment.as_view(),name='comment'),
+    url(r'^commentdetail/$',commentdetail.as_view(),name='commentdetail'),
+    url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
     url(r'^map/all/geojson/$','locations_geojson',name="locations"),
     url(r'^map/all/geojson/(?P<limit>\d+)/$','locations_geojson',name="locations"),
     url(r'^map/$','map',name="map"),
-
-
 )
 
 urlpatterns += patterns('',

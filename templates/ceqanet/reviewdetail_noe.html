@@ -1,11 +1,24 @@
 {% extends "ceqanet/base.html" %}
 
+{% block title %}OPR Data Clearinghouse Document Review Detail{% endblock title %}
+
+{% block extrajs %}
+
+  <script>
+    $(function() {
+        $( "#id_doc_dept" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+    $(function() {
+        $( "#id_doc_clear" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+  </script>
+
+{% endblock extrajs %}
+
 {% load staticfiles %}
 
 {% block content %}
-
-{{ form.media }}
-<FORM name="adddoc" method="post" action="">
+<FORM name="reviewdetailform" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
@@ -29,16 +42,6 @@
         {{ form.prj_description }} {{ form.prj_description.errors }}
       </TD>
     </TR>
-    {% if prj_pk != '-9999' %}
-    <TR>
-      <TH width="25%" align="left" valign="top">
-        Project Clearinghouse Number:
-      </TH>
-      <TD colspan="2">
-        {{ prjinfo.prj_schno }}
-      </TD>
-    </TR>
-    {% endif %}    
     <TR> 
       <TH align="left" colspan="3">
         <h3>Document Information:</h3>
@@ -50,11 +53,11 @@
       </TH>
     </TR>
     <tr>
-      <td width="25%" valign="top">
-        <b>From <font color="#000066">(Lead Agency)</font>:</b>
-      </td>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conagency.label }}
+      </TH>
       <td colspan="2"> 
-        {{ laglist.lag_name }}
+        {{ form.doc_conagency }}
       </td>
     </tr>
     <TR>
@@ -213,14 +216,18 @@
         {{ form.doc_exreasons }} {{ form.doc_exreasons.errors }}
       </td>
     </tr>
+    <tr> 
+      <td colspan="3"> 
+        <hr width="100%">
+      </td>
+    </tr>
     <TR> 
       <TD align="center" colspan="3"> 
-        <input type="submit" value="Submit to OPR for review...">
+        <input type="submit" value="Accept Document">
+        <input type="submit" value="Reject Document">
       </TD>
     </TR>
-  </TABLE>
-  <input type="hidden" name="prj_pk" value="{{ prj_pk }}">
-  <input type="hidden" name="doctype" value="{{ doctype }}">
-</FORM>
-
+  </table>
+  <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
+</form>
 {% endblock content %}
