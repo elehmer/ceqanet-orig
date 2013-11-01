@@ -1,13 +1,20 @@
+import os
 from django.template import RequestContext, Context, loader
 from django.http import HttpResponse
 from django.shortcuts import render
+from django.conf import settings
 from django.http import HttpResponseRedirect
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import FormView,UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
-from ceqanet.forms import QueryForm,submitform,AddDocForm,nocform,nodform,noeform,nopform,editnocform,editnoeform,editnodform,editnopform,pendingdetailnocform,pendingdetailnodform,pendingdetailnoeform,pendingdetailnopform,DocReviewForm,usersettingsform,reviewdetailform,reviewdetailnocform,reviewdetailnodform,reviewdetailnoeform,reviewdetailnopform,pendingdetailform,commentdetailform
+from ceqanet.forms import QueryForm,submitform,usersettingsform
+from ceqanet.forms import nocform,nodform,noeform,nopform
+from ceqanet.forms import editnocform,editnoeform,editnodform,editnopform
+from ceqanet.forms import pendingdetailnocform,pendingdetailnodform,pendingdetailnoeform,pendingdetailnopform
+from ceqanet.forms import reviewdetailnocform,reviewdetailnodform,reviewdetailnoeform,reviewdetailnopform
+from ceqanet.forms import commentdetailform
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords
 from datetime import datetime
 
@@ -84,212 +91,6 @@ def ClearinghouseQuery(request):
     prj_schno = request.GET.get('prj_schno')
 
     queryset = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).order_by('-prj_schno')
-    return queryset
-
-class adddocument(FormView):
-    template_name="ceqanet/adddocument.html"
-    form_class = AddDocForm
-
-    def get_success_url(self):
-        success_url = "%s" % (reverse_lazy('accept'))
-        return success_url
-
-    def get_context_data(self, **kwargs):
-        context = super(adddocument, self).get_context_data(**kwargs)
-
-        context['prj_pk'] = self.request.GET.get("prj_pk")
-        context['doctype'] = self.request.GET.get("doctype")
-        if self.request.GET.get('doctype') in ['NOC','NOP']:
-            context['actions'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001).order_by('keyw_longname')
-            #context['devtypes'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010).order_by('keyw_longname')
-            #context['issues'] = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname')
-        if self.request.GET.get("prj_pk") != '-9999':
-            context['prjinfo'] = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
-        context['laglist'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
-
-        return context
-    
-    def get_initial(self):
-        initial = super(adddocument, self).get_initial()
-
-        initial['doc_conname'] = self.request.user.first_name + " " + self.request.user.last_name
-        initial['doc_conemail'] = self.request.user.email
-
-        la_query = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
-        initial['doc_conaddress1'] = la_query.lag_address1.strip
-        initial['doc_conaddress2'] = la_query.lag_address2.strip
-        initial['doc_concity'] = la_query.lag_city.strip
-        initial['doc_constate'] = la_query.lag_state.strip
-        initial['doc_conzip'] = la_query.lag_zip.strip
-        return initial
-
-    def form_valid(self,form):
-        data = form.cleaned_data
-        today = datetime.now()
-        doc_received = today
-        lag = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
-        doc = documents.objects.get(pk=0)
-        cnty = counties.objects.get(pk=data['doc_county'].pk)
-        doct = doctypes.objects.get(keyw_shortname__startswith=self.request.POST.get('doctype'))
-        if data['doc_conaddress2'] == '':
-            doc_conaddress2 = None
-        else:
-            doc_conaddress2 = data['doc_conaddress2']
-        doc_conphone = data['strphone1']+data['strphone2']+data['strphone3']
-        if self.request.POST.get('doctype') in ['NOC','NOP']:
-            if data['doc_parcelno'] == '':
-                doc_parcelno = None
-            else:
-                doc_parcelno = data['doc_parcelno']
-            if data['doc_xstreets'] == '':
-                doc_xstreets = None
-            else:
-                doc_xstreets = data['doc_xstreets']
-            if data['doc_township'] == '':
-                doc_township = None
-            else:
-                doc_township = data['doc_township']
-            if data['doc_range'] == '':
-                doc_range = None
-            else:
-                doc_range = data['doc_range']
-            if data['doc_section'] == '':
-                doc_section = None
-            else:
-                doc_section = data['doc_section']
-            if data['doc_base'] == '':
-                doc_base = None
-            else:
-                doc_base = data['doc_base']
-            if data['doc_highways'] == '':
-                doc_highways = None
-            else:
-                doc_highways = data['doc_highways']
-            if data['doc_airports'] == '':
-                doc_airports = None
-            else:
-                doc_airports = data['doc_airports']
-            if data['doc_railways'] == '':
-                doc_railways = None
-            else:
-                doc_railways = data['doc_railways']
-            if data['doc_waterways'] == '':
-                doc_waterways = None
-            else:
-                doc_waterways = data['doc_waterways']
-            if data['doc_landuse'] == '':
-                doc_landuse = None
-            else:
-                doc_landuse = data['doc_landuse']
-            if data['doc_schools'] == '':
-                doc_schools = None
-            else:
-                doc_schools = data['doc_schools']
-
-        if self.request.POST.get('doctype') == 'NOE':
-            doc_exministerial = False
-            doc_exdeclared = False
-            doc_exemergency = False
-            doc_excategorical = False
-            doc_exstatutory = False
-            doc_exnumber = ""
-            status = ""
-            rdoexemptstatus = self.request.POST.get('rdoexemptstatus')
-            if rdoexemptstatus == '1':
-                doc_exministerial = True
-                status = "Ministerial"
-            elif rdoexemptstatus == '2':
-                doc_exdeclared = True
-                status = "Declared Emergency"
-            elif rdoexemptstatus == '3':
-                doc_exemergency = True
-                status = "Emergency Project"
-            elif rdoexemptstatus == '4':
-                doc_excategorical = True
-                doc_exnumber = self.request.POST.get('strsectionnumber')
-                status = "Categorical Exemption, Section " + doc_exnumber
-            elif rdoexemptstatus == '5':
-                doc_exstatutory = True
-                doc_exnumber = self.request.POST.get('strcodenumber')
-                status = "Statutory Exemptions, State Code " + doc_exnumber
-
-        if self.request.POST.get('prj_pk') == '-9999':
-            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
-            prj.save()
-        else:
-            prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
-
-        if self.request.POST.get('doctype') in ['NOC','NOP']:
-            adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base)
-            adddoc.save()
-            actions = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001)
-            for a in actions:
-                if self.request.POST.get('lat'+str(a.keyw_pk)) == "1":
-                    adockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=a,dkey_rank=0)
-                    adockeyw.save()
-            devtypes = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010)
-            for d in devtypes:
-                if self.request.POST.get('dev'+str(d.keyw_pk)) == "1":
-                    ddockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=d,dkey_value1=self.request.POST.get('dev'+str(d.keyw_pk)+'_val1'),dkey_value2=self.request.POST.get('dev'+str(d.keyw_pk)+'_val2'),dkey_value3=self.request.POST.get('dev'+str(d.keyw_pk)+'_val3'),dkey_rank=0)
-                    ddockeyw.save()
-            issues = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002)
-            for i in issues:
-                if self.request.POST.get('issue'+str(i.keyw_pk)) == "1":
-                    idockeyw = dockeywords(dkey_doc_fk=adddoc,dkey_keyw_fk=i,dkey_rank=0)
-                    idockeyw.save()
-            for ra in data['ragencies']:
-                docrev = docreviews(drag_doc_fk=adddoc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
-                docrev.save()
-
-        if self.request.POST.get('doctype') == 'NOE':
-            adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=doc_conphone,doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=data['doc_conaddress2'],doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber)
-            adddoc.save()
-        prj.prj_doc_fk=adddoc
-        prj.save()
-
-        coords = latlongs(doc_pk=adddoc.pk,doc_prj_fk=prj,doc_doctype=self.request.POST.get('doctype'),doc_latitude=data['doc_latitude'],doc_longitude=data['doc_longitude'])
-        coords.save()
-
-        strFrom = "ceqanet@opr.ca.gov"
-        ToList = [data['doc_conemail']]
-        strSubject = "Confirmation of Submittal - " + doct.keyw_longname
-        strBody = "This confirms receipt of your electronic " + doct.keyw_longname + " form submission on " + doc_received.strftime('%m/%d/%Y') + ".  \n \n"
-        strBody = strBody + "The State Clearinghouse will review your submittal and provide a State Clearinghouse Number and filing date within one business day. \n \n"
-        strBody = strBody + "If you have questions about the form submittal process, please reply to this email.  Thank you for using CEQAnet. \n"
-        strBody = strBody + "\n \n" + "--- Information Submitted ---" + "\n"
-        strBody = strBody + "Document Type: " + self.request.POST.get('doctype') + "\n"        
-        if self.request.POST.get('prj_pk') == '-9999':
-            strBody = strBody + "Project Title: " + data['prj_title'] + "\n"
-        else:
-            strBody = strBody + "Project Title: " + prj.prj_title + "\n"            
-        strBody = strBody + "Project Location: " + data['doc_location'] + "\n"
-        strBody = strBody + "    City: " + data['doc_city'].geow_shortname + "\n"
-        strBody = strBody + "    County: " + data['doc_county'].geow_shortname + "\n"
-        strBody = strBody + "    Latitude: " + data['doc_latitude'] + "\n"
-        strBody = strBody + "    Longitude: " + data['doc_longitude'] + "\n"
-        if self.request.POST.get('prj_pk') == '-9999':
-            strBody = strBody + "Project Description: " + data['prj_description'] + "\n"
-        else:
-            strBody = strBody + "Project Description: " + prj.prj_description + "\n"
-        #strBody = strBody + "Person or Agency Carrying out Project: " & prj_otheragency + "\n"
-        strBody = strBody + "Agency Approving Project: " + lag.lag_name + "\n"
-        strBody = strBody + "Primary Contact:  " + "\n"
-        strBody = strBody + "    Name: " + data['doc_conname'] + "\n"
-        strBody = strBody + "    Phone: " + doc_conphone + "\n"
-        strBody = strBody + "    E-mail: " + data['doc_conemail'] + "\n"
-        if self.request.POST.get('doctype') == 'NOE':
-            strBody = strBody + "Exempt Status: " + status + "\n"
-            strBody = strBody + "Reason for Exemption: " + data['txtreason'] + "\n"
-        strBody = strBody + "DATE: " + doc_received.strftime('%m/%d/%Y') + "\n"
-
-        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
-
-        return super(adddocument,self).form_valid(form)
-
-def ProjectInfoQuery(request):
-    prj_pk = request.GET.get('prj_pk')
-
-    queryset = projects.objects.get(prj_pk=prj_pk)
     return queryset
 
 class docadd_noc(FormView):
@@ -1067,29 +868,6 @@ class docdesp_nop(DetailView):
         context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
         context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
-        return context
-
-class docdescription(DetailView):
-    model = documents
-    template_name="ceqanet/docdescription.html"
-    context_object_name = "doc"
-
-    def get_context_data(self, **kwargs):
-        context = super(docdescription, self).get_context_data(**kwargs)
-        doc_pk = self.kwargs['pk']
-        context['doc_pk'] = doc_pk
-        doctype = self.request.GET.get("doctype")
-        context['doctype'] = doctype
-        if doctype == "NOE":
-            context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
-        elif doctype == "NOD":
-            context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
-        else:
-            context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
-            context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
-            context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
-            context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
-            context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
         return context
 
 class docedit_noc(FormView):
@@ -1914,47 +1692,6 @@ class pending(ListView):
 def PendingListQuery(request):
     queryset = documents.objects.filter(doc_pending=True).order_by('-doc_received')
     return queryset
-
-class pendingdetail(FormView):
-    form_class = pendingdetailform
-    template_name="ceqanet/pendingdetail.html"
-    context_object_name = "detail"
- 
-    def get_context_data(self, **kwargs):
-        context = super(pendingdetail, self).get_context_data(**kwargs)
-
-        doc_pk = self.request.GET.get('doc_pk')
-        context['doc_pk'] = doc_pk
-        context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
-        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
-        context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
-        context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
-        context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
-        context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
-
-        return context
-
-    def get_success_url(self):
-        success_url = "%s" % reverse_lazy('pending')
-        return success_url
-
-    def form_valid(self,form):
-        data = form.cleaned_data
-
-        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
-        doc.doc_pending = False
-        doc.doc_plannerreview = True
-        doc.doc_plannerregion = self.request.POST.get('doc_plannerregion')
-
-        prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
-
-        if prj.prj_pending:
-            prj.prj_pending = False
-            prj.prj_plannerreview = True
-        doc.save()
-        prj.save()
-
-        return super(pendingdetail,self).form_valid(form)
 
 class pendingdetail_noc(FormView):
     form_class = pendingdetailnocform
@@ -2820,64 +2557,6 @@ def ReviewListQuery(request):
     region = request.user.get_profile().region 
     queryset = documents.objects.filter(doc_plannerregion=region).filter(doc_plannerreview=True).order_by('-doc_received')
     return queryset
-
-class reviewdetail(FormView):
-    form_class = reviewdetailform
-    template_name="ceqanet/reviewdetail.html"
-    context_object_name = "detail"
- 
-    def get_context_data(self, **kwargs):
-        context = super(reviewdetail, self).get_context_data(**kwargs)
-
-        doc_pk = self.request.GET.get('doc_pk')
-        context['doc_pk'] = doc_pk
-        context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
-        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
-        context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
-        context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
-        context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
-        context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
-        context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
-
-        return context
-
-    def get_success_url(self):
-        success_url = "%s" % (reverse_lazy('review'))
-        return success_url
-
-    def form_valid(self,form):
-        data = form.cleaned_data
-
-        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
-
-        ch = clearinghouse.objects.get(pk=1)
-        currentidnum = str(ch.currentid)
-        if len(currentidnum) == 1:
-            currentidnum = "00"+currentidnum
-        elif len(currentidnum) == 2:
-            currentidnum = "0"+currentidnum
-        schno = ch.schnoprefix + str(doc.doc_plannerregion) + currentidnum
-        ch.currentid = ch.currentid+1
-        ch.save()
-
-        if doc.doc_doctype in ['NOC','NOP']:
-            doc.doc_dept = data['doc_dept']
-            doc.doc_clear = data['doc_clear']
-            doc.doc_review = True
-        if doc.doc_doctype == 'NOE':
-            doc.doc_visible = True
-        doc.doc_plannerreview = False
-        doc.doc_schno = schno
-
-        prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
-
-        if prj.prj_pending:
-            prj.prj_schno = schno
-            prj.prj_plannerreview = False
-        doc.save()
-        prj.save()
-
-        return super(reviewdetail,self).form_valid(form)
 
 class reviewdetail_noc(FormView):
     form_class = reviewdetailnocform
@@ -3782,36 +3461,80 @@ def CommentListQuery(request):
     queryset = docreviews.objects.filter(drag_rag_fk__rag_pk=set_rag_fk).filter(drag_doc_fk__doc_review=True).order_by('-drag_doc_fk__doc_received')
     return queryset
 
-class commentdetail(FormView):
+class commentdetail_noc(FormView):
     form_class = commentdetailform
-    template_name="ceqanet/commentdetail.html"
-    context_object_name = "detail"
+    template_name="ceqanet/commentdetail_noc.html"
  
+    def get_success_url(self):
+        success_url = "%s" % (reverse_lazy('comment'))
+        return success_url
+
+    def get_initial(self):
+        initial = super(commentdetail_noc, self).get_initial()
+
+        dr_query = docreviews.objects.get(drag_doc_fk__doc_pk=self.request.GET.get('doc_pk'),drag_rag_fk__rag_pk=self.request.user.get_profile().set_rag_fk.rag_pk)
+        initial['drag_ragcomment'] = dr_query.drag_ragcomment
+        return initial
+
     def get_context_data(self, **kwargs):
-        context = super(commentdetail, self).get_context_data(**kwargs)
+        context = super(commentdetail_noc, self).get_context_data(**kwargs)
 
         doc_pk = self.request.GET.get('doc_pk')
-        context['doc_pk'] = doc_pk
-        context['drag_pk'] = self.request.GET.get('drag_pk')
         context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
+        context['doc_pk'] = doc_pk
         context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
         context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
         context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
         context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
-        context['lag'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
-
+        context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        context['file'] = docreviews.objects.get(drag_doc_fk__doc_pk=doc_pk,drag_rag_fk__rag_pk=self.request.user.get_profile().set_rag_fk.rag_pk)
         return context
 
+    def form_valid(self,form):
+        data = form.cleaned_data
+        today = datetime.now()
+
+        docreview = docreviews.objects.get(drag_doc_fk__doc_pk=self.request.GET.get('doc_pk'),drag_rag_fk__rag_pk=self.request.user.get_profile().set_rag_fk.rag_pk)
+
+        docreview.drag_ragcomment = data['drag_ragcomment']
+        if self.request.FILES['drag_file']:
+            if docreview.drag_file:
+                os.remove(os.path.join(settings.MEDIA_ROOT, docreview.drag_file.name))
+            docreview.drag_file = self.request.FILES['drag_file']
+        else:
+            if docreview.drag_file:
+                os.remove(os.path.join(settings.MEDIA_ROOT, docreview.drag_file.name))
+                docreview.drag_file = None
+        docreview.drag_received = today
+        docreview.save()
+
+        return super(commentdetail_noc,self).form_valid(form)
+
+class commentdetail_nod(FormView):
+    form_class = commentdetailform
+    template_name="ceqanet/commentdetail_nod.html"
+ 
+    def get_success_url(self):
+        success_url = "%s" % (reverse_lazy('comment'))
+        return success_url
+
     def get_initial(self):
-        initial = super(commentdetail, self).get_initial()
+        initial = super(commentdetail_nod, self).get_initial()
 
         dr_query = docreviews.objects.get(drag_pk__exact=self.request.GET.get('drag_pk'))
         initial['drag_ragcomment'] = dr_query.drag_ragcomment
         return initial
 
-    def get_success_url(self):
-        success_url = "%s" % (reverse_lazy('comment'))
-        return success_url
+    def get_context_data(self, **kwargs):
+        context = super(commentdetail_nod, self).get_context_data(**kwargs)
+
+        doc_pk = self.request.GET.get('doc_pk')
+        context['doc_pk'] = doc_pk
+        context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
+        context['drag_pk'] = self.request.GET.get('drag_pk')
+        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        return context
 
     def form_valid(self,form):
         data = form.cleaned_data
@@ -3819,9 +3542,88 @@ class commentdetail(FormView):
         docreview = docreviews.objects.get(drag_pk=self.request.POST.get('drag_pk'))
 
         docreview.drag_ragcomment = data['drag_ragcomment']
+        docreview.drag_file = self.request.FILES['dcmf_file']
         docreview.save()
 
-        return super(commentdetail,self).form_valid(form)
+        return super(commentdetail_nod,self).form_valid(form)
+
+class commentdetail_noe(FormView):
+    form_class = commentdetailform
+    template_name="ceqanet/commentdetail_noe.html"
+ 
+    def get_success_url(self):
+        success_url = "%s" % (reverse_lazy('comment'))
+        return success_url
+
+    def get_initial(self):
+        initial = super(commentdetail_noe, self).get_initial()
+
+        dr_query = docreviews.objects.get(drag_pk__exact=self.request.GET.get('drag_pk'))
+        initial['drag_ragcomment'] = dr_query.drag_ragcomment
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(commentdetail_noe, self).get_context_data(**kwargs)
+
+        doc_pk = self.request.GET.get('doc_pk')
+        context['doc_pk'] = doc_pk
+        context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
+        context['drag_pk'] = self.request.GET.get('drag_pk')
+        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        return context
+
+    def form_valid(self,form):
+        data = form.cleaned_data
+
+        docreview = docreviews.objects.get(drag_pk=self.request.POST.get('drag_pk'))
+
+        docreview.drag_ragcomment = data['drag_ragcomment']
+        docreview.drag_file = self.request.FILES['dcmf_file']
+        docreview.save()
+
+        return super(commentdetail_noe,self).form_valid(form)
+
+class commentdetail_nop(FormView):
+    form_class = commentdetailform
+    template_name="ceqanet/commentdetail_nop.html"
+ 
+    def get_success_url(self):
+        success_url = "%s" % (reverse_lazy('comment'))
+        return success_url
+
+    def get_initial(self):
+        initial = super(commentdetail_nop, self).get_initial()
+
+        dr_query = docreviews.objects.get(drag_pk__exact=self.request.GET.get('drag_pk'))
+        initial['drag_ragcomment'] = dr_query.drag_ragcomment
+        return initial
+
+    def get_context_data(self, **kwargs):
+        context = super(commentdetail_nop, self).get_context_data(**kwargs)
+
+        doc_pk = self.request.GET.get('doc_pk')
+        context['doc_pk'] = doc_pk
+        context['detail'] = documents.objects.get(doc_pk__exact=self.request.GET.get('doc_pk'))
+        context['drag_pk'] = self.request.GET.get('drag_pk')
+        context['latlongs'] = latlongs.objects.filter(doc_pk=doc_pk)
+        context['dev'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
+        context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
+        context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
+        context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        return context
+
+    def form_valid(self,form):
+        data = form.cleaned_data
+
+        docreview = docreviews.objects.get(drag_pk=self.request.POST.get('drag_pk'))
+
+        docreview.drag_ragcomment = data['drag_ragcomment']
+        docreview.drag_file = self.request.FILES['dcmf_file']
+        docreview.save()
+
+        return super(commentdetail_nop,self).form_valid(form)
+
 
 def accept(request):
     t = loader.get_template("ceqanet/accept.html")

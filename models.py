@@ -48,6 +48,7 @@ class docreviews(models.Model):
     dsloc = models.CharField(null=True,blank=True,max_length=30)
     drag_lateletter = models.DateField(null=True,blank=True)
     drag_ragcomment = models.TextField(null=True,blank=True)
+    drag_file = models.FileField(null=True,blank=True,upload_to='documents/%Y/%m/%d')    
 class documents(models.Model):
     doc_pk = models.AutoField(primary_key=True)
     doc_prj_fk = models.ForeignKey("projects",null=True,blank=True,db_column="doc_prj_fk")

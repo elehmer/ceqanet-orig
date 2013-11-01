@@ -11,44 +11,6 @@ class QueryForm(forms.Form):
     date_from = forms.DateField(label="From", initial=lambda: (date.today() - timedelta(days=14)).strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
     date_to = forms.DateField(label="To", initial=date.today().strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
 
-class AddDocForm(forms.Form):
-    prj_title = forms.CharField(label="Project Title:",required=False,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    prj_description = forms.CharField(label="Project Description:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    doc_conname = forms.CharField(label="Contact Person:",max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-    doc_conemail = forms.EmailField(label="E-mail:",max_length=64)
-    doc_conaddress1 = forms.CharField(label="Street Address1:",max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    doc_concity = forms.CharField(label="City:",max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_constate = forms.CharField(label="State:",max_length=2,widget=forms.TextInput(attrs={'size':'2'}))
-    doc_conzip = forms.CharField(label="Zip:",max_length=10,widget=forms.TextInput(attrs={'size':'10'}))
-    doc_location = forms.CharField(label="Document Location:",widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    doc_county = forms.ModelChoiceField(label="County:",queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
-    doc_city = forms.ModelChoiceField(label="City:",queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
-    doc_latitude = forms.CharField(label="Document Latitude:",max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
-    doc_longitude = forms.CharField(label="Document Longitude:",max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
-    strsectionnumber = forms.CharField(label="Section Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-    strcodenumber = forms.CharField(label="Code Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-    txtreason = forms.CharField(label="Reasons why project is exempt:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
-    strleadagency2 = forms.CharField(label="Person or Agency Carrying Out Project:",required=False,max_length=45,widget=forms.TextInput(attrs={'size':'45'}))
-    strphone1 = forms.CharField(max_length=3,widget=forms.TextInput(attrs={'size':'3'}))
-    strphone2 = forms.CharField(max_length=3,widget=forms.TextInput(attrs={'size':'3'}))
-    strphone3 = forms.CharField(max_length=4,widget=forms.TextInput(attrs={'size':'4'}))
-    doc_parcelno = forms.CharField(label='Parcel No.:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
-    doc_xstreets = forms.CharField(label='Cross Streets:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
-    doc_township = forms.CharField(label='Township:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
-    doc_range = forms.CharField(label='Range:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
-    doc_section = forms.CharField(label='Section:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
-    doc_base = forms.CharField(label='Base:',required=False,max_length=8,widget=forms.TextInput(attrs={'size':'8'}))
-    doc_highways = forms.CharField(label="State Hwy #:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_airports = forms.CharField(label="Airports:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_railways = forms.CharField(label="Railways:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_waterways = forms.CharField(label="Waterways:",required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
-    doc_landuse = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    doc_schools = forms.CharField(label="Schools:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    doc_actionnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_issuesnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
-
 class submitform(forms.Form):
     doctype = forms.ChoiceField(required=True,choices=DOCUMENT_TYPES,initial='NOE')
     prjtoggle = forms.ChoiceField(required=True,choices=PROJECT_EXISTS,initial='no',widget=forms.RadioSelect())
@@ -443,12 +405,6 @@ class editnopform(forms.Form):
     dkey_comment_issues = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
     ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
 
-class DocReviewForm(forms.Form):
-    pass
-
-class pendingdetailform(forms.Form):
-    pass
-
 class pendingdetailnocform(editnocform):
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
 
@@ -460,10 +416,6 @@ class pendingdetailnoeform(editnoeform):
 
 class pendingdetailnopform(editnopform):
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
-
-class reviewdetailform(forms.Form):
-    doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'])
-    doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'])
 
 class reviewdetailnocform(editnocform):
     doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'])
@@ -482,7 +434,8 @@ class reviewdetailnopform(editnopform):
     doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'])
 
 class commentdetailform(forms.Form):
-    drag_ragcomment = forms.CharField(label="Comment:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+    drag_ragcomment = forms.CharField(label="Text Comment:",required=False,widget=forms.Textarea(attrs={'cols':'100','rows':'40'}))
+    drag_file = forms.FileField(label='Select a PDF File:',help_text='max. 42 megabytes')
 
 class usersettingsform(forms.Form):
     formID = "usersettingsform"
