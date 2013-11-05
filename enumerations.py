@@ -5,6 +5,22 @@ DOCUMENT_TYPES = (
     ('NOP','NOP')
 )
 
+SORT_FIELDS = (
+    ('-doc_prj_fk__prj_schno','Clearinghouse Number (Descending)'),
+    ('doc_prj_fk__prj_schno','Clearinghouse Number (Ascending)'),
+    ('doc_prj_fk__prj_leadagency','Lead Agency'),
+    ('doc_prj_fk__prj_title','Project Title'),
+    ('doc_description','Project Description'),
+    ('doc_docname','Document Type'),
+    ('-doc_received','Date Received (Descending)'),
+    ('doc_received','Date Received (Ascending)')
+)
+
+COLATION_CHOICES = (
+    ('project', 'Project'),
+    ('document', 'Document')
+)
+
 PROJECT_EXISTS = (
     ('yes','Yes'),
     ('no','No')

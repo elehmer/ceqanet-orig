@@ -3,7 +3,18 @@ from django.forms import ModelForm
 from datetime import datetime, date, timedelta
 from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
-from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES
+from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,SORT_FIELDS
+
+class basicqueryform(forms.Form):
+    prj_schno = forms.CharField(label="Clearinghouse Number:",required=True,max_length=12)
+    colation = forms.ChoiceField(label="Colate Results By:",required=True,choices=COLATION_CHOICES,initial='project',widget=forms.RadioSelect())
+    sortfld = forms.ChoiceField(label="Sort Results By:",required=True,choices=SORT_FIELDS,initial='-doc_received')
+
+class advancedqueryform(forms.Form):    
+    prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)
+
+    date_from = forms.DateField(label="From", initial=lambda: (date.today() - timedelta(days=14)).strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
+    date_to = forms.DateField(label="To", initial=date.today().strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
 
 class QueryForm(forms.Form):
     prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)

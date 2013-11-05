@@ -9,7 +9,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import FormView,UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
-from ceqanet.forms import QueryForm,submitform,usersettingsform
+from ceqanet.forms import QueryForm,basicqueryform,advancedqueryform,submitform,usersettingsform
 from ceqanet.forms import nocform,nodform,noeform,nopform
 from ceqanet.forms import editnocform,editnoeform,editnodform,editnopform
 from ceqanet.forms import pendingdetailnocform,pendingdetailnodform,pendingdetailnoeform,pendingdetailnopform
@@ -22,6 +22,82 @@ def index(request):
     t = loader.get_template("ceqanet/index.html")
     c = RequestContext(request,{})
     return HttpResponse(t.render(c))
+
+class basicquery(FormView):
+    template_name="ceqanet/basicquery.html"
+    form_class = basicqueryform
+
+    def get_success_url(self):
+        prj_schno = self.request.POST.get('prj_schno')
+        colation = self.request.POST.get('colation')
+        sortfld = self.request.POST.get('sortfld')
+
+        if colation == "project":
+            success_url = "%s?prj_schno=%s&sortfld=%s&mode=basic" % (reverse_lazy('prjlist'),prj_schno,sortfld)
+        elif colation == "document":
+            success_url = "%s?prj_schno=%s&mode=basic" % (reverse_lazy('projectlist'),prj_schno)
+            success_url = "%s?prj_pk=-9999&doctype=%s" % (reverse_lazy('docadd_'+doctype.lower()),doctype)
+        return success_url
+
+class prjlist(ListView):
+    template_name="ceqanet/prjlist.html"
+    context_object_name = "prjs"
+    paginate_by = 25
+
+    def get_queryset(self):
+        queryset = prjlistquery(self.request)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(prjlist, self).get_context_data(**kwargs)
+
+        qsminuspage = self.request.GET.copy()
+        
+        if "page" in qsminuspage:
+            qsminuspage.pop('page')
+
+        context['restofqs'] = qsminuspage.urlencode()
+
+        return context
+
+def prjlistquery(request):
+    mode = request.GET.get('mode')
+
+    queryset = ""
+
+    if mode == "basic":
+        prj_schno = request.GET.get('prj_schno')
+        sortfld = request.GET.get('sortfld')
+
+        queryset = documents.objects.filter(doc_visible=True).filter(doc_prj_fk__prj_schno__startswith=prj_schno).order_by(sortfld)
+    elif mode == "advanced":
+        rdodate = request.GET.get('rdodate')
+        date_from = request.GET.get('date_from')
+        date_to = request.GET.get('date_to')
+        rdoplace = request.GET.get('rdoplace')
+        cityid = request.GET.get('cityid')
+        cid = request.GET.get('cid')
+        rdokword = request.GET.get('rdokword')
+        rdorag = request.GET.get('rdorag')
+        rag_pk = request.GET.get('rag_pk')
+        rdolag = request.GET.get('rdolag')
+        lag_pk = request.GET.get('lag_pk')
+        doctype = request.GET.get('doctype')
+
+        queryset = documents.objects.filter(doc_visible=True).order_by('-doc_received','-doc_prj_fk__prj_schno')
+        if rdodate == "2":
+            queryset = queryset.filter(doc_received__range=(date_from,date_to))
+        if rdoplace == "2":
+            queryset = queryset.filter(docgeowords__dgeo_geow_fk__geow_pk=cityid)
+        elif rdoplace == "3":
+            queryset = queryset.filter(docgeowords__dgeo_geow_fk__geow_pk=cid)
+        if rdorag == "2":
+            queryset = queryset.filter(docreviews__drag_rag_fk__rag_pk=rag_pk)
+        if rdolag == "2":
+            queryset = queryset.filter(projects__prj_lag_fk__lag_pk=lag_pk)
+        if doctype != "1":
+            queryset = queryset.filter(doc_doct_fk__keyw_pk=doctype)
+    return queryset
 
 class query(FormView):
     template_name="ceqanet/query.html"

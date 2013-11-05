@@ -1,0 +1,47 @@
+{% extends "ceqanet/base.html" %}
+
+{% block title %}OPR Data Clearinghouse Query{% endblock title %}
+
+{% block content %}
+
+<FORM name="queryform" method="post" action="">
+  {% csrf_token %}
+  <table>
+    <tr>
+      <td colspan="3">
+        <h4>Basic Query</h4>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        {{ form.prj_schno.label }}
+      </td>
+      <td>
+        {{ form.prj_schno }}
+      </td>
+      <td>
+        <input type="submit" value="Submit">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        {{ form.colation.label }}
+        {% for r in form.colation %}
+          {{ r }}
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        {{ form.sortfld.label }} {{ form.sortfld }}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <button onclick="window.location = ''">Advanced Query</button>
+      </td>
+    </tr>
+  </table>
+</form>
+
+{% endblock content %}

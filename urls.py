@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from django.conf.urls.static import static
 from django.conf import settings
-from ceqanet.views import index,query,projectlist,projdoclist,submit,findproject,accept,usersettings
+from ceqanet.views import index,query,basicquery,prjlist,projectlist,projdoclist,submit,findproject,accept,usersettings
 from ceqanet.views import docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
 from ceqanet.views import docadd_noc,docadd_nod,docadd_noe,docadd_nop
 from ceqanet.views import docedit_noc,docedit_noe,docedit_nod,docedit_nop
@@ -13,6 +13,8 @@ from ceqanet.views import comment,commentdetail_noc,commentdetail_nod,commentdet
 urlpatterns = patterns('ceqanet.views',
     url(r'^$','index',name='index'),
     url(r'^query/$',query.as_view(),name='query'),
+    url(r'^basicquery/$',basicquery.as_view(),name='basicquery'),
+    url(r'^prjlist/$',prjlist.as_view(),name='prjlist'),
     url(r'^projectlist/$',projectlist.as_view(),name='projectlist'),
     url(r'^projdoclist/$',projdoclist.as_view(),name='projdoclist'),
     url(r'^submit/$',submit.as_view(),name='submit'),
