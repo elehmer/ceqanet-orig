@@ -1,0 +1,137 @@
+{% extends "ceqanet/base.html" %}
+
+{% block title %}OPR Data Clearinghouse Query{% endblock title %}
+
+{% block extrajs %}
+  <script>
+    $(function() {
+        $( "#id_date_from" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+    $(function() {
+        $( "#id_date_to" ).datepicker({dateFormat: "yy-mm-dd"});
+    });
+  </script>
+
+  <script language="javascript">
+    function radiocheck()
+      {
+        document.queryform.rdodate[1].checked = true;
+      }
+  </script>
+
+{% endblock extrajs %}
+
+{% block content %}
+
+<table>
+  <FORM name="queryform" method="post" action="">
+    {% csrf_token %}
+    <tr>
+      <td colspan="3">
+        <h4>Advanced Query</h4>
+      </td>
+    </tr>
+    <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdodate.label }}
+      </TH>
+    </tr>
+    {% for date in form.rdodate %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ date }}
+      {% else %}
+        {{ date }} {{ form.date_from.label }} {{ form.date_from }} {{ form.date_to.label }} {{ form.date_to }}
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdoplace.label }}
+      </TH>
+    </tr>
+    {% for place in form.rdoplace %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ place }}
+      {% elif forloop.counter = 2 %}
+        {{ place }} {{ form.cityid }}
+      {% elif forloop.counter = 3 %}
+        {{ place }} {{ form.countyid }}
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdolag.label }}
+      </TH>
+    </tr>
+    {% for lag in form.rdolag %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ lag }}
+      {% elif forloop.counter = 2 %}
+        {{ lag }} {{ form.lagid }}
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdorag.label }}
+      </TH>
+    </tr>
+    {% for rag in form.rdorag %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ rag }}
+      {% elif forloop.counter = 2 %}
+        {{ rag }} {{ form.ragid }}
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdodoctype.label }}
+      </TH>
+    </tr>
+    {% for doctype in form.rdodoctype %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ doctype }}
+      {% elif forloop.counter = 2 %}
+        {{ doctype }} {{ form.doctypeid }}
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
+      <td colspan="3">
+        <input type="submit" value="Submit">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        {{ form.colation.label }}
+        {% for r in form.colation %}
+          {{ r }}
+        {% endfor %}
+      </td>
+    </tr>
+  </form>
+    <tr>
+      <td colspan="3">
+        <button onclick="window.location = '{% url 'basicquery' %}'">Basic Query</button>
+      </td>
+    </tr>
+</table>
+
+{% endblock content %}

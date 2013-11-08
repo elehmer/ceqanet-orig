@@ -4,10 +4,10 @@
 
 {% block listing %}
 
-  {% if prjs %}
+  {% if docs %}
  	<TABLE border="1">
     <TR>
-      <TD colspan="7">
+      <TD colspan="6">
         <TABLE width="100%">
           <tr>
             <td colspan="2">
@@ -17,7 +17,7 @@
           </tr>
           <TR>
             <TD>
-              <B>Query Type:</B> Project Listing - {{ mode|title }}
+              <B>Query Type:</B> Document Listing - {{ mode|title }}
             </TD>
             <TD align="right">
               <B>Sorted By:</B>
@@ -51,7 +51,7 @@
     </TR>
     {% if is_paginated %}
     <TR>
-      <TD COLSPAN="7" ALIGN="middle">
+      <TD COLSPAN="6" ALIGN="middle">
         <TABLE>
           <TR>
             <TD align="middle">
@@ -105,40 +105,42 @@
  	  	  Document Type
  	  	</TH>
  	  	<TH align="center" width="10%">
- 	  	  Date First Document Received
+ 	  	  Date Received
  	  	</TH>
-      <TH align="center" width="10%">
-        Date Lastest Document Received
-      </TH>
  	  </TR> 
-    {% for prj in prjs %}
+    {% for doc in docs %}
       <TR>
       	<TD align="center">
-          <a href="{% url 'doclist' %}?prj_schno={{prj.prj_schno}}&sortfld=-doc_received&mode=basic">{{ prj.prj_schno }}</a>
+        {% if doc.doc_doctype = 'NOE' or doc.doc_docname.strip = 'Notice of Exemption' %}
+          <a href="{% url 'docdesp_noe' doc.doc_pk %}">{{ doc.doc_prj_fk.prj_schno }}</a>
+        {% elif doc.doc_doctype = 'NOD' or doc.doc_docname.strip = 'Notice of Determination' %}
+          <a href="{% url 'docdesp_nod' doc.doc_pk %}">{{ doc.doc_prj_fk.prj_schno }}</a>
+        {% elif doc.doc_doctype = 'NOP' or doc.doc_docname.strip = 'Notice of Preperation' %}
+          <a href="{% url 'docdesp_nop' doc.doc_pk %}">{{ doc.doc_prj_fk.prj_schno }}</a>
+        {% else %}
+          <a href="{% url 'docdesp_noc' doc.doc_pk %}">{{ doc.doc_prj_fk.prj_schno }}</a>
+        {% endif %}
     	  </TD>
       	<TD align="center">
-          {{ prj.prj_title }}
+          {{ doc.doc_prj_fk.prj_title }}
     	  </TD>
       	<TD align="center">
-    	    {{ prj.prj_description }}
+    	    {{ doc.doc_prj_fk.prj_description }}
     	  </TD>
         <TD align="center">
-          {{ prj.prj_leadagency }}
+          {{ doc.doc_prj_fk.prj_leadagency }}
         </TD>
       	<TD align="center">
-          {{ prj.prj_doc_fk.doc_docname }} ({{ prj.prj_status }})
+          {{ doc.doc_docname }} ({{ doc.doc_doctype }})
       	</TD>
       	<TD align="center">
-    	    {{ prj.prj_datefirst }}
+    	    {{ doc.doc_received }}
     	  </TD>
-        <TD align="center">
-          {{ prj.prj_datelast }}
-        </TD>
       </TR>
   	{% endfor %}
     {% if is_paginated %}
     <TR>
-      <TD COLSPAN="7" ALIGN="middle">
+      <TD COLSPAN="6" ALIGN="middle">
         <TABLE>
           <TR>
             <TD align="middle">

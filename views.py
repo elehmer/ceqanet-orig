@@ -9,7 +9,7 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import FormView,UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
-from ceqanet.forms import QueryForm,basicqueryform,advancedqueryform,submitform,usersettingsform
+from ceqanet.forms import QueryForm,basicqueryform,prjlistform,doclistform,advancedqueryform,submitform,usersettingsform
 from ceqanet.forms import nocform,nodform,noeform,nopform
 from ceqanet.forms import editnocform,editnoeform,editnodform,editnopform
 from ceqanet.forms import pendingdetailnocform,pendingdetailnodform,pendingdetailnoeform,pendingdetailnopform
@@ -30,10 +30,23 @@ class basicquery(FormView):
     def get_success_url(self):
         prj_schno = self.request.POST.get('prj_schno')
         colation = self.request.POST.get('colation')
-        sortfld = self.request.POST.get('sortfld')
 
         if colation == "project":
-            success_url = "%s?prj_schno=%s&sortfld=%s&mode=basic" % (reverse_lazy('prjlist'),prj_schno,sortfld)
+            success_url = "%s?prj_schno=%s&sortfld=-prj_schno&mode=basic" % (reverse_lazy('prjlist'),prj_schno)
+        elif colation == "document":
+            success_url = "%s?prj_schno=%s&sortfld=-doc_prj_fk__prj_schno&mode=basic" % (reverse_lazy('doclist'),prj_schno)
+        return success_url
+
+class advancedquery(FormView):
+    template_name="ceqanet/advancedquery.html"
+    form_class = advancedqueryform
+
+    def get_success_url(self):
+        prj_schno = self.request.POST.get('prj_schno')
+        colation = self.request.POST.get('colation')
+
+        if colation == "project":
+            success_url = "%s?prj_schno=%s&sortfld=-prj_schno&mode=basic" % (reverse_lazy('prjlist'),prj_schno)
         elif colation == "document":
             success_url = "%s?prj_schno=%s&mode=basic" % (reverse_lazy('projectlist'),prj_schno)
             success_url = "%s?prj_pk=-9999&doctype=%s" % (reverse_lazy('docadd_'+doctype.lower()),doctype)
@@ -51,16 +64,90 @@ class prjlist(ListView):
     def get_context_data(self, **kwargs):
         context = super(prjlist, self).get_context_data(**kwargs)
 
+        mode = self.request.GET.get('mode')
+        context['mode'] = mode
+        context['sortfld'] = self.request.GET.get('sortfld')
+        if mode == "basic":
+            context['prj_schno'] = self.request.GET.get('prj_schno')
+
         qsminuspage = self.request.GET.copy()
         
         if "page" in qsminuspage:
             qsminuspage.pop('page')
 
         context['restofqs'] = qsminuspage.urlencode()
-
+        context['form'] = prjlistform()
+        
         return context
 
 def prjlistquery(request):
+    mode = request.GET.get('mode')
+
+    queryset = ""
+
+    if mode == "basic":
+        prj_schno = request.GET.get('prj_schno')
+        sortfld = request.GET.get('sortfld')
+
+        queryset = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).order_by(sortfld)
+    elif mode == "advanced":
+        rdodate = request.GET.get('rdodate')
+        date_from = request.GET.get('date_from')
+        date_to = request.GET.get('date_to')
+        rdoplace = request.GET.get('rdoplace')
+        cityid = request.GET.get('cityid')
+        cid = request.GET.get('cid')
+        rdokword = request.GET.get('rdokword')
+        rdorag = request.GET.get('rdorag')
+        rag_pk = request.GET.get('rag_pk')
+        rdolag = request.GET.get('rdolag')
+        lag_pk = request.GET.get('lag_pk')
+        doctype = request.GET.get('doctype')
+
+        queryset = documents.objects.filter(doc_visible=True).order_by('-doc_received','-doc_prj_fk__prj_schno')
+        if rdodate == "2":
+            queryset = queryset.filter(doc_received__range=(date_from,date_to))
+        if rdoplace == "2":
+            queryset = queryset.filter(docgeowords__dgeo_geow_fk__geow_pk=cityid)
+        elif rdoplace == "3":
+            queryset = queryset.filter(docgeowords__dgeo_geow_fk__geow_pk=cid)
+        if rdorag == "2":
+            queryset = queryset.filter(docreviews__drag_rag_fk__rag_pk=rag_pk)
+        if rdolag == "2":
+            queryset = queryset.filter(projects__prj_lag_fk__lag_pk=lag_pk)
+        if doctype != "1":
+            queryset = queryset.filter(doc_doct_fk__keyw_pk=doctype)
+    return queryset
+
+class doclist(ListView):
+    template_name="ceqanet/doclist.html"
+    context_object_name = "docs"
+    paginate_by = 25
+
+    def get_queryset(self):
+        queryset = doclistquery(self.request)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(doclist, self).get_context_data(**kwargs)
+
+        mode = self.request.GET.get('mode')
+        context['mode'] = mode
+        context['sortfld'] = self.request.GET.get('sortfld')
+        if mode == "basic":
+            context['prj_schno'] = self.request.GET.get('prj_schno')
+
+        qsminuspage = self.request.GET.copy()
+        
+        if "page" in qsminuspage:
+            qsminuspage.pop('page')
+
+        context['restofqs'] = qsminuspage.urlencode()
+        context['form'] = doclistform()
+        
+        return context
+
+def doclistquery(request):
     mode = request.GET.get('mode')
 
     queryset = ""
@@ -282,10 +369,12 @@ class docadd_noc(FormView):
             doc_county = ''
 
         if self.request.POST.get('prj_pk') == '-9999':
-            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
+            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_status=data['doctypeid'].keyw_shortname,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
             prj.save()
         else:
             prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
+            prj.prj_status = data['doctypeid'].keyw_shortname
+            prj.prj_datelast = today
 
         adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=data['doctypeid'],doc_doctype=data['doctypeid'].keyw_shortname,doc_docname=data['doctypeid'].keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=doc_city,doc_county=doc_county,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools)
         adddoc.save()
@@ -421,10 +510,12 @@ class docadd_nod(FormView):
             doc_conaddress2 = data['doc_conaddress2']
 
         if self.request.POST.get('prj_pk') == '-9999':
-            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
+            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_status=self.request.POST.get('doctype'),prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
             prj.save()
         else:
             prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
+            prj.prj_status = self.request.POST.get('doctype')
+            prj.prj_datelast = today
 
         adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_nodbylead=data['doc_nodbylead'],doc_nodbyresp=data['doc_nodbyresp'],doc_nodagency=data['doc_nodagency'],doc_nod=data['doc_nod'],doc_detsigeffect=data['doc_detsigeffect'],doc_detnotsigeffect=data['doc_detnotsigeffect'],doc_deteir=data['doc_deteir'],doc_detnegdec=data['doc_detnegdec'],doc_detmitigation=data['doc_detmitigation'],doc_detnotmitigation=data['doc_detnotmitigation'],doc_detconsider=data['doc_detconsider'],doc_detnotconsider=data['doc_detnotconsider'],doc_detfindings=data['doc_detfindings'],doc_detnotfindings=data['doc_detnotfindings'],doc_eiravailableat=data['doc_eiravailableat'])
         adddoc.save()
@@ -548,10 +639,12 @@ class docadd_noe(FormView):
             status = "Statutory Exemptions, State Code " + doc_exnumber
 
         if self.request.POST.get('prj_pk') == '-9999':
-            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
+            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_status=self.request.POST.get('doctype'),prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
             prj.save()
         else:
             prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
+            prj.prj_status = self.request.POST.get('doctype')
+            prj.prj_datelast = today
 
         adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=self.request.POST.get('doctype'),doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_pending=1,doc_received=doc_received,doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber,doc_exreasons=data['doc_exreasons'])
         adddoc.save()
@@ -713,10 +806,12 @@ class docadd_nop(FormView):
             doc_county = ''
 
         if self.request.POST.get('prj_pk') == '-9999':
-            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
+            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_status=self.request.POST.get('doctype'),prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
             prj.save()
         else:
             prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
+            prj.prj_status = self.request.POST.get('doctype')
+            prj.prj_datelast = today
 
         adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=doc_city,doc_county=doc_county,doc_pending=1,doc_received=doc_received,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools)
         adddoc.save()

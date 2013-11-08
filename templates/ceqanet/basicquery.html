@@ -4,9 +4,9 @@
 
 {% block content %}
 
-<FORM name="queryform" method="post" action="">
-  {% csrf_token %}
-  <table>
+<table>
+  <FORM name="queryform" method="post" action="">
+    {% csrf_token %}
     <tr>
       <td colspan="3">
         <h4>Basic Query</h4>
@@ -31,17 +31,12 @@
         {% endfor %}
       </td>
     </tr>
+  </form>
     <tr>
       <td colspan="3">
-        {{ form.sortfld.label }} {{ form.sortfld }}
+        <button onclick="window.location = '{% url 'advancedquery' %}'">Advanced Query</button>
       </td>
     </tr>
-    <tr>
-      <td colspan="3">
-        <button onclick="window.location = ''">Advanced Query</button>
-      </td>
-    </tr>
-  </table>
-</form>
+</table>
 
 {% endblock content %}

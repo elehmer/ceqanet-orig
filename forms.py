@@ -3,18 +3,34 @@ from django.forms import ModelForm
 from datetime import datetime, date, timedelta
 from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
-from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,SORT_FIELDS
+from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES
 
 class basicqueryform(forms.Form):
     prj_schno = forms.CharField(label="Clearinghouse Number:",required=True,max_length=12)
     colation = forms.ChoiceField(label="Colate Results By:",required=True,choices=COLATION_CHOICES,initial='project',widget=forms.RadioSelect())
-    sortfld = forms.ChoiceField(label="Sort Results By:",required=True,choices=SORT_FIELDS,initial='-doc_received')
 
-class advancedqueryform(forms.Form):    
-    prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)
+class advancedqueryform(forms.Form):
+    rdodate = forms.ChoiceField(label="Date Range:",required=True,choices=RDODATE_CHOICES,initial='range',widget=forms.RadioSelect())
+    date_from = forms.DateField(label="From:", initial=lambda: (date.today() - timedelta(days=14)).strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
+    date_to = forms.DateField(label="To:", initial=date.today().strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
+    rdoplace = forms.ChoiceField(label="Project Location:",required=True,choices=RDOPLACE_CHOICES,initial='all',widget=forms.RadioSelect())
+    cityid = forms.ModelChoiceField(label="City:",queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+    countyid = forms.ModelChoiceField(label="County:",queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
+    rdolag = forms.ChoiceField(label="Lead Agency:",required=True,choices=RDOLAG_CHOICES,initial='all',widget=forms.RadioSelect())
+    lagid = forms.ModelChoiceField(label="Lead Agency:",queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]")
+    rdorag = forms.ChoiceField(label="Reviewing Agency:",required=True,choices=RDORAG_CHOICES,initial='all',widget=forms.RadioSelect())
+    ragid = forms.ModelChoiceField(label="Reviewing Agency:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_name'),empty_label="[Select Agency]")
+    rdodoctype = forms.ChoiceField(label="Document Type:",required=True,choices=RDODOCTYPE_CHOICES,initial='all',widget=forms.RadioSelect())
+    doctypeid = forms.ModelChoiceField(label="Document Type:",queryset=doctypes.objects.filter(inlookup=True).filter(storfed__gt=0).order_by('keyw_longname'),empty_label="[Select Type]")
 
-    date_from = forms.DateField(label="From", initial=lambda: (date.today() - timedelta(days=14)).strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
-    date_to = forms.DateField(label="To", initial=date.today().strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
+    colation = forms.ChoiceField(label="Colate Results By:",required=True,choices=COLATION_CHOICES,initial='project',widget=forms.RadioSelect())
+
+
+class prjlistform(forms.Form):
+    sortfld = forms.ChoiceField(label="Sort Results By:",required=True,choices=PRJ_SORT_FIELDS,initial='-prj_schno')
+
+class doclistform(forms.Form):
+    sortfld = forms.ChoiceField(label="Sort Results By:",required=True,choices=DOC_SORT_FIELDS,initial='-doc_prj_fk__prj_schno')
 
 class QueryForm(forms.Form):
     prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)
