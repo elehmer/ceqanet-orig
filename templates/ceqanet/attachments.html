@@ -1,0 +1,83 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<FORM id="attachments" name="attachments" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TH align="left">
+        <h3>Attach Related Electronic Information:</h3>
+      </TH>
+    </TR>
+    <TR> 
+      <TH align="left">
+        <B>{{ form.datt_file.label }}</B> {{ form.datt_file }}
+      </TH>
+    </TR>    
+    <TR> 
+      <TD align="left"> 
+        <input id="attach" type="submit" value="Attach File...">
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="3">
+        <TABLE BORDER="1" WIDTH="100%">
+          <TR>
+            <TH BGCOLOR="#000000">
+              <FONT COLOR="#FFFFFF">
+                List of Files Attached to Document
+              </FONT>
+            </TH>
+          </TR>
+          {% if attachments %}
+            {% for a in attachments %}
+              <TR>
+                <TD>
+                  <a href="{{ a.datt_file.url }}">{{ a.datt_file.name }}</a>
+                </TD>
+              </TR>
+            {% endfor %}
+          {% else %}
+            <TR>
+              <TD align="center">
+                NO FILES ATTACHED
+              </TD>
+            </TR>      
+          {% endif %}
+        </TABLE>
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD align="left"> 
+        <input id="submitch" type="submit" value="Submit to CEQANet >>">
+      </TD>
+    </TR>
+  </TABLE>
+  <input id="mode" type="hidden" name="mode" value="">
+  <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
+  <script>
+    $('#attach').click(function() {
+      $('#mode').val('attach');
+      $('#attachments').submit();
+    });
+    $('#submitch').click(function() {
+      $('#mode').val('submitch');
+      $('#attachments').submit();
+    });
+  </script>
+</FORM>
+
+{% endblock content %}

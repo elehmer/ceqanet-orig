@@ -1,14 +1,13 @@
 from django.conf.urls import patterns, url
 from django.conf.urls.static import static
 from django.conf import settings
-from ceqanet.views import index,query,basicquery,advancedquery,prjlist,doclist,projectlist,projdoclist,submit,findproject,accept,usersettings
+from ceqanet.views import index,query,basicquery,advancedquery,prjlist,doclist,projectlist,projdoclist,submit,chquery,findproject,accept,usersettings,attachments
 from ceqanet.views import docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
 from ceqanet.views import docadd_noc,docadd_nod,docadd_noe,docadd_nop
 from ceqanet.views import docedit_noc,docedit_noe,docedit_nod,docedit_nop
 from ceqanet.views import pending,pendingdetail_noc,pendingdetail_nod,pendingdetail_noe,pendingdetail_nop
 from ceqanet.views import review,reviewdetail_noc,reviewdetail_nod,reviewdetail_noe,reviewdetail_nop
 from ceqanet.views import comment,commentdetail_noc,commentdetail_nod,commentdetail_noe,commentdetail_nop
-
 
 urlpatterns = patterns('ceqanet.views',
     url(r'^$','index',name='index'),
@@ -21,7 +20,9 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^projdoclist/$',projdoclist.as_view(),name='projdoclist'),
     url(r'^submit/$',submit.as_view(),name='submit'),
     url(r'^accept/$','accept',name='accept'),
+    url(r'^chquery/$',chquery.as_view(),name='chquery'),
     url(r'^findproject/$',findproject.as_view(),name='findproject'),
+    url(r'^attachments/$',attachments.as_view(),name='attachments'),
     url(r'^docdesp_noc/(?P<pk>\d+)/$',docdesp_noc.as_view(),name='docdesp_noc'),
     url(r'^docdesp_nod/(?P<pk>\d+)/$',docdesp_nod.as_view(),name='docdesp_nod'),
     url(r'^docdesp_noe/(?P<pk>\d+)/$',docdesp_noe.as_view(),name='docdesp_noe'),

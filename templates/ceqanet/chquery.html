@@ -1,0 +1,27 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<FORM name="chquery" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD align="left">
+        Find an Existing Project within CEQAnet
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        <B>{{ form.prj_schno.label }}</B> {{ form.prj_schno }}
+      </TD>
+    <TR>
+    <TR> 
+      <TD> 
+        <input type="submit" value="Query">
+      </TD>
+    </TR>
+  </TABLE>
+  <INPUT type="hidden" name="doctype" value="{{ doctype }}">
+</FORM>
+{% endblock content %}

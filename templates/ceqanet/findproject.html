@@ -3,54 +3,16 @@
 {% load staticfiles %}
 
 {% block content %}
-<FORM name="findproject" method="get" action="">
+<FORM id="findproject" name="findproject" method="post" action="">
+  {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
-      <TD colspan="2" align="center">
+      <TD colspan="2" align="left">
         Find an Existing Project within CEQAnet
       </TD>
     </TR>
-    <TR>
-      <tD colspan="2">
-        <B>Clearinghouse Number:</B> <input maxlength="12" name="prj_schno" type="text" value="{{ prj_schno }}" /> 
-      </TD>
-    <TR>
-    <TR> 
-      <TD colspan="2"> 
-        <input type="submit" value="Query">
-      </TD>
-    </TR>
   </TABLE>
-  {% if object_list %}
   <TABLE border="1">
-    {% if is_paginated %}
-    <TR>
-      <TD COLSPAN="7" ALIGN="middle">
-          <B>
-            {% if page_obj.number = 1 %}
-              [First]&nbsp;&nbsp;
-            {% else %}
-              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
-            {% endif %}
-            {% if page_obj.has_next %}
-              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
-            {% else %}
-              [Next]&nbsp;&nbsp;
-            {% endif %}
-            {% if page_obj.has_previous %}
-              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
-            {% else %}
-              [Previous]&nbsp;&nbsp;
-            {% endif %}
-            {% if page_obj.has_next %}
-              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
-            {% else %}
-              [Last]
-            {% endif %}
-          </B>
-      </TD>
-    </TR>
-    {% endif %}
     <TR>
       <TH align="center" width="5%">
         &nbsp;
@@ -77,7 +39,7 @@
     {% for schno in schnos %}
       <TR>
         <TD align="center">
-          <input type="radio" name="whichpk" class="whichpk" value="{{ schno.prj_pk }}">
+          <input type="radio" name="prj_pk" class="prj_pk" value="{{ schno.prj_pk }}">
         </TD>
         <TD align="center">
           {{ schno.prj_schno }}
@@ -100,30 +62,11 @@
       </TR>
     {% endfor %}
     </TABLE>
-<script>
-$('.whichpk').change(function() {
-  $('#prj_pk').val($('input[name=whichpk]:radio:checked').val());
-});
-</script>
-    <TAB:E border="0">
-      <TR> 
-        <TD colspan="2"> 
-          <input type="button" id="selectprj" name="selectprj" class="selectprj" value="Select Project">
-          <script>
-            $('#selectprj').click(function() {
-              if ($('#prj_pk').val() != '-9999') {
-                $('#foundproject').submit();
-              }
-            });
-          </script>
-        </TD>
-      </TR>
-    </TABLE>
-  {% endif %}
   <INPUT type="hidden" name="doctype" value="{{ doctype }}">
-</FORM>
-<FORM id="foundproject" name="foundproject" method="get" action="{% url formurl %}">
-  <INPUT type="hidden" id="prj_pk" name="prj_pk" value="-9999">
-  <INPUT type="hidden" name="doctype" value="{{ doctype }}">
+  <script>
+  $('.prj_pk').change(function() {
+    $('#findproject').submit();
+  });
+  </script>
 </FORM>
 {% endblock content %}

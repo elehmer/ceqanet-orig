@@ -34,6 +34,16 @@ COLATION_CHOICES = (
     ('document', 'Document')
 )
 
+NODAGENCY_CHOICES = (
+    ('lead','Lead Agency'),
+    ('resp','Responsible Agency')
+)
+
+DETERMINATION_CHOICES = (
+    ('True',''),
+    ('False','')
+)
+
 RDODATE_CHOICES = (
     ('all', 'All'),
     ('range', 'Range')

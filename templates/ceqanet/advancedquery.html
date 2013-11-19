@@ -11,24 +11,34 @@
         $( "#id_date_to" ).datepicker({dateFormat: "yy-mm-dd"});
     });
   </script>
-
-  <script language="javascript">
-    function radiocheck()
-      {
-        document.queryform.rdodate[1].checked = true;
-      }
-  </script>
-
 {% endblock extrajs %}
 
 {% block content %}
 
 <table>
+    <tr>
+      <td colspan="3">
+        <h4>Advanced Query</h4>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3" align="right">
+        <button onclick="window.location = '{% url 'basicquery' %}'">Basic Query</button>
+      </td>
+    </tr>
   <FORM name="queryform" method="post" action="">
     {% csrf_token %}
     <tr>
       <td colspan="3">
-        <h4>Advanced Query</h4>
+        <b>{{ form.colation.label }}</b>
+        {% for r in form.colation %}
+          {{ r }}
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        &nbsp;
       </td>
     </tr>
     <tr>
@@ -42,7 +52,9 @@
       {% if forloop.counter = 1 %}
         {{ date }}
       {% else %}
-        {{ date }} {{ form.date_from.label }} {{ form.date_from }} {{ form.date_to.label }} {{ form.date_to }}
+        <div id="rdodate_div">
+          {{ date }} {{ form.date_from.label }} {{ form.date_from }} {{ form.date_to.label }} {{ form.date_to }}
+        </div>
       {% endif %}
       </TD>
     </TR>
@@ -58,9 +70,13 @@
       {% if forloop.counter = 1 %}
         {{ place }}
       {% elif forloop.counter = 2 %}
-        {{ place }} {{ form.cityid }}
+        <div id="rdoplace1_div">
+          {{ place }} {{ form.cityid }}
+        </div>
       {% elif forloop.counter = 3 %}
-        {{ place }} {{ form.countyid }}
+        <div id="rdoplace2_div">
+          {{ place }} {{ form.countyid }}
+        </div>
       {% endif %}
       </TD>
     </TR>
@@ -76,7 +92,9 @@
       {% if forloop.counter = 1 %}
         {{ lag }}
       {% elif forloop.counter = 2 %}
-        {{ lag }} {{ form.lagid }}
+        <div id="rdolag_div">
+          {{ lag }} {{ form.lagid }}
+        </div>
       {% endif %}
       </TD>
     </TR>
@@ -92,7 +110,9 @@
       {% if forloop.counter = 1 %}
         {{ rag }}
       {% elif forloop.counter = 2 %}
-        {{ rag }} {{ form.ragid }}
+        <div id="rdorag_div">
+          {{ rag }} {{ form.ragid }}
+        </div>
       {% endif %}
       </TD>
     </TR>
@@ -108,30 +128,51 @@
       {% if forloop.counter = 1 %}
         {{ doctype }}
       {% elif forloop.counter = 2 %}
-        {{ doctype }} {{ form.doctypeid }}
+        <div id="rdodoctype_div">
+          {{ doctype }} {{ form.doctypeid }}
+        </div>
       {% endif %}
       </TD>
     </TR>
     {% endfor %}
     <tr>
-      <td colspan="3">
-        <input type="submit" value="Submit">
+      <td>
+        &nbsp;
       </td>
     </tr>
     <tr>
       <td colspan="3">
-        {{ form.colation.label }}
-        {% for r in form.colation %}
-          {{ r }}
-        {% endfor %}
+        <input type="submit" value="Submit Query">
       </td>
     </tr>
   </form>
-    <tr>
-      <td colspan="3">
-        <button onclick="window.location = '{% url 'basicquery' %}'">Basic Query</button>
-      </td>
-    </tr>
 </table>
+
+<script>
+  $("#rdodate_div").click(function() {
+    setRadio('rdodate_1');
+  });
+  $("#rdoplace1_div").click(function() {
+    setRadio('rdoplace_1');
+  });
+  $("#rdoplace2_div").click(function() {
+    setRadio('rdoplace_2');
+  });
+  $("#rdolag_div").click(function() {
+    setRadio('rdolag_1');
+  });
+  $("#rdorag_div").click(function() {
+    setRadio('rdorag_1');
+  });
+  $("#rdodoctype_div").click(function() {
+    setRadio('rdodoctype_1');      
+  });
+  
+  function setRadio(id) {
+    var radio = $('#' + id);
+    radio[0].checked = true;
+    radio.button("refresh");
+  }
+</script>
 
 {% endblock content %}
