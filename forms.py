@@ -3,7 +3,7 @@ from django.forms import ModelForm
 from datetime import datetime, date, timedelta
 from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
-from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES
+from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES,RDOLAT_CHOICES,RDODEVTYPE_CHOICES,RDOISSUE_CHOICES
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
 class basicqueryform(forms.Form):
@@ -23,7 +23,12 @@ class advancedqueryform(forms.Form):
     ragid = forms.ModelChoiceField(label="Reviewing Agency:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_name'),empty_label=None)
     rdodoctype = forms.ChoiceField(label="Document Type:",required=True,choices=RDODOCTYPE_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdodoctype'}))
     doctypeid = forms.ModelChoiceField(label="Document Type:",required=False,queryset=doctypes.objects.filter(inlookup=True).order_by('keyw_longname'),empty_label=None)
-
+    rdolat = forms.ChoiceField(label="Local Action Type:",required=True,choices=RDOLAT_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdolat'}))
+    latid = forms.ModelChoiceField(label="Local Action Type:",required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001).order_by('keyw_longname'),empty_label=None)
+    rdodevtype = forms.ChoiceField(label="Development Type:",required=True,choices=RDODEVTYPE_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdodevtype'}))
+    devtypeid = forms.ModelChoiceField(label="Development Type:",required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010).order_by('keyw_longname'),empty_label=None)
+    rdoissue = forms.ChoiceField(label="Project Issue:",required=True,choices=RDOISSUE_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdoissue'}))
+    issueid = forms.ModelChoiceField(label="Project Issue:",required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname'),empty_label=None)
     colation = forms.ChoiceField(label="Search Database By:",required=True,choices=COLATION_CHOICES,initial='document',widget=forms.RadioSelect(attrs={'id':'colation'}))
 
 class prjlistform(forms.Form):

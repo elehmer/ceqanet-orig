@@ -70,6 +70,21 @@ RDODOCTYPE_CHOICES = (
     ('type', 'Type')
 )
 
+RDOLAT_CHOICES = (
+    ('all', 'All'),
+    ('type', 'Type')
+)
+
+RDODEVTYPE_CHOICES = (
+    ('all', 'All'),
+    ('type', 'Type')
+)
+
+RDOISSUE_CHOICES = (
+    ('all', 'All'),
+    ('issue', 'Issue')
+)
+
 PROJECT_EXISTS = (
     ('yes','Yes'),
     ('no','No')

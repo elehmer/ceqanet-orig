@@ -12,7 +12,7 @@
       </tr>
       <tr> 
         <td> 
-          <b>SCH Number:</b> {{ doc.doc_prj_fk.prj_schno }}
+          <b>SCH Number:</b> <a href="{% url 'doclist' %}?prj_schno={{ doc.doc_prj_fk.prj_schno }}&sortfld=-doc_received&mode=basic">{{ doc.doc_prj_fk.prj_schno }}</a>
         </td>
       </tr>
       <tr> 

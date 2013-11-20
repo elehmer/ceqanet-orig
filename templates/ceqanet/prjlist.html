@@ -30,10 +30,7 @@
           </TR>
           <TR>
             <TD>
-              <B>Parameters:</B>
-              {% if mode = "basic" %}
-                Clearinghouse Number begins with: {{ prj_schno }}
-              {% endif %}
+              <B>Filters:</B>
             </TD>
             <td align="right">
               <FORM name="sortform" method="get" action="">
@@ -41,10 +38,83 @@
                 <INPUT type="hidden" name="mode" value="{{ mode }}">
                 {% if mode = "basic" %}
                   <INPUT type="hidden" name="prj_schno" value="{{ prj_schno }}">
+                {% elif mode = "advanced" %}
+                  {% if date_from %}
+                    <INPUT type="hidden" name="date_from" value="{{ date_from }}">
+                  {% endif %}
+                  {% if date_to %}
+                    <INPUT type="hidden" name="date_to" value="{{ date_to }}">
+                  {% endif %}
+                  {% if cityid %}
+                    <INPUT type="hidden" name="cityid" value="{{ cityid }}">
+                  {% endif %}
+                  {% if countyid %}
+                    <INPUT type="hidden" name="countyid" value="{{ countyid }}">
+                  {% endif %}
+                  {% if lagid %}
+                    <INPUT type="hidden" name="lagid" value="{{ lagid }}">
+                  {% endif %}
+                  {% if ragid %}
+                    <INPUT type="hidden" name="ragid" value="{{ ragid }}">
+                  {% endif %}
+                  {% if doctypeid %}
+                    <INPUT type="hidden" name="doctypeid" value="{{ doctypeid }}">
+                  {% endif %}
+                  {% if latid %}
+                    <INPUT type="hidden" name="latid" value="{{ latid }}">
+                  {% endif %}
+                  {% if devtypeid %}
+                    <INPUT type="hidden" name="devtypeid" value="{{ devtypeid }}">
+                  {% endif %}
+                  {% if issueid %}
+                    <INPUT type="hidden" name="issueid" value="{{ issueid }}">
+                  {% endif %}
                 {% endif %}
                 <INPUT type="submit" value="Resort">
               </FORM>
             </td>
+          </TR>
+          <TR>
+            <TD colspan="2">
+              <TABLE border="0" width="100%">
+                {% if mode = "basic" %}
+                  <TR>
+                    <TD>
+                      Clearinghouse Number begins with: {{ prj_schno }}
+                    </TD>
+                  </TR>
+                {% elif mode = "advanced" %}
+                  <TR>
+                    <TD>
+                      Date Range: {{ date_from }} - {{ date_to }}
+                    </TD>
+                    <TD>
+                      Project Location: {{ locname }}
+                    </TD>
+                    <TD>
+                      Lead Agency: {{ lagname }}
+                    </TD>
+                    <TD>
+                      Reviewing Agency: {{ ragname }}
+                    </TD>
+                  </TR>
+                  <TR>
+                    <TD>
+                      Document Type: {{ docname }}
+                    </TD>
+                    <TD>
+                      Local Action Type: {{ latname }}
+                    </TD>
+                    <TD>
+                      Development Type: {{ devtypename }}
+                    </TD>
+                    <TD colspan="2">
+                      Project Issue: {{ issuename }}
+                    </TD>
+                  </TR>
+                {% endif %}
+              </TABLE>
+            </TD>
           </TR>
         </TABLE>
       </TD>

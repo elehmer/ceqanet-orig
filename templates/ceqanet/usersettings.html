@@ -25,7 +25,7 @@
     </TR>
     <TR> 
       <TD colspan="2">
-        {% if islead %}
+        {% if islead or isclearinghouse or isplanner %}
         Lead Agency: {{ form.set_lag_fk }}
         {% endif %}
       </TD>

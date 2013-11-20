@@ -136,6 +136,60 @@
     </TR>
     {% endfor %}
     <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdolat.label }}
+      </TH>
+    </tr>
+    {% for lat in form.rdolat %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ lat }}
+      {% elif forloop.counter = 2 %}
+        <div id="rdolat_div">
+          {{ lat }} {{ form.latid }}
+        </div>
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdodevtype.label }}
+      </TH>
+    </tr>
+    {% for devtype in form.rdodevtype %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ devtype }}
+      {% elif forloop.counter = 2 %}
+        <div id="rdodevtype_div">
+          {{ devtype }} {{ form.devtypeid }}
+        </div>
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdoissue.label }}
+      </TH>
+    </tr>
+    {% for issue in form.rdoissue %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ issue }}
+      {% elif forloop.counter = 2 %}
+        <div id="rdoissue_div">
+          {{ issue }} {{ form.issueid }}
+        </div>
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
       <td>
         &nbsp;
       </td>
@@ -166,6 +220,15 @@
   });
   $("#rdodoctype_div").click(function() {
     setRadio('rdodoctype_1');      
+  });
+  $("#rdolat_div").click(function() {
+    setRadio('rdolat_1');      
+  });
+  $("#rdodevtype_div").click(function() {
+    setRadio('rdodevtype_1');      
+  });
+  $("#rdoissue_div").click(function() {
+    setRadio('rdoissue_1');      
   });
   
   function setRadio(id) {

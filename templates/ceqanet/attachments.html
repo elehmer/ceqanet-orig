@@ -7,22 +7,22 @@
 <FORM id="attachments" name="attachments" method="post" action="" enctype="multipart/form-data">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
-    <TR> 
+    <TR colspan="3"> 
       <TH align="left">
         <h3>Attach Related Electronic Information:</h3>
       </TH>
     </TR>
-    <TR> 
+    <TR colspan="3"> 
       <TH align="left">
         <B>{{ form.datt_file.label }}</B> {{ form.datt_file }}
       </TH>
     </TR>    
-    <TR> 
+    <TR colspan="3"> 
       <TD align="left"> 
         <input id="attach" type="submit" value="Attach File...">
       </TD>
     </TR>
-    <TR>
+    <TR colspan="3">
       <TD>
         &nbsp;
       </TD>
@@ -55,7 +55,7 @@
         </TABLE>
       </TD>
     </TR>
-    <TR>
+    <TR colspan="3">
       <TD>
         &nbsp;
       </TD>
@@ -63,6 +63,12 @@
     <TR> 
       <TD align="left"> 
         <input id="submitch" type="submit" value="Submit to CEQANet >>">
+      </TD>
+      <TD align="right"> 
+        <input id="delete" type="submit" value="Delete Draft">
+      </TD>
+      <TD align="right"> 
+        <input id="draft" type="submit" value="Save Draft">
       </TD>
     </TR>
   </TABLE>
@@ -75,6 +81,14 @@
     });
     $('#submitch').click(function() {
       $('#mode').val('submitch');
+      $('#attachments').submit();
+    });
+    $('#draft').click(function() {
+      $('#mode').val('draft');
+      $('#attachments').submit();
+    });
+    $('#delete').click(function() {
+      $('#mode').val('delete');
       $('#attachments').submit();
     });
   </script>
