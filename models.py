@@ -51,6 +51,12 @@ class docreviews(models.Model):
     dsloc = models.CharField(null=True,blank=True,max_length=30)
     drag_lateletter = models.DateField(null=True,blank=True)
     drag_ragcomment = models.TextField(null=True,blank=True)
+    drag_file = models.FileField(null=True,blank=True,upload_to='documents/%Y/%m/%d')
+
+class docattachments(models.Model):
+    datt_pk = models.AutoField(primary_key=True)
+    datt_doc_fk = models.ForeignKey("documents",db_column="datt_doc_fk")
+    datt_file = models.FileField(null=True,blank=True,upload_to='documents/%Y/%m/%d')
 
 class documents(models.Model):
     doc_pk = models.AutoField(primary_key=True)
@@ -151,6 +157,8 @@ class documents(models.Model):
     doc_plannerregion = models.IntegerField(null=True,blank=True)
     doc_plannerreview = models.BooleanField()
     doc_exstatus = models.IntegerField()
+    doc_added = models.DateField(null=True,blank=True)
+    doc_draft = models.BooleanField()
 
     class Meta:
         #ordering = ['name']

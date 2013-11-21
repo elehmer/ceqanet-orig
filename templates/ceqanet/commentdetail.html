@@ -4,7 +4,7 @@
 
 {% block listing %}
   {% load staticfiles %}
-<FORM name="commentdetailform" method="post" action="">
+<FORM name="commentdetailform" method="post" action="" enctype="multipart/form-data">
   {% csrf_token %}
     <table width="767" border="0" cellpadding="3">
       <tr>
@@ -340,6 +340,26 @@
           <B>{{ form.drag_ragcomment.label }}</B> {{ form.drag_ragcomment }}
         </td>
       </tr>
+      <tr> 
+        <td>
+          <B>{{ form.dcmf_file.label }}</B> {{ form.dcmf_file }}
+        </td>
+      </tr>
+      {% if documents %}
+        {% for d in documents %}
+      <TR>
+        <TD>
+          <a href="{{ d.dcmf_file.url }}">{{ d.dcmf_file.name }}</a>
+        </TD>
+      </TR>
+        {% endfor %}
+      {% else %}
+      <TR>
+        <TD>
+          NO DOCUMENTS
+        </TD>
+      </TR>      
+      {% endif %}
       <tr>
         <td>
           <hr width="100%">

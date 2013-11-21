@@ -6,7 +6,7 @@
 
   <FORM NAME="submit" METHOD="post" ACTION="">
     {% csrf_token %}
-    <table border="0" cellpadding="5">
+    <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
       <tr><td colspan="3">&nbsp;</td></tr>
       <tr>
         <td colspan="3">
@@ -47,11 +47,59 @@
           &nbsp;
         </TD>
       </TR>
-      <tr colspan="3">
-        <td>
-          <Input type="submit" value="Next >>">
-        </td>
-      </tr>
+      <TR>
+        <TD colspan="3">
+          <input type="submit" value="Next >>">
+        </TD>
+      </TR>
+      <TR>
+        <TD colspan="3">
+          &nbsp;
+        </TD>
+      </TR>
+      <TR>
+        <TD colspan="3">
+          <B>Draft Documents:</B>
+        </TD>
+      </TR>
+      <TR> 
+        <TD colspan="3">
+          <TABLE BORDER="1" WIDTH="100%">
+            <TR>
+              <TH>
+                Project Title
+              </TH>
+              <TH>
+                Document Type
+              </TH>
+              <TH>
+                Date Draft Opened
+              </TH>
+            </TR>
+            {% if drafts %}
+              {% for d in drafts %}
+                <TR>
+                  <TD align="middle" width="60%">
+                    <a href="{% url 'attachments' %}?doc_pk={{ d.doc_pk }}">{{ d.doc_prj_fk.prj_title }}</a>
+                  </TD>
+                  <TD align="middle" width="20%">
+                    {{ d.doc_doctype }}
+                  </TD>
+                  <TD align="middle" width="20%">
+                    {{ d.doc_added }}
+                  </TD>
+                </TR>
+              {% endfor %}
+            {% else %}
+              <TR>
+                <TD align="center" colspan="3">
+                  NO DRAFT DOCUMENTS
+                </TD>
+              </TR>      
+            {% endif %}
+          </TABLE>
+        </TD>
+      </TR>
     </table>
   </FORM>
 

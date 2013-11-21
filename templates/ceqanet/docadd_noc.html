@@ -2,6 +2,13 @@
 
 {% load staticfiles %}
 
+{% block extrajs %}
+
+<script type="text/javascript" src="{% static "ceqanet/js/jsi18n.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/admin_styles.css" %}">
+
+{% endblock extrajs %}
+
 {% block content %}
 
 {{ form.media }}
@@ -29,16 +36,14 @@
         {{ form.prj_description }} {{ form.prj_description.errors }}
       </TD>
     </TR>
-    {% if prj_pk != '-9999' %}
     <TR>
       <TH width="25%" align="left" valign="top">
         Project Clearinghouse Number:
       </TH>
       <TD colspan="2">
-        {{ prjinfo.prj_schno }}
+        {{ document.doc_prj_fk.prj_schno }}
       </TD>
     </TR>
-    {% endif %}    
     <TR> 
       <TH align="left" colspan="3">
         <h3>Document Information:</h3>
@@ -585,9 +590,14 @@
         {{ form.ragencies }}
       </td>
     </tr>
+    <TR>
+      <TD colspan="3">
+        &nbsp;
+      </TD>
+    </TR>
     <TR> 
-      <TD align="center" colspan="3"> 
-        <input type="submit" value="Submit to OPR for review...">
+      <TD align="left" colspan="3"> 
+        <input type="submit" value="Next >>">
       </TD>
     </TR>
   </TABLE>

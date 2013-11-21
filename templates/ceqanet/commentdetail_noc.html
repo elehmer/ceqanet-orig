@@ -4,34 +4,36 @@
 
 {% block listing %}
   {% load staticfiles %}
+<FORM name="commentdetailform" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
     <table width="767" border="0" cellpadding="3">
       <tr>
         <td align="center">
-          <h3>{{ doc.doc_prj_fk.prj_title }}</h3>
+          <h3>{{ detail.doc_prj_fk.prj_title }}</h3>
         </td>
       </tr>
       <tr> 
         <td> 
-          <b>SCH Number:</b> <a href="{% url 'doclist' %}?prj_schno={{ doc.doc_prj_fk.prj_schno }}&sortfld=-doc_received&mode=basic">{{ doc.doc_prj_fk.prj_schno }}</a>
+          <b>SCH Number:</b> {{ detail.doc_prj_fk.prj_schno }}
         </td>
       </tr>
       <tr> 
         <td> 
-          <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
+          <b>Document Type:</b> {{ detail.doc_doctype }}  - {{ detail.doc_docname }}
         </td>
       </tr>
-      {% if doc.doc_title %}
-        {% if doc.doc_title.strip != '' %}
+      {% if detail.doc_title %}
+        {% if detail.doc_title.strip != '' %}
       <tr> 
         <td> 
-          <b>Alternate Title:</b> {{ doc.doc_title }}
+          <b>Alternate Title:</b> {{ detail.doc_title }}
         </td>
       </tr>
         {% endif %}
       {% endif %}
       <tr> 
         <td> 
-          <b>Project Lead Agency:</b> {{ doc.doc_prj_fk.prj_leadagency }}
+          <b>Project Lead Agency:</b> {{ detail.doc_prj_fk.prj_leadagency }}
         </td>
       </tr>
       <tr>
@@ -46,7 +48,7 @@
       </tr>
       <tr> 
         <td>
-          {{ doc.doc_description }}
+          {{ detail.doc_description }}
         </td>
       </tr>
       <tr> 
@@ -69,32 +71,32 @@
             </tr>
             <tr>
               <td align="left">
-               {{ doc.doc_conname }}
+               {{ detail.doc_conname }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ doc.doc_conagency }}
+                {{ detail.doc_conagency }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ doc.doc_conphone }}
+                {{ detail.doc_conphone }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ doc.doc_conaddress1 }}
+                {{ detail.doc_conaddress1 }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ doc.doc_conaddress2 }}
+                {{ detail.doc_conaddress2 }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                {{ doc.doc_concity }}, {{ doc.doc_constate }} {{ doc.doc_conzip }}
+                {{ detail.doc_concity }}, {{ detail.doc_constate }} {{ detail.doc_conzip }}
               </td>
             </tr>
           </table>
@@ -115,22 +117,22 @@
           <table border="0">
             <tr>
               <td align="left">
-                County: {{ doc.doc_county }}
+                County: {{ detail.doc_county }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                City: {{ doc.doc_city }}
+                City: {{ detail.doc_city }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Region: {{ doc.doc_region }}
+                Region: {{ detail.doc_region }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Cross Streets: {{ doc.doc_xstreets }}
+                Cross Streets: {{ detail.doc_xstreets }}
               </td>
             </tr> 
             <tr>
@@ -146,32 +148,32 @@
             </tr> 
             <tr>
               <td align="left">
-                Parcel No: {{ doc.doc_parcelno }}
+                Parcel No: {{ detail.doc_parcelno }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Township: {{ doc.doc_township }}
+                Township: {{ detail.doc_township }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Range: {{ doc.doc_range }}
+                Range: {{ detail.doc_range }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Section: {{ doc.doc_section }}
+                Section: {{ detail.doc_section }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Base: {{ doc.doc_base }}
+                Base: {{ detail.doc_base }}
               </td>
             </tr> 
             <tr>
               <td align="left">
-                Other Location Info: {{ doc.doc_location }}
+                Other Location Info: {{ detail.doc_location }}
               </td>
             </tr>
           </table>
@@ -192,32 +194,32 @@
           <table border="0">
             <tr>
               <td align="left">
-                Highways: {{ doc.doc_highways }}
+                Highways: {{ detail.doc_highways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Airports: {{ doc.doc_airports }}
+                Airports: {{ detail.doc_airports }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Railways: {{ doc.doc_railways }}
+                Railways: {{ detail.doc_railways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Waterways: {{ doc.doc_waterways }}
+                Waterways: {{ detail.doc_waterways }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Schools: {{ doc.doc_schools }}
+                Schools: {{ detail.doc_schools }}
               </td>
             </tr>
             <tr>
               <td align="left">
-                Land Use: {{ doc.doc_landuse }}
+                Land Use: {{ detail.doc_landuse }}
               </td>
             </tr>
           </table>
@@ -331,26 +333,55 @@
       </tr>
       <tr> 
         <td> 
-          <b>Date Received:</b> {{ doc.doc_received }}&nbsp; 
+          <b>Date Received:</b> {{ detail.doc_received }}&nbsp; 
           <b>Start of Review:</b>
-          {% if doc.doc_dept != None %} 
-            {{ doc.doc_dept }}&nbsp; 
+          {% if detail.doc_dept != None %} 
+            {{ detail.doc_dept }}&nbsp; 
           {% endif %}&nbsp;&nbsp;&nbsp; 
           <b>End of Review:</b> 
-          {% if doc.doc_clear != None %} 
-            {{ doc.doc_clear }} 
+          {% if detail.doc_clear != None %} 
+            {{ detail.doc_clear }} 
           {% endif %}
         </td>
       </tr>
       <tr>
         <td>
-          <hr width="100%">
+          <h5>Official CEQA Comment Area:</h5>
         </td>
       </tr>
       <tr>
         <td>
-          <button onclick="window.location = '{% url 'docedit_nop' %}?doc_pk={{ doc_pk }}'">Edit Database Record</button>
+          Enter comment text in the text area below or attach a PDF file below.
         </td>
       </tr>
+      <tr> 
+        <td>
+          <B>{{ form.drag_ragcomment.label }}</B> {{ form.drag_ragcomment }}
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <B>{{ form.drag_file.label }}</B> {{ form.drag_file }}
+        </td>
+      </tr>
+      {% if file.drag_file %}
+      <tr>
+        <td>
+          Existing Attachment: <a href="{{ file.drag_file.url }}">{{ file.drag_file.name }}</a>           
+        </td>
+      </tr>
+      {% endif %}
+      <tr>
+        <td>
+          <hr width="100%">
+        </td>
+      </tr>
+      <TR> 
+        <TD align="center" colspan="3"> 
+          <input type="submit" value="Add Comment">
+        </TD>
+      </TR>
     </table>
+    <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
+  </form>
 {% endblock listing %}
