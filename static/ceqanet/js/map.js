@@ -91,13 +91,41 @@ map = new OpenLayers.Map('map',{
             // idx can be used to retrieve layer from map.layers[idx]
                 info = infoLookup[idx];
                 if (info && info.data) {
-                    msg += '<a href="/docdesp_noc/'+info.data.doc_pk+'">'+info.data.doc_pk+'</a>';
+                    msg += '<a href="/docdesp_noc/'+info.data.doc_pk+'" target="_blank" >'+info.data.doc_pk+'</a>';
                     document.getElementById("attributes").innerHTML = msg;
+                    //msg = getData(msg,info.data.doc_pk);
+                    getData(arguments[1],msg,info.data.doc_pk);
                 }
             }
         }
     
     };    
+    
+    var createPopup = function(coords,text){
+        var popup = new OpenLayers.Popup.FramedCloud("document",
+                       coords,
+                       null,
+                       text,
+                       null,
+                       true);
+
+        map.addPopup(popup);
+    };
+    
+    var getData = function(coords,msg,id) {
+        var result = msg
+        $.getJSON("http://ceqa.ice.ucdavis.edu/doc/short/"+id,function(data) {
+        //data.responseJSON[0].pk
+            var title = data[0].fields.doc_prj_fk[0];
+            var sch = data[0].fields.doc_schno;
+            var type = data[0].fields.doc_docname;
+            var date = data[0].fields.doc_received;
+            result = "<ul><h3><a href='"+msg+"'>"+title+"</a></h3><li>"+sch+"</li><li>"+date+"</li><li>"+type+"</li></ul>";
+            createPopup(coords,result);
+            });
+        //console.log
+        //return(result);   
+    };
     
     var controls = {
     //move: new OpenLayers.Control.UTFGrid({
