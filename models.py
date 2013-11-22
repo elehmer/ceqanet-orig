@@ -261,7 +261,13 @@ class prinfo(models.Model):
     info_prjdate = models.DateField()
     info_docdate = models.DateField()
 
+
+class projectsManager(models.Manager):
+    def get_by_natural_key(self, prj_title):
+        return self.get(prj_title=prj_title)
+
 class projects(models.Model):
+    objects = projectsManager()
     prj_pk = models.AutoField(primary_key=True)
     prj_lag_fk = models.ForeignKey("leadagencies",db_column="prj_lag_fk")
     prj_schno = models.CharField(null=True,blank=True,max_length=12)
@@ -286,6 +292,9 @@ class projects(models.Model):
     prj_pending = models.BooleanField()
     prj_visible = models.BooleanField()
     prj_plannerreview = models.BooleanField()
+
+    def natural_key(self):
+        return (self.prj_title, self.prj_pk)
 
 class reviewingagencies(models.Model):
     rag_pk = models.AutoField(primary_key=True)

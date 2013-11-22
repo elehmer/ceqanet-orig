@@ -10,6 +10,8 @@ from ceqanet.views import review,reviewdetail_noc,reviewdetail_nod,reviewdetail_
 from ceqanet.views import comment,commentdetail_noc,commentdetail_nod,commentdetail_noe,commentdetail_nop
 #map related views
 from ceqanet.views import locations_geojson, map
+#document api
+from ceqanet.views import doc_json,doc_location
 
 urlpatterns = patterns('ceqanet.views',
     url(r'^$','index',name='index'),
@@ -41,7 +43,7 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^review/$',review.as_view(),name='review'),
     url(r'^comment/$',comment.as_view(),name='comment'),
     #url(r'^commentdetail/$',commentdetail.as_view(),name='commentdetail'),
-    url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
+    #url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
     url(r'^pendingdetail_noc/$',pendingdetail_noc.as_view(),name='pendingdetail_noc'),
     url(r'^pendingdetail_nod/$',pendingdetail_nod.as_view(),name='pendingdetail_nod'),
     url(r'^pendingdetail_noe/$',pendingdetail_noe.as_view(),name='pendingdetail_noe'),
@@ -57,10 +59,13 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^commentdetail_noe/$',commentdetail_noe.as_view(),name='commentdetail_noe'),
     url(r'^commentdetail_nop/$',commentdetail_nop.as_view(),name='commentdetail_nop'),
     url(r'^usersettings/$',usersettings.as_view(),name='usersettings'),
-    url(r'^map/all/geojson/$','locations_geojson',name="locations"),
-    url(r'^map/all/geojson/(?P<limit>\d+)/$','locations_geojson',name="locations"),
+    url(r'^map/all/geojson/$','locations_geojson',name="locationsall"),
+    url(r'^map/all/geojson/(?P<limit>\d+)/$','locations_geojson',name="locationslimited"),
+    url(r'^doc/short/(?P<doc_id>\d+)/$','doc_json',name="doc_json"),
+    url(r'^doc/location/(?P<doc_id>\d+)/$','doc_location',name="doc_location"), 
     url(r'^map/$','map',name="map"),
-) + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+) 
+#+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 
 urlpatterns += patterns('',

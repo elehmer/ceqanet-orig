@@ -26,7 +26,7 @@ from datetime import datetime
 from vectorformats.Formats import Django, GeoJSON, KML
 #import simplejson
 from django.utils import simplejson
-
+from django.core import serializers
 
 def index(request):
     t = loader.get_template("ceqanet/index.html")
@@ -4154,6 +4154,19 @@ def locations_geojson(request,limit):
     string = geoj.encode(djf.decode(locations_qs))
     #string = locations_qs
     return HttpResponse(string)
+
+def doc_json(request,doc_id):
+    data = serializers.serialize('json', documents.objects.filter(pk=doc_id), fields=('doc_pk','doc_schno','doc_prj_fk','doc_docname','doc_received'),use_natural_keys=True)
+    #data = serializers.serialize('json', documents.objects.filter(pk=doc_id))
+    return HttpResponse(data)
+
+def doc_location(request,doc_id):
+    locations_qs = Locations.objects.filter(document=doc_id)
+    djf = Django.Django(geodjango="geom")
+    geoj = GeoJSON.GeoJSON()
+    string = geoj.encode(djf.decode(locations_qs))
+    return HttpResponse(string)
+
 
 def map(request):
     t = loader.get_template("ceqanet/map.html")
