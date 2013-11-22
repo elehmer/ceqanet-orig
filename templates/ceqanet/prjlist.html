@@ -1,0 +1,259 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Project Listing{% endblock title %}
+
+{% block listing %}
+
+  {% if prjs %}
+ 	<TABLE border="1">
+    <TR>
+      <TD colspan="7">
+        <TABLE width="100%">
+          <tr>
+            <td colspan="2">
+              <button onclick="window.location = '{% url 'basicquery' %}'">Basic Query</button>
+              <button onclick="window.location = '{% url 'advancedquery' %}'">Advanced Query</button>
+            </td>
+          </tr>
+          <TR>
+            <TD>
+              <B>Query Type:</B> Project Listing - {{ mode|title }}
+            </TD>
+            <TD align="right">
+              <B>Sorted By:</B>
+              {% for key,value in form.sortfld.field.widget.choices %}
+                {% if key = sortfld %}
+                  {{ value }}
+                {% endif %}
+              {% endfor %}
+            </TD>
+          </TR>
+          <TR>
+            <TD>
+              <B>Filters:</B>
+            </TD>
+            <td align="right">
+              <FORM name="sortform" method="get" action="">
+                <B>{{ form.sortfld.label }}</B> {{ form.sortfld }}
+                <INPUT type="hidden" name="mode" value="{{ mode }}">
+                {% if mode = "basic" %}
+                  <INPUT type="hidden" name="prj_schno" value="{{ prj_schno }}">
+                {% elif mode = "advanced" %}
+                  {% if date_from %}
+                    <INPUT type="hidden" name="date_from" value="{{ date_from }}">
+                  {% endif %}
+                  {% if date_to %}
+                    <INPUT type="hidden" name="date_to" value="{{ date_to }}">
+                  {% endif %}
+                  {% if cityid %}
+                    <INPUT type="hidden" name="cityid" value="{{ cityid }}">
+                  {% endif %}
+                  {% if countyid %}
+                    <INPUT type="hidden" name="countyid" value="{{ countyid }}">
+                  {% endif %}
+                  {% if lagid %}
+                    <INPUT type="hidden" name="lagid" value="{{ lagid }}">
+                  {% endif %}
+                  {% if ragid %}
+                    <INPUT type="hidden" name="ragid" value="{{ ragid }}">
+                  {% endif %}
+                  {% if doctypeid %}
+                    <INPUT type="hidden" name="doctypeid" value="{{ doctypeid }}">
+                  {% endif %}
+                  {% if latid %}
+                    <INPUT type="hidden" name="latid" value="{{ latid }}">
+                  {% endif %}
+                  {% if devtypeid %}
+                    <INPUT type="hidden" name="devtypeid" value="{{ devtypeid }}">
+                  {% endif %}
+                  {% if issueid %}
+                    <INPUT type="hidden" name="issueid" value="{{ issueid }}">
+                  {% endif %}
+                {% endif %}
+                <INPUT type="submit" value="Resort">
+              </FORM>
+            </td>
+          </TR>
+          <TR>
+            <TD colspan="2">
+              <TABLE border="0" width="100%">
+                {% if mode = "basic" %}
+                  <TR>
+                    <TD>
+                      Clearinghouse Number begins with: {{ prj_schno }}
+                    </TD>
+                  </TR>
+                {% elif mode = "advanced" %}
+                  <TR>
+                    <TD>
+                      Date Range: {{ date_from }} - {{ date_to }}
+                    </TD>
+                    <TD>
+                      Project Location: {{ locname }}
+                    </TD>
+                    <TD>
+                      Lead Agency: {{ lagname }}
+                    </TD>
+                    <TD>
+                      Reviewing Agency: {{ ragname }}
+                    </TD>
+                  </TR>
+                  <TR>
+                    <TD>
+                      Document Type: {{ docname }}
+                    </TD>
+                    <TD>
+                      Local Action Type: {{ latname }}
+                    </TD>
+                    <TD>
+                      Development Type: {{ devtypename }}
+                    </TD>
+                    <TD colspan="2">
+                      Project Issue: {{ issuename }}
+                    </TD>
+                  </TR>
+                {% endif %}
+              </TABLE>
+            </TD>
+          </TR>
+        </TABLE>
+      </TD>
+    </TR>
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="7" ALIGN="middle">
+        <TABLE>
+          <TR>
+            <TD align="middle">
+              <B>Page Number = {{ page_obj.number }}</B>
+            </TD>
+          </TR>
+          <TR>
+            <TD align="middle">
+              <B>
+                {% if page_obj.number = 1 %}
+                  [First]&nbsp;&nbsp;
+                {% else %}
+                  <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+                {% endif %}
+                {% if page_obj.has_next %}
+                  <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+                {% else %}
+                  [Next]&nbsp;&nbsp;
+                {% endif %}
+                {% if page_obj.has_previous %}
+                  <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+                {% else %}
+                  [Previous]&nbsp;&nbsp;
+                {% endif %}
+                {% if page_obj.has_next %}
+                  <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+                {% else %}
+                  [Last]
+                {% endif %}
+              </B>
+            </TD>
+          </TR>
+        </TABLE>
+      </TD>
+    </TR>
+    {% endif %}
+ 	  <TR>
+ 	  	<TH align="center" width="10%">
+ 	      SCH#
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Project Title
+ 	  	</TH>
+ 	  	<TH align="center" width="40%">
+ 	  	  Project Description
+ 	  	</TH>
+      <TH align="center" width="10%">
+        Lead Agency
+      </TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Document Type
+ 	  	</TH>
+ 	  	<TH align="center" width="10%">
+ 	  	  Date First Document Received
+ 	  	</TH>
+      <TH align="center" width="10%">
+        Date Lastest Document Received
+      </TH>
+ 	  </TR> 
+    {% for prj in prjs %}
+      <TR>
+      	<TD align="center">
+          <a href="{% url 'doclist' %}?prj_schno={{prj.prj_schno}}&sortfld=-doc_received&mode=basic">{{ prj.prj_schno }}</a>
+    	  </TD>
+      	<TD align="center">
+          {{ prj.prj_title }}
+    	  </TD>
+      	<TD align="center">
+    	    {{ prj.prj_description }}
+    	  </TD>
+        <TD align="center">
+          {{ prj.prj_leadagency }}
+        </TD>
+      	<TD align="center">
+          {{ prj.prj_doc_fk.doc_docname }} ({{ prj.prj_status }})
+      	</TD>
+      	<TD align="center">
+    	    {{ prj.prj_datefirst }}
+    	  </TD>
+        <TD align="center">
+          {{ prj.prj_datelast }}
+        </TD>
+      </TR>
+  	{% endfor %}
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="7" ALIGN="middle">
+        <TABLE>
+          <TR>
+            <TD align="middle">
+              <B>Page Number = {{ page_obj.number }}</B>
+            </TD>
+          </TR>
+          <TR>
+            <TD align="middle">
+              <B>
+                {% if page_obj.number = 1 %}
+                  [First]&nbsp;&nbsp;
+                {% else %}
+                  <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+                {% endif %}
+                {% if page_obj.has_next %}
+                  <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+                {% else %}
+                  [Next]&nbsp;&nbsp;
+                {% endif %}
+                {% if page_obj.has_previous %}
+                  <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+                {% else %}
+                  [Previous]&nbsp;&nbsp;
+                {% endif %}
+                {% if page_obj.has_next %}
+                  <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+                {% else %}
+                  [Last]
+                {% endif %}
+              </B>
+            </TD>
+          </TR>
+        </TABLE>
+      </TD>
+    </TR>
+    {% endif %}
+    </TABLE>
+  {% else %}
+  <TABLE>
+    <TR>
+      <TD ALIGN="middle">
+        Query Returned No Records. Please use the Back button on your browser and try again.
+      </TD>
+    </TR>
+  </TABLE>
+  {% endif %}
+
+{% endblock listing %}

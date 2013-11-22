@@ -1,53 +1,47 @@
 from django import forms
 from django.forms import ModelForm
 from datetime import datetime, date, timedelta
-from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes
+from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
-from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES
+from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES,RDOLAT_CHOICES,RDODEVTYPE_CHOICES,RDOISSUE_CHOICES
+from django.contrib.admin.widgets import FilteredSelectMultiple
+
+class basicqueryform(forms.Form):
+    prj_schno = forms.CharField(label="Clearinghouse Number:",required=True,max_length=12)
+    colation = forms.ChoiceField(label="Search Database By:",required=True,choices=COLATION_CHOICES,initial='document',widget=forms.RadioSelect())
+
+class advancedqueryform(forms.Form):
+    rdodate = forms.ChoiceField(label="Date Range:",required=True,choices=RDODATE_CHOICES,initial='range',widget=forms.RadioSelect(attrs={'id':'rdodate'}))
+    date_from = forms.DateField(label="From:",required=False, initial=lambda: (date.today() - timedelta(days=180)).strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
+    date_to = forms.DateField(label="To:",required=False, initial=date.today().strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
+    rdoplace = forms.ChoiceField(label="Project Location:",required=True,choices=RDOPLACE_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdoplace'}))
+    cityid = forms.ModelChoiceField(label="City:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label=None)
+    countyid = forms.ModelChoiceField(label="County:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label=None)
+    rdolag = forms.ChoiceField(label="Lead Agency:",required=True,choices=RDOLAG_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdolag'}))
+    lagid = forms.ModelChoiceField(label="Lead Agency:",required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label=None)
+    rdorag = forms.ChoiceField(label="Reviewing Agency:",required=True,choices=RDORAG_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdorag'}))
+    ragid = forms.ModelChoiceField(label="Reviewing Agency:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_name'),empty_label=None)
+    rdodoctype = forms.ChoiceField(label="Document Type:",required=True,choices=RDODOCTYPE_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdodoctype'}))
+    doctypeid = forms.ModelChoiceField(label="Document Type:",required=False,queryset=doctypes.objects.filter(inlookup=True).order_by('keyw_longname'),empty_label=None)
+    rdolat = forms.ChoiceField(label="Local Action Type:",required=True,choices=RDOLAT_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdolat'}))
+    latid = forms.ModelChoiceField(label="Local Action Type:",required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1001).order_by('keyw_longname'),empty_label=None)
+    rdodevtype = forms.ChoiceField(label="Development Type:",required=True,choices=RDODEVTYPE_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdodevtype'}))
+    devtypeid = forms.ModelChoiceField(label="Development Type:",required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010).order_by('keyw_longname'),empty_label=None)
+    rdoissue = forms.ChoiceField(label="Project Issue:",required=True,choices=RDOISSUE_CHOICES,initial='all',widget=forms.RadioSelect(attrs={'id':'rdoissue'}))
+    issueid = forms.ModelChoiceField(label="Project Issue:",required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname'),empty_label=None)
+    colation = forms.ChoiceField(label="Search Database By:",required=True,choices=COLATION_CHOICES,initial='document',widget=forms.RadioSelect(attrs={'id':'colation'}))
+
+class prjlistform(forms.Form):
+    sortfld = forms.ChoiceField(label="Sort Results By:",required=True,choices=PRJ_SORT_FIELDS,initial='-prj_schno')
+
+class doclistform(forms.Form):
+    sortfld = forms.ChoiceField(label="Sort Results By:",required=True,choices=DOC_SORT_FIELDS,initial='-doc_prj_fk__prj_schno')
 
 class QueryForm(forms.Form):
     prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)
 
     date_from = forms.DateField(label="From", initial=lambda: (date.today() - timedelta(days=14)).strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
     date_to = forms.DateField(label="To", initial=date.today().strftime("%Y-%m-%d"),input_formats=['%Y-%m-%d'])
-
-class AddDocForm(forms.Form):
-    prj_title = forms.CharField(label="Project Title:",required=False,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    prj_description = forms.CharField(label="Project Description:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    doc_conname = forms.CharField(label="Contact Person:",max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-    doc_conemail = forms.EmailField(label="E-mail:",max_length=64)
-    doc_conaddress1 = forms.CharField(label="Street Address1:",max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    doc_concity = forms.CharField(label="City:",max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_constate = forms.CharField(label="State:",max_length=2,widget=forms.TextInput(attrs={'size':'2'}))
-    doc_conzip = forms.CharField(label="Zip:",max_length=10,widget=forms.TextInput(attrs={'size':'10'}))
-    doc_location = forms.CharField(label="Document Location:",widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    doc_county = forms.ModelChoiceField(label="County:",queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
-    doc_city = forms.ModelChoiceField(label="City:",queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
-    doc_latitude = forms.CharField(label="Document Latitude:",max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
-    doc_longitude = forms.CharField(label="Document Longitude:",max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
-    strsectionnumber = forms.CharField(label="Section Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-    strcodenumber = forms.CharField(label="Code Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
-    txtreason = forms.CharField(label="Reasons why project is exempt:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
-    strleadagency2 = forms.CharField(label="Person or Agency Carrying Out Project:",required=False,max_length=45,widget=forms.TextInput(attrs={'size':'45'}))
-    strphone1 = forms.CharField(max_length=3,widget=forms.TextInput(attrs={'size':'3'}))
-    strphone2 = forms.CharField(max_length=3,widget=forms.TextInput(attrs={'size':'3'}))
-    strphone3 = forms.CharField(max_length=4,widget=forms.TextInput(attrs={'size':'4'}))
-    doc_parcelno = forms.CharField(label='Parcel No.:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
-    doc_xstreets = forms.CharField(label='Cross Streets:',required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
-    doc_township = forms.CharField(label='Township:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
-    doc_range = forms.CharField(label='Range:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
-    doc_section = forms.CharField(label='Section:',required=False,max_length=6,widget=forms.TextInput(attrs={'size':'6'}))
-    doc_base = forms.CharField(label='Base:',required=False,max_length=8,widget=forms.TextInput(attrs={'size':'8'}))
-    doc_highways = forms.CharField(label="State Hwy #:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_airports = forms.CharField(label="Airports:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_railways = forms.CharField(label="Railways:",required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_waterways = forms.CharField(label="Waterways:",required=False,max_length=96,widget=forms.TextInput(attrs={'size':'96'}))
-    doc_landuse = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    doc_schools = forms.CharField(label="Schools:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    doc_actionnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    doc_issuesnotes = forms.CharField(required=False,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
 
 class submitform(forms.Form):
     doctype = forms.ChoiceField(required=True,choices=DOCUMENT_TYPES,initial='NOE')
@@ -111,6 +105,7 @@ class nocform(forms.Form):
     issues = forms.ModelMultipleChoiceField(required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname'),widget=forms.CheckboxSelectMultiple())
     dkey_comment_issues = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
     ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
+    #ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=FilteredSelectMultiple("Subjects",True,attrs={'rows':'10'}))
 
 class editnocform(forms.Form):
     prj_title = forms.CharField(label="Project Title:",required=False,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
@@ -189,20 +184,14 @@ class nodform(forms.Form):
     doc_longitude = forms.CharField(label="Document Longitude:",max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
     doc_city = forms.ModelChoiceField(label="City:",queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
     doc_county = forms.ModelChoiceField(label="County:",queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
-    doc_nodbylead = forms.BooleanField(required=False)
-    doc_nodbyresp = forms.BooleanField(required=False)
-    doc_nodagency = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+    leadorresp = forms.ChoiceField(required=False,choices=NODAGENCY_CHOICES,widget=forms.RadioSelect(attrs={'id':'det1'}))
+    doc_nodagency = forms.ModelChoiceField(required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]")
     doc_nod = forms.DateField(required=False,input_formats=['%Y-%m-%d'])
-    doc_detsigeffect = forms.BooleanField(required=False)
-    doc_detnotsigeffect = forms.BooleanField(required=False)
-    doc_deteir = forms.BooleanField(required=False)
-    doc_detnegdec = forms.BooleanField(required=False)
-    doc_detmitigation = forms.BooleanField(required=False)
-    doc_detnotmitigation = forms.BooleanField(required=False)
-    doc_detconsider = forms.BooleanField(required=False)
-    doc_detnotconsider = forms.BooleanField(required=False)
-    doc_detfindings = forms.BooleanField(required=False)
-    doc_detnotfindings = forms.BooleanField(required=False)
+    det1 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det1'}))
+    det2 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det2'}))
+    det3 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det3'}))
+    det4 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det4'}))
+    det5 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det5'}))
     doc_eiravailableat = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
 
 class editnodform(forms.Form):
@@ -222,20 +211,14 @@ class editnodform(forms.Form):
     doc_longitude = forms.CharField(label="Document Longitude:",required=False,max_length=30,widget=forms.TextInput(attrs={'size':'30'}))
     doc_city = forms.ModelChoiceField(label="City:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
     doc_county = forms.ModelChoiceField(label="County:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
-    doc_nodbylead = forms.BooleanField(required=False)
-    doc_nodbyresp = forms.BooleanField(required=False)
+    leadorresp = forms.ChoiceField(required=False,choices=NODAGENCY_CHOICES,widget=forms.RadioSelect(attrs={'id':'det1'}))
     doc_nodagency = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
     doc_nod = forms.DateField(required=False,input_formats=['%Y-%m-%d'])
-    doc_detsigeffect = forms.BooleanField(required=False)
-    doc_detnotsigeffect = forms.BooleanField(required=False)
-    doc_deteir = forms.BooleanField(required=False)
-    doc_detnegdec = forms.BooleanField(required=False)
-    doc_detmitigation = forms.BooleanField(required=False)
-    doc_detnotmitigation = forms.BooleanField(required=False)
-    doc_detconsider = forms.BooleanField(required=False)
-    doc_detnotconsider = forms.BooleanField(required=False)
-    doc_detfindings = forms.BooleanField(required=False)
-    doc_detnotfindings = forms.BooleanField(required=False)
+    det1 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det1'}))
+    det2 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det2'}))
+    det3 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det3'}))
+    det4 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det4'}))
+    det5 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det5'}))
     doc_eiravailableat = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
 
 class noeform(forms.Form):
@@ -443,11 +426,8 @@ class editnopform(forms.Form):
     dkey_comment_issues = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
     ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
 
-class DocReviewForm(forms.Form):
-    pass
-
-class pendingdetailform(forms.Form):
-    pass
+class attachmentsform(forms.Form):
+    datt_file = forms.FileField(label='Select file to attach:',required=False,help_text='max. 42 megabytes')
 
 class pendingdetailnocform(editnocform):
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
@@ -460,10 +440,6 @@ class pendingdetailnoeform(editnoeform):
 
 class pendingdetailnopform(editnopform):
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
-
-class reviewdetailform(forms.Form):
-    doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'])
-    doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'])
 
 class reviewdetailnocform(editnocform):
     doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'])
@@ -482,7 +458,8 @@ class reviewdetailnopform(editnopform):
     doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'])
 
 class commentdetailform(forms.Form):
-    drag_ragcomment = forms.CharField(label="Comment:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+    drag_ragcomment = forms.CharField(label="Text Comment:",required=False,widget=forms.Textarea(attrs={'cols':'100','rows':'40'}))
+    drag_file = forms.FileField(label='Select a PDF File:',help_text='max. 42 megabytes')
 
 class usersettingsform(forms.Form):
     formID = "usersettingsform"
@@ -491,3 +468,10 @@ class usersettingsform(forms.Form):
     set_lag_fk = forms.ModelChoiceField(label="Lead Agency:",required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'))
     set_rag_fk = forms.ModelChoiceField(label="Reviewing Agency:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_name'))
     conphone = USPhoneNumberField(label="Phone Number:",required=False)
+
+class chqueryform(forms.Form):
+    prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)
+
+class findprojectform(forms.Form):
+    pass
+
