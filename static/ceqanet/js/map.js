@@ -85,16 +85,18 @@ map = new OpenLayers.Map('map',{
 
     var callback = function(infoLookup) {
         var msg = "";
+        var msg1 = "";
         if (infoLookup) {
             var info;
             for (var idx in infoLookup) {
             // idx can be used to retrieve layer from map.layers[idx]
                 info = infoLookup[idx];
                 if (info && info.data) {
-                    msg += '<a href="/docdesp_noc/'+info.data.doc_pk+'" target="_blank" >'+info.data.doc_pk+'</a>';
+                    msg1 += '<a href="/docdesp_noc/'+info.data.doc_pk+'" target="_blank" >';
+                    msg += msg1+info.data.doc_pk+'</a>';
                     document.getElementById("attributes").innerHTML = msg;
                     //msg = getData(msg,info.data.doc_pk);
-                    getData(arguments[1],msg,info.data.doc_pk);
+                    getData(arguments[1],msg1,info.data.doc_pk);
                 }
             }
         }
@@ -117,10 +119,11 @@ map = new OpenLayers.Map('map',{
         $.getJSON("http://ceqa.ice.ucdavis.edu/doc/short/"+id,function(data) {
         //data.responseJSON[0].pk
             var title = data[0].fields.doc_prj_fk[0];
-            var sch = data[0].fields.doc_schno;
+            var sch = data[0].fields.doc_schno.trim();
+            sch = '<a href="/doclist/?prj_schno='+sch+' &sortfld=-doc_received&mode=basic" target="_blank">'+sch+'</a>'
             var type = data[0].fields.doc_docname;
             var date = data[0].fields.doc_received;
-            result = "<ul><h3><a href='"+msg+"'>"+title+"</a></h3><li>"+sch+"</li><li>"+date+"</li><li>"+type+"</li></ul>";
+            result = "<ul><h3>"+msg+title+"</a></h3><li>Clearing House # "+sch+"</li><li>Date Received: "+date+"</li><li>"+type+"</li></ul>";
             createPopup(coords,result);
             });
         //console.log
