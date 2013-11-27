@@ -92,7 +92,8 @@ map = new OpenLayers.Map('map',{
             // idx can be used to retrieve layer from map.layers[idx]
                 info = infoLookup[idx];
                 if (info && info.data) {
-                    msg1 += '<a href="/docdesp_noc/'+info.data.doc_pk+'" target="_blank" >';
+                    //Need to make urls pull from django templates
+                    msg1 += '<a href="/document/noc/description/'+info.data.doc_pk+'" target="_blank" >';
                     msg += msg1+info.data.doc_pk+'</a>';
                     document.getElementById("attributes").innerHTML = msg;
                     //msg = getData(msg,info.data.doc_pk);
@@ -116,11 +117,11 @@ map = new OpenLayers.Map('map',{
     
     var getData = function(coords,msg,id) {
         var result = msg
-        $.getJSON("http://ceqa.ice.ucdavis.edu/doc/short/"+id,function(data) {
+        $.getJSON("http://ceqa.ice.ucdavis.edu/api/doc/short/"+id,function(data) {
         //data.responseJSON[0].pk
             var title = data[0].fields.doc_prj_fk[0];
             var sch = data[0].fields.doc_schno.trim();
-            sch = '<a href="/doclist/?prj_schno='+sch+' &sortfld=-doc_received&mode=basic" target="_blank">'+sch+'</a>'
+            sch = '<a href="/document/list/?prj_schno='+sch+' &sortfld=-doc_received&mode=basic" target="_blank">'+sch+'</a>'
             var type = data[0].fields.doc_docname;
             var date = data[0].fields.doc_received;
             result = "<ul><h3>"+msg+title+"</a></h3><li>Clearing House # "+sch+"</li><li>Date Received: "+date+"</li><li>"+type+"</li></ul>";
