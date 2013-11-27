@@ -89,7 +89,7 @@
 		<ul id="nav_list">
 			<li><a href="{% url 'index' %}" class="nav_level1_link"><span id="nav_home_container"></span><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Home" />&nbsp;</a></li>
 			
-			<li><a href="{% url 'basicquery' %}" class="nav_level1_link">{% trans "Query" %}</a></li>
+			<li><a href="{% url 'basicquery' %}" class="nav_level1_link">{% trans "Search" %}</a></li>
             <li><a href="{% url 'map' %}" class="nav_level1_link">{% trans "Map" %}</a></li>
 
 			{% for g in user.groups.all %}
