@@ -96,10 +96,10 @@
 			{% if g.name = "leads" or g.name = "planners" or g.name = "clearinghouse" %}
 			<li><a href="{% url 'submit' %}" class="nav_level1_link">{% trans "Submit" %}</a></li>
 			{% endif %}
-			{% if g.name = "clearinghouse" %}
+			{% if g.name = "clearinghouse" or g.name = "planners" %}
 			<li><a href="{% url 'pending' %}" class="nav_level1_link">{% trans "Pending" %}</a></li>
 			{% endif %}
-			{% if g.name = "reviewers" %}
+			{% if g.name = "reviewers" or g.name = "planners" or g.name = "clearinghouse" %}
 			<li><a href="{% url 'comment' %}" class="nav_level1_link">{% trans "Comment" %}</a></li>
 			{% endif %}
 			{% if g.name = "planners" %}
