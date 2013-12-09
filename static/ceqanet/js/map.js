@@ -1,4 +1,6 @@
 /* Javascript for GeoWeb Map*/
+//Set domain to allow all ice subdomains to be used in json calls
+//document.domain = "ceqa.ice.ucdavis.edu";
 var map;
 var mercator = new OpenLayers.Projection("EPSG:900913");
 var geographic = new OpenLayers.Projection("EPSG:4326");
@@ -71,9 +73,11 @@ map = new OpenLayers.Map('map',{
         );
 
     var utfgrid = new OpenLayers.Layer.UTFGrid({
-        url: "http://ceqa.ice.ucdavis.edu/tiles/docgrid/${z}/${x}/${y}.json",
+        //url: "http://ceqa.ice.ucdavis.edu/tiles/docgrid/${z}/${x}/${y}.json",
+        url: "/tiles/docgrid/${z}/${x}/${y}.json",
         utfgridResolution: 4, // default is 2
-        displayInLayerSwitcher: false
+        displayInLayerSwitcher: false,
+        //tileOptions: {crossOriginKeyword: 'anonymous'},
     });
 
     var matrixIds = new Array(26);
@@ -117,7 +121,7 @@ map = new OpenLayers.Map('map',{
     
     var getData = function(coords,msg,id) {
         var result = msg
-        $.getJSON("http://ceqa.ice.ucdavis.edu/api/doc/short/"+id,function(data) {
+        $.getJSON("/api/doc/short/"+id,function(data) {
         //data.responseJSON[0].pk
             var title = data[0].fields.doc_prj_fk[0];
             var sch = data[0].fields.doc_schno.trim();
