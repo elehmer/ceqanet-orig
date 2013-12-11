@@ -1,9 +1,15 @@
 {% extends "ceqanet/base.html"%}
 
+{% block onload %} 
+onload="init()"
+{% endblock onload %}
+
 {% block content %}
     <div class='listing'>
     {% block listing %}
     {% endblock %}
+        
+    {% include "ceqanet/minimap.html" with doc=doc.doc_pk %}
     </div>
 
 {% endblock %}

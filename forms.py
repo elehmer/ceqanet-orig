@@ -474,4 +474,8 @@ class chqueryform(forms.Form):
 
 class findprojectform(forms.Form):
     pass
+    
+class geocode(forms.Form):
+    address = forms.CharField(label="",max_length=254)
+    
 

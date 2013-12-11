@@ -16,6 +16,7 @@ from ceqanet.forms import editnocform,editnoeform,editnodform,editnopform
 from ceqanet.forms import pendingdetailnocform,pendingdetailnodform,pendingdetailnoeform,pendingdetailnopform
 from ceqanet.forms import reviewdetailnocform,reviewdetailnodform,reviewdetailnoeform,reviewdetailnopform
 from ceqanet.forms import commentdetailform
+from ceqanet.forms import geocode
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords,docattachments
 #split geo imports for simplicity
 from ceqanet.models import Locations
@@ -4169,6 +4170,8 @@ def doc_location(request,doc_id):
 
 
 def map(request):
+    #form = basicqueryform()
+    form = geocode()
     t = loader.get_template("ceqanet/map.html")
-    c = RequestContext(request,{})
+    c = RequestContext(request,{'form':form})
     return HttpResponse(t.render(c))

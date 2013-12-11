@@ -12,6 +12,18 @@
 onload="init()"
 {% endblock onload %}
 
+{% block formabove %}
+    <div id="search">
+    <form>
+        <ul>
+        {{ form.as_ul }}
+        <li><input type="submit" value="Search" class="button" title='Click to search'></li>
+        </ul>
+    </form>
+    </div>
+{% endblock formabove %}
+
+
 {% block content %}
     <div id="map">
     </div>
@@ -23,3 +35,4 @@ onload="init()"
     <div id="attributes"></div>
 
 {% endblock content %}
+
