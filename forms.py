@@ -2,12 +2,22 @@ from django import forms
 from django.forms import ModelForm
 from olwidget.forms import  MapModelForm
 from olwidget.fields import EditableLayerField
+from olwidget.widgets import EditableMap
 from datetime import datetime, date, timedelta
 from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments,Locations
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
 from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES,RDOLAT_CHOICES,RDODEVTYPE_CHOICES,RDOISSUE_CHOICES
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
+
+class MapForm(forms.Form):
+    '''Reusable Map enhancement to forms'''
+    geom = forms.CharField(widget=EditableMap(options={'layers': ['osm.mapnik'],
+                                                    'isCollection':True, 
+                                                    'geometry':['point','linestring','polygon'],
+                                                    'default_lat': 37.424431833728114,
+                                                    'default_lon': -121.90515908415186,'default_zoom':6},template=None))
+    
 class basicqueryform(forms.Form):
     prj_schno = forms.CharField(label="Clearinghouse Number:",required=True,max_length=12)
     colation = forms.ChoiceField(label="Search Database By:",required=True,choices=COLATION_CHOICES,initial='document',widget=forms.RadioSelect())
@@ -223,7 +233,8 @@ class editnodform(forms.Form):
     det5 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det5'}))
     doc_eiravailableat = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
 
-class noeform(forms.Form):
+#class noeform(forms.Form):
+class noeform(MapForm):
     prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
     prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
     doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
