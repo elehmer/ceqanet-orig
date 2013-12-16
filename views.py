@@ -16,7 +16,7 @@ from ceqanet.forms import editnocform,editnoeform,editnodform,editnopform
 from ceqanet.forms import pendingdetailnocform,pendingdetailnodform,pendingdetailnoeform,pendingdetailnopform
 from ceqanet.forms import reviewdetailnocform,reviewdetailnodform,reviewdetailnoeform,reviewdetailnopform
 from ceqanet.forms import commentdetailform
-from ceqanet.forms import geocode
+from ceqanet.forms import geocode, locationEditForm
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords,docattachments
 #split geo imports for simplicity
 from ceqanet.models import Locations
@@ -4175,3 +4175,15 @@ def map(request):
     t = loader.get_template("ceqanet/map.html")
     c = RequestContext(request,{'form':form})
     return HttpResponse(t.render(c))
+    
+class locationEdit(UpdateView):
+    model = Locations
+    form_class = locationEditForm
+    template_name="ceqanet/form.html"
+    slug_field = "document"
+    
+    def get_queryset(self):
+        slug = self.kwargs['slug']
+        queryset = Locations.objects.filter(document=slug)
+        return queryset
+

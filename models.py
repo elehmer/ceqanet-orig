@@ -166,7 +166,7 @@ class documents(models.Model):
         verbose_name_plural = "Documents"
 
     def __unicode__(self):
-        return self.doc_pk
+        return str(self.doc_pk)
 
 class geowordlists(models.Model):
     geol_pk = models.AutoField(primary_key=True)
@@ -338,4 +338,7 @@ class Locations(models.Model):
     class Meta:
         verbose_name = "Location"
         verbose_name_plural = "Locations"
+    
+    def __unicode__(self):
+        return ','.join(["Location",str(self.document)])
 

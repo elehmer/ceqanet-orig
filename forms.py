@@ -1,7 +1,9 @@
 from django import forms
 from django.forms import ModelForm
+from olwidget.forms import  MapModelForm
+from olwidget.fields import EditableLayerField
 from datetime import datetime, date, timedelta
-from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments
+from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments,Locations
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
 from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES,RDOLAT_CHOICES,RDODEVTYPE_CHOICES,RDOISSUE_CHOICES
 from django.contrib.admin.widgets import FilteredSelectMultiple
@@ -477,5 +479,20 @@ class findprojectform(forms.Form):
     
 class geocode(forms.Form):
     address = forms.CharField(label="",max_length=254)
+    
+class locationEditForm(MapModelForm):
+    document = forms.CharField()
+    geom = EditableLayerField()
+
+    class Meta:
+        model = Locations
+        maps = (
+            (('geom',),
+                {'layers': ['osm.mapnik'],
+                'isCollection':True,
+                'geometry':['point','linestring','polygon'],
+                } ),
+        )
+ 
     
 
