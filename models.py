@@ -8,6 +8,10 @@ class counties(models.Model):
     geow_shortname = models.CharField(max_length=32)
     geow_longname = models.CharField(max_length=64)
 
+    class Meta:
+        verbose_name = "County"
+        verbose_name_plural = "Counties"
+
 class doctypes(models.Model):
     keyw_pk = models.AutoField(primary_key=True)
     keyw_shortname = models.CharField(max_length=32)
@@ -185,6 +189,10 @@ class geowords(models.Model):
     geow_recordsource = models.CharField(max_length=10)
     inlookup = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name = "Geoword"
+        verbose_name_plural = "Geowords"
+
     def __unicode__(self):
         return self.geow_shortname        
 
@@ -213,6 +221,10 @@ class keywords(models.Model):
     keyw_caption3 = models.CharField(max_length=10)
     keyw_originalcontrolid = models.CharField(max_length=10)
     keyw_recordsource = models.CharField(max_length=10)
+
+    class Meta:
+        verbose_name = "Keyword"
+        verbose_name_plural = "Keywords"
 
     def __unicode__(self):
         return self.keyw_longname        
@@ -254,6 +266,10 @@ class leadagencies(models.Model):
     lag_note = models.CharField(max_length=60)
     inlookup = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name = "Lead Agency"
+        verbose_name_plural = "Lead Agencies"
+
     def __unicode__(self):
         return self.lag_name
 
@@ -293,6 +309,10 @@ class projects(models.Model):
     prj_visible = models.BooleanField()
     prj_plannerreview = models.BooleanField()
 
+    class Meta:
+        verbose_name = "Project"
+        verbose_name_plural = "Projects"
+
     def natural_key(self):
         return (self.prj_title, self.prj_pk)
 
@@ -315,6 +335,10 @@ class reviewingagencies(models.Model):
     rag_disable = models.BooleanField()
     inlookup = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name = "Reviewing Agency"
+        verbose_name_plural = "Reviewing Agencies"
+
     def __unicode__(self):
         return self.rag_title
 
@@ -325,9 +349,17 @@ class UserProfile(models.Model):
     set_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="set_rag_fk")
     conphone = models.CharField(null=True,blank=True,max_length=32)
     
+    class Meta:
+        verbose_name = "User Profile"
+        verbose_name_plural = "User Profiles"
+    
 class clearinghouse(models.Model):
     schnoprefix = models.CharField(max_length=6)
     currentid = models.IntegerField()
+
+    class Meta:
+        verbose_name = "Clearinghouse"
+        verbose_name_plural = "Clearing House Relate?"
 
 class Locations(models.Model):
     '''Spatial model to store locations associations with Documents'''

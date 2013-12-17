@@ -11,7 +11,7 @@ from django.contrib.admin.widgets import FilteredSelectMultiple
 
 
 class MapForm(forms.Form):
-    '''Reusable Map enhancement to forms'''
+    '''Reusable Map enhancement to forms, inherited by document forms needing location entry'''
     geom = forms.CharField(widget=EditableMap(options={'layers': ['osm.mapnik'],
                                                     'isCollection':True, 
                                                     'geometry':['point','linestring','polygon'],
@@ -59,7 +59,7 @@ class submitform(forms.Form):
     doctype = forms.ChoiceField(required=True,choices=DOCUMENT_TYPES,initial='NOE')
     prjtoggle = forms.ChoiceField(required=True,choices=PROJECT_EXISTS,initial='no',widget=forms.RadioSelect())
 
-class nocform(forms.Form):
+class nocform(MapForm):
     prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
     prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
     doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
@@ -180,7 +180,7 @@ class editnocform(forms.Form):
     dkey_comment_issues = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
     ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
 
-class nodform(forms.Form):
+class nodform(MapForm):
     prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
     prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
     doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
@@ -233,7 +233,6 @@ class editnodform(forms.Form):
     det5 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det5'}))
     doc_eiravailableat = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
 
-#class noeform(forms.Form):
 class noeform(MapForm):
     prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
     prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
@@ -321,7 +320,7 @@ class editnoeform(forms.Form):
 
         return cleaned_data
 
-class nopform(forms.Form):
+class nopform(MapForm):
     prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
     prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
     doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
