@@ -1,0 +1,26 @@
+{% extends "ceqanet/base.html" %}
+{% load staticfiles %}
+
+{% block extrajs %}
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+<script type="text/javascript" src="{% static 'olwidget/js/olwidget.js' %}"></script>
+<link rel="stylesheet" href="{% static 'olwidget/css/olwidget.css' %}">
+{% endblock extrajs %}
+
+{% block onload %} 
+onload="init()"
+{% endblock onload %}
+
+{% block formabove %}
+    <div id="mapedit">
+    <form>
+        <ul>
+        {{ form.as_ul }}
+        </ul>
+    </form>
+    </div>
+{% endblock formabove %}
+

@@ -5,7 +5,8 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
 <script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
-<link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+<script type="text/javascript" src="{% static 'ceqanet/js/nominatim.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/map.css' %}">
 {% endblock extrajs %}
 
 {% block onload %} 
@@ -13,13 +14,9 @@ onload="init()"
 {% endblock onload %}
 
 {% block formabove %}
-    <div id="search">
-    <form>
-        <ul>
-        {{ form.as_ul }}
-        <li><input type="submit" value="Search" class="button" title='Click to search'></li>
-        </ul>
-    </form>
+    <div id="geocode">
+    {{ form.address }}
+    <button value="Search" class="button" title='Location Zoom' onclick="doBasicSearchClick();">Search for Location</button>
     </div>
 {% endblock formabove %}
 
@@ -31,6 +28,7 @@ onload="init()"
     Background Map Sources: 
     <a href="http://maps.stamen.com/">Stamen Designs</a> and 
     <a href="http://www.openstreetmap.org">©OpenStreetMap contributors.</a>
+    <p>Nominatim Search Courtesy of <a href="http://www.mapquest.com/" target="_blank">MapQuest</a> <img src="http://developer.mapquest.com/content/osm/mq_logo.png"></p>
     </div>
     <div id="attributes"></div>
 

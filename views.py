@@ -4179,7 +4179,7 @@ def map(request):
 class locationEdit(UpdateView):
     model = Locations
     form_class = locationEditForm
-    template_name="ceqanet/form.html"
+    template_name="ceqanet/mapform.html"
     slug_field = "document"
     
     def get_queryset(self):

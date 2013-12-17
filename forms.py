@@ -488,7 +488,7 @@ class findprojectform(forms.Form):
     pass
     
 class geocode(forms.Form):
-    address = forms.CharField(label="",max_length=254)
+    address = forms.CharField(label="",max_length=254, widget=forms.TextInput(attrs={'onkeydown':"if (event.keyCode == 13) doBasicSearchClick()"}))
     
 class locationEditForm(MapModelForm):
     document = forms.CharField()
