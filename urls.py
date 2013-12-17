@@ -1,7 +1,7 @@
 from django.conf.urls import patterns, url
 from django.conf.urls.static import static
 from django.conf import settings
-from ceqanet.views import index,query,basicquery,advancedquery,prjlist,doclist,projectlist,projdoclist,submit,chquery,findproject,accept,usersettings,attachments
+from ceqanet.views import index,query,basicquery,advancedquery,prjlist,doclist,projectlist,projdoclist,submit,chquery,findproject,accept,usersettings,attachments,account
 from ceqanet.views import docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
 from ceqanet.views import docadd_noc,docadd_nod,docadd_noe,docadd_nop
 from ceqanet.views import docedit_noc,docedit_noe,docedit_nod,docedit_nop
@@ -30,7 +30,7 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^document/noc/description/(?P<pk>\d+)/$',docdesp_noc.as_view(),name='docdesp_noc'),
     url(r'^document/nod/description/(?P<pk>\d+)/$',docdesp_nod.as_view(),name='docdesp_nod'),
     url(r'^document/noe/description/(?P<pk>\d+)/$',docdesp_noe.as_view(),name='docdesp_noe'),
-    url(r'^document/nop/description(?P<pk>\d+)/$',docdesp_nop.as_view(),name='docdesp_nop'),
+    url(r'^document/nop/description/(?P<pk>\d+)/$',docdesp_nop.as_view(),name='docdesp_nop'),
     url(r'^document/noc/edit/$',docedit_noc.as_view(),name='docedit_noc'),
     url(r'^document/nod/edit/$',docedit_nod.as_view(),name='docedit_nod'),
     url(r'^document/noe/edit/$',docedit_noe.as_view(),name='docedit_noe'),
@@ -58,6 +58,7 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^comment/nod/detail/$',commentdetail_nod.as_view(),name='commentdetail_nod'),
     url(r'^comment/noe/detail/$',commentdetail_noe.as_view(),name='commentdetail_noe'),
     url(r'^comment/nop/detail/$',commentdetail_nop.as_view(),name='commentdetail_nop'),
+    url(r'^user/account/$','account',name='account'),
     url(r'^user/settings/$',usersettings.as_view(),name='usersettings'),
     url(r'^map/all/geojson/$','locations_geojson',name="locationsall"),
     url(r'^map/all/geojson/(?P<limit>\d+)/$','locations_geojson',name="locationslimited"),

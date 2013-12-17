@@ -334,10 +334,14 @@
           <hr width="100%">
         </td>
       </tr>
+      {% for g in user.groups.all %}
+      {% if g.name = "planners" or g.name = "clearinghouse" %}
       <tr>
         <td>
           <button onclick="window.location = '{% url 'docedit_nod' %}?doc_pk={{ doc_pk }}'">Edit Database Record</button>
         </td>
       </tr>
+      {% endif %}
+      {% endfor %}
     </table>
 {% endblock listing %}

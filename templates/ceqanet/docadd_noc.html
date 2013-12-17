@@ -4,14 +4,20 @@
 
 {% block extrajs %}
 
-<script type="text/javascript" src="{% static "ceqanet/js/jsi18n.js" %}"></script>
+<script type="text/javascript" src="/admin/jsi18n"></script>
+<script type="text/javascript" src="{% static "admin/js/core.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/admin/RelatedObjectLookups.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/jquery.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/jquery.init.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/actions.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/SelectBox.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/SelectFilter2.js" %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/admin_styles.css" %}">
 
 {% endblock extrajs %}
 
 {% block content %}
 
-{{ form.media }}
 <FORM name="adddoc" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
@@ -263,7 +269,7 @@
             <TD>
               <table>
               {% for dt in form.doctypeid %}
-                {% if forloop.counter < 12 %}
+                {% if forloop.counter < 16 %}
                 <tr>
                   <td>
                     {{ dt }}
@@ -276,7 +282,7 @@
             <TD>
               <table>
               {% for dt in form.doctypeid %}
-                {% if forloop.counter > 11 and forloop.counter < 20 %}
+                {% if forloop.counter > 15 and forloop.counter < 24 %}
                 <tr>
                   <td>
                     {{ dt }}
@@ -289,7 +295,7 @@
             <TD>
               <table>
               {% for dt in form.doctypeid %}
-                {% if forloop.counter = 20 %}
+                {% if forloop.counter = 24 %}
                 <tr>
                   <td>
                     {{ dt }}
@@ -582,7 +588,7 @@
     </tr>
     <tr> 
       <td colspan="3">
-        <B>Reviewing Agencies (Ctrl+Click to select multiple):</B>
+        <B>Reviewing Agencies (Double click on values in the left box to add. Double click on values in the right box to remove.):</B>
       </td>
     </tr>
     <tr> 

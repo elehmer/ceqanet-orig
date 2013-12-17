@@ -2,9 +2,22 @@
 
 {% load staticfiles %}
 
+{% block extrajs %}
+
+<script type="text/javascript" src="/admin/jsi18n"></script>
+<script type="text/javascript" src="{% static "admin/js/core.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/admin/RelatedObjectLookups.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/jquery.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/jquery.init.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/actions.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/SelectBox.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/SelectFilter2.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/admin_styles.css" %}">
+
+{% endblock extrajs %}
+
 {% block content %}
 
-{{ form.media }}
 <FORM name="editdoc" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">

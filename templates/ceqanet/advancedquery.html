@@ -42,6 +42,16 @@
       </td>
     </tr>
     <tr>
+      <td>
+        <B><FONT size="+1">Apply Search Filters:</FONT></B>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
       <TH colspan="3" align="left">
         {{ form.rdodate.label }}
       </TH>
@@ -190,6 +200,42 @@
     </TR>
     {% endfor %}
     <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdotitle.label }}
+      </TH>
+    </tr>
+    {% for title in form.rdotitle %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ title }}
+      {% elif forloop.counter = 2 %}
+        <div id="rdotitle_div">
+          {{ title }} {{ form.titlestr }}
+        </div>
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
+      <TH colspan="3" align="left">
+        {{ form.rdodescription.label }}
+      </TH>
+    </tr>
+    {% for description in form.rdodescription %}
+    <TR>
+      <TD colspan="3">
+      {% if forloop.counter = 1 %}
+        {{ description }}
+      {% elif forloop.counter = 2 %}
+        <div id="rdodescription_div">
+          {{ description }} {{ form.descriptionstr }}
+        </div>
+      {% endif %}
+      </TD>
+    </TR>
+    {% endfor %}
+    <tr>
       <td>
         &nbsp;
       </td>
@@ -229,6 +275,12 @@
   });
   $("#rdoissue_div").click(function() {
     setRadio('rdoissue_1');      
+  });
+  $("#rdotitle_div").click(function() {
+    setRadio('rdotitle_1');      
+  });
+  $("#rdodescription_div").click(function() {
+    setRadio('rdodescription_1');      
   });
   
   function setRadio(id) {

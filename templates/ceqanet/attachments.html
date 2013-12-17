@@ -2,6 +2,18 @@
 
 {% load staticfiles %}
 
+{% block extrajs %}
+
+<script type="text/javascript">
+  function removeatt(pk) {
+    document.attachments.attpk.value = pk;
+    document.attachments.mode.value = 'remove';
+    document.attachments.submit();
+  }
+</script>
+
+{% endblock extrajs %}
+
 {% block content %}
 
 <FORM id="attachments" name="attachments" method="post" action="" enctype="multipart/form-data">
@@ -31,7 +43,7 @@
       <TD colspan="3">
         <TABLE BORDER="1" WIDTH="100%">
           <TR>
-            <TH BGCOLOR="#000000">
+            <TH BGCOLOR="#000000" colspan="2">
               <FONT COLOR="#FFFFFF">
                 List of Files Attached to Document
               </FONT>
@@ -43,11 +55,14 @@
                 <TD>
                   <a href="{{ a.datt_file.url }}">{{ a.datt_file.name }}</a>
                 </TD>
+                <TD align="middle">
+                  <input id="attpk_{{a.pk}}" class="remove" type="submit" value="Delete" onClick=removeatt({{a.pk}})>
+                </TD>
               </TR>
             {% endfor %}
           {% else %}
             <TR>
-              <TD align="center">
+              <TD align="center" colspan="2">
                 NO FILES ATTACHED
               </TD>
             </TR>      
@@ -73,6 +88,7 @@
     </TR>
   </TABLE>
   <input id="mode" type="hidden" name="mode" value="">
+  <input id="attpk" type="hidden" name="attpk" value="">
   <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
   <script>
     $('#attach').click(function() {

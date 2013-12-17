@@ -70,6 +70,10 @@ class advancedquery(FormView):
         devtypeid = self.request.POST.get('devtypeid')
         rdoissue = self.request.POST.get('rdoissue')
         issueid = self.request.POST.get('issueid')
+        rdotitle = self.request.POST.get('rdotitle')
+        titlestr = self.request.POST.get('titlestr')
+        rdodescription = self.request.POST.get('rdodescription')
+        descriptionstr = self.request.POST.get('descriptionstr')
         colation = self.request.POST.get('colation')
 
         if colation == "project":
@@ -92,6 +96,10 @@ class advancedquery(FormView):
                 success_url += "devtypeid=" + devtypeid + "&"
             if rdoissue == "issue":
                 success_url += "issueid=" + issueid + "&"
+            if rdotitle == "title":
+                success_url += "titlestr=" + titlestr + "&"
+            if rdodescription == "description":
+                success_url += "descriptionstr=" + descriptionstr + "&"
             success_url += "sortfld=-prj_schno&mode=advanced"
         elif colation == "document":
             success_url = reverse_lazy('doclist') + "?"
@@ -113,6 +121,10 @@ class advancedquery(FormView):
                 success_url += "devtypeid=" + devtypeid + "&"
             if rdoissue == "issue":
                 success_url += "issueid=" + issueid + "&"
+            if rdotitle == "title":
+                success_url += "titlestr=" + titlestr + "&"
+            if rdodescription == "description":
+                success_url += "descriptionstr=" + descriptionstr + "&"
             success_url += "sortfld=-doc_prj_fk__prj_schno&mode=advanced"
         return success_url
 
@@ -142,6 +154,8 @@ class prjlist(ListView):
             latid = self.request.GET.get('latid')
             devtypeid = self.request.GET.get('devtypeid')
             issueid = self.request.GET.get('issueid')
+            titlestr = self.request.GET.get('titlestr')
+            descriptionstr = self.request.GET.get('descriptionstr')
             sortfld = self.request.GET.get('sortfld')
 
             self.locname = "All"
@@ -150,6 +164,8 @@ class prjlist(ListView):
             self.latname = "All"
             self.devtypename = "All"
             self.issuename = "All"
+            self.titlestrname = "All"
+            self.descriptionstrname = "All"
             self.docname = "All"
 
             queryset = projects.objects.filter(prj_visible=True).order_by(sortfld)
@@ -181,6 +197,12 @@ class prjlist(ListView):
             if issueid:
                 queryset = queryset.filter(documents__dockeywords__dkey_keyw_fk__keyw_pk=issueid)
                 self.issuename = keywords.objects.get(pk=issueid).keyw_longname
+            if titlestr:
+                queryset = queryset.filter(prj_title__icontains=titlestr)
+                self.titlestrname = titlestr
+            if descriptionstr:
+                queryset = queryset.filter(prj_description__icontains=descriptionstr)
+                self.descriptionstrname = descriptionstr
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -209,6 +231,10 @@ class prjlist(ListView):
             context['devtypename'] = self.devtypename
             context['issueid'] = self.request.GET.get('issueid')
             context['issuename'] = self.issuename
+            context['titlestr'] = self.request.GET.get('titlestr')
+            context['titlestrname'] = self.titlestrname
+            context['descriptionstr'] = self.request.GET.get('descriptionstr')
+            context['descriptionstrname'] = self.descriptionstrname
 
         qsminuspage = self.request.GET.copy()
         
@@ -246,6 +272,8 @@ class doclist(ListView):
             latid = self.request.GET.get('latid')
             devtypeid = self.request.GET.get('devtypeid')
             issueid = self.request.GET.get('issueid')
+            titlestr = self.request.GET.get('titlestr')
+            descriptionstr = self.request.GET.get('descriptionstr')
             sortfld = self.request.GET.get('sortfld')
 
             self.locname = "All"
@@ -254,6 +282,8 @@ class doclist(ListView):
             self.latname = "All"
             self.devtypename = "All"
             self.issuename = "All"
+            self.titlestrname = "All"
+            self.descriptionstrname = "All"
             self.docname = "All"
 
             queryset = documents.objects.filter(doc_visible=True).order_by(sortfld)
@@ -283,6 +313,12 @@ class doclist(ListView):
             if issueid:
                 queryset = queryset.filter(dockeywords__dkey_keyw_fk__keyw_pk=issueid)
                 self.issuename = keywords.objects.get(pk=issueid).keyw_longname
+            if titlestr:
+                queryset = queryset.filter(doc_prj_fk__prj_title__icontains=titlestr)
+                self.titlestrname = titlestr
+            if descriptionstr:
+                queryset = queryset.filter(doc_prj_fk__prj_description__icontains=descriptionstr)
+                self.descriptionstrname = descriptionstr
         return queryset
 
     def get_context_data(self, **kwargs):
@@ -311,6 +347,10 @@ class doclist(ListView):
             context['devtypename'] = self.devtypename
             context['issueid'] = self.request.GET.get('issueid')
             context['issuename'] = self.issuename
+            context['titlestr'] = self.request.GET.get('titlestr')
+            context['titlestrname'] = self.titlestrname
+            context['descriptionstr'] = self.request.GET.get('descriptionstr')
+            context['descriptionstrname'] = self.descriptionstrname
 
         qsminuspage = self.request.GET.copy()
         
@@ -355,6 +395,7 @@ class submit(FormView):
 
         context['laginfo'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
         context['drafts'] = documents.objects.filter(projects__prj_lag_fk__lag_pk=self.request.user.get_profile().set_lag_fk.lag_pk).filter(doc_draft=True)
+        context['pending'] = documents.objects.filter(projects__prj_lag_fk__lag_pk=self.request.user.get_profile().set_lag_fk.lag_pk).filter(doc_pending=True)
         return context
 
 class chquery(FormView):
@@ -409,6 +450,8 @@ class attachments(FormView):
             success_url = "%s?doc_pk=%s" % (reverse_lazy('attachments'),self.request.POST.get('doc_pk'))
         elif self.request.POST.get('mode') == 'delete':
             success_url = "%s" % reverse_lazy('submit')
+        elif self.request.POST.get('mode') == 'remove':
+            success_url = "%s?doc_pk=%s" % (reverse_lazy('attachments'),self.request.POST.get('doc_pk'))
         elif self.request.POST.get('mode') == 'draft':
             success_url = "%s" % reverse_lazy('submit')
         elif self.request.POST.get('mode') == 'submitch':
@@ -428,8 +471,14 @@ class attachments(FormView):
         doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
 
         if self.request.POST.get('mode') == 'attach':
-            docatt = docattachments(datt_doc_fk=doc,datt_file=self.request.FILES['datt_file'])
-            docatt.save()
+            if self.request.FILES['datt_file']:
+                docatt = docattachments(datt_doc_fk=doc,datt_file=self.request.FILES['datt_file'])
+                docatt.save()
+        elif self.request.POST.get('mode') == 'remove':
+            docatts = docattachments.objects.filter(datt_pk=self.request.POST.get('attpk'))
+            for att in docatts:
+                os.remove(os.path.join(settings.MEDIA_ROOT, att.datt_file.name))
+            docatts.delete()            
         elif self.request.POST.get('mode') == 'delete':
             doc_prj_fk = doc.doc_prj_fk
             otherdocs = documents.objects.filter(doc_prj_fk=doc_prj_fk).exclude(pk=doc.doc_pk).order_by('-doc_received')
@@ -461,8 +510,12 @@ class attachments(FormView):
             doc.doc_pending = True
             doc.save()
     
+            emaillist = doc.doc_conemail
+            if doc.doc_conemail != self.request.user.email:
+                emaillist += "," + self.request.user.email
+
             strFrom = "ceqanet@opr.ca.gov"
-            ToList = [doc.doc_conemail]
+            ToList = [emaillist]
             strSubject = "Confirmation of Submittal - " + doc.doc_doctype
             strBody = "This confirms receipt of your electronic " + doc.doc_docname + " form submission on " + doc.doc_received.strftime('%m/%d/%Y') + ".  \n \n"
             strBody = strBody + "The State Clearinghouse will review your submittal and provide a State Clearinghouse Number and filing date within one business day. \n \n"
@@ -795,8 +848,12 @@ class docadd_nod(FormView):
 
         self.doc_pk = adddoc.pk
 
+        emaillist = adddoc.doc_conemail
+        if adddoc.doc_conemail != self.request.user.email:
+            emaillist += "," + self.request.user.email
+
         strFrom = "ceqanet@opr.ca.gov"
-        ToList = [adddoc.doc_conemail]
+        ToList = [emaillist]
         strSubject = "Confirmation of Submittal - " + adddoc.doc_doctype
         strBody = "This confirms receipt of your electronic " + adddoc.doc_docname + " form submission on " + adddoc.doc_received.strftime('%m/%d/%Y') + ".  \n \n"
         strBody = strBody + "The State Clearinghouse will review your submittal and provide a State Clearinghouse Number and filing date within one business day. \n \n"
@@ -920,8 +977,12 @@ class docadd_noe(FormView):
 
         self.doc_pk = adddoc.pk
 
+        emaillist = adddoc.doc_conemail
+        if adddoc.doc_conemail != self.request.user.email:
+            emaillist += "," + self.request.user.email
+
         strFrom = "ceqanet@opr.ca.gov"
-        ToList = [adddoc.doc_conemail]
+        ToList = [emaillist]
         strSubject = "Confirmation of Submittal - " + adddoc.doc_doctype
         strBody = "This confirms receipt of your electronic " + adddoc.doc_docname + " form submission on " + adddoc.doc_received.strftime('%m/%d/%Y') + ".  \n \n"
         strBody = strBody + "The State Clearinghouse will review your submittal and provide a State Clearinghouse Number and filing date within one business day. \n \n"
@@ -4077,6 +4138,11 @@ def accept(request):
     c = RequestContext(request,{})
     return HttpResponse(t.render(c))
 
+def account(request):
+    t = loader.get_template("ceqanet/account.html")
+    c = RequestContext(request,{})
+    return HttpResponse(t.render(c))
+
 class usersettings(FormView):
     form_class = usersettingsform
     template_name="ceqanet/usersettings.html"
@@ -4092,6 +4158,9 @@ class usersettings(FormView):
         initial['region'] = us_query.region
         initial['set_lag_fk'] = us_query.set_lag_fk.lag_pk
         initial['set_rag_fk'] = us_query.set_rag_fk.rag_pk
+        initial['confirstname'] = self.request.user.first_name
+        initial['conlastname'] = self.request.user.last_name
+        initial['conemail'] = self.request.user.email
         initial['conphone'] = us_query.conphone
         return initial
 
@@ -4133,6 +4202,15 @@ class usersettings(FormView):
         set_rag_fk = data['set_rag_fk']
         if set_rag_fk == None:
             set_rag_fk = reviewingagencies.objects.get(pk=0)
+
+        confirstname = data['confirstname']
+        conlastname = data['conlastname']
+        conemail = data['conemail']
+        usr = self.request.user
+        usr.first_name = confirstname
+        usr.last_name = conlastname
+        usr.email = conemail
+        usr.save()
 
         conphone = data['conphone']
 

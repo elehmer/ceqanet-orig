@@ -100,6 +100,57 @@
           </TABLE>
         </TD>
       </TR>
+      <TR>
+        <TD colspan="3">
+          <B>Pending Documents:</B>
+        </TD>
+      </TR>
+      <TR> 
+        <TD colspan="3">
+          <TABLE BORDER="1" WIDTH="100%">
+            <TR>
+              <TH>
+                Project Title
+              </TH>
+              <TH>
+                Document Type
+              </TH>
+              <TH>
+                Date Submitted
+              </TH>
+            </TR>
+            {% if pending %}
+              {% for p in pending %}
+                <TR>
+                  <TD align="middle" width="60%">
+                    {% if p.doc_doctype = 'NOE' or p.doc_docname.strip = 'Notice of Exemption' %}
+                      <a href="{% url 'docdesp_noe' p.doc_pk %}">{{ p.doc_prj_fk.prj_title }}</a>
+                    {% elif p.doc_doctype = 'NOD' or p.doc_docname.strip = 'Notice of Determination' %}
+                      <a href="{% url 'docdesp_nod' p.doc_pk %}">{{ p.doc_prj_fk.prj_title }}</a>
+                    {% elif p.doc_doctype = 'NOP' or p.doc_docname.strip = 'Notice of Preperation' %}
+                      <a href="{% url 'docdesp_nop' p.doc_pk %}">{{ p.doc_prj_fk.prj_title }}</a>
+                    {% else %}
+                      <a href="{% url 'docdesp_noc' p.doc_pk %}">{{ p.doc_prj_fk.prj_title }}</a>
+                    {% endif %}
+                  </TD>
+                  <TD align="middle" width="20%">
+                    {{ p.doc_doctype }}
+                  </TD>
+                  <TD align="middle" width="20%">
+                    {{ p.doc_received }}
+                  </TD>
+                </TR>
+              {% endfor %}
+            {% else %}
+              <TR>
+                <TD align="center" colspan="3">
+                  NO PENDING DOCUMENTS
+                </TD>
+              </TR>      
+            {% endif %}
+          </TABLE>
+        </TD>
+      </TR>
     </table>
   </FORM>
 
