@@ -6,7 +6,8 @@ function doBasicSearchClick() {
 	var query = document.getElementById('id_address').value;
 	var limit = 3;
 	searchType = "geocode";
-    var newURL = SAMPLE_POST + "&q=" +query;
+	var bbox = "-132,42,-111,32"
+    var newURL = SAMPLE_POST +"&bounded=1&countrycodes=US"+"&viewbox="+bbox+"&q=" +query;
 	if(limit != ""){
 		newURL += "&limit=" + limit;
 	}
