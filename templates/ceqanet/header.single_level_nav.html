@@ -109,6 +109,9 @@
 			{% if user.is_active %}
 			<li><a href="{% url 'usersettings' %}" class="nav_level1_link">{% trans "Settings" %}</a></li>
 			{% endif %}
+			{% if not user.is_active %}
+            <li><a href="{% url 'account' %}" class="nav_level1_link">{% trans "Account" %}</a></li>
+			{% endif %}
 		</ul>
 	</nav>
 	

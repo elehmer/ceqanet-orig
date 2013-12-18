@@ -69,6 +69,12 @@
                   {% if issueid %}
                     <INPUT type="hidden" name="issueid" value="{{ issueid }}">
                   {% endif %}
+                  {% if titlestr %}
+                    <INPUT type="hidden" name="titlestr" value="{{ titlestr }}">
+                  {% endif %}
+                  {% if descriptionstr %}
+                    <INPUT type="hidden" name="descriptionstr" value="{{ descriptionstr }}">
+                  {% endif %}
                 {% endif %}
                 <INPUT type="submit" value="Resort">
               </FORM>
@@ -108,8 +114,16 @@
                     <TD>
                       Development Type: {{ devtypename }}
                     </TD>
-                    <TD colspan="2">
+                    <TD>
                       Project Issue: {{ issuename }}
+                    </TD>
+                  </TR>
+                  <TR>
+                    <TD colspan="2">
+                      Project Title Contains: {{ titlestr }}
+                    </TD>
+                    <TD colspan="2">
+                      Project Description Contains: {{ descriptionstr }}
                     </TD>
                   </TR>
                 {% endif %}

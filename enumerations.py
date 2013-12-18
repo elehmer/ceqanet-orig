@@ -85,6 +85,16 @@ RDOISSUE_CHOICES = (
     ('issue', 'Issue')
 )
 
+RDOTITLE_CHOICES = (
+    ('all', 'All'),
+    ('title', 'Title Contains')
+)
+
+RDODESCRIPTION_CHOICES = (
+    ('all', 'All'),
+    ('description', 'Description Contains')
+)
+
 PROJECT_EXISTS = (
     ('yes','Yes'),
     ('no','No')

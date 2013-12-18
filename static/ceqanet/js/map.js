@@ -8,6 +8,7 @@ var geographic = new OpenLayers.Projection("EPSG:4326");
 var world = new OpenLayers.Bounds(-180, -89, 180, 89).transform(
     geographic, mercator
 );
+var california = new OpenLayers.Bounds(-132,32,-110,42).transform(geographic,mercator);
 var center = new OpenLayers.LonLat(-121.90515908415186, 37.424431833728114).transform(
     geographic, mercator
 );
