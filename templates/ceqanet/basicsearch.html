@@ -1,0 +1,59 @@
+{% extends "ceqanet/base.html" %}
+
+{% block title %}OPR Data Clearinghouse Search{% endblock title %}
+
+{% block content %}
+
+<table>
+    <tr>
+      <td colspan="3">
+        <h4>Basic Search</h4>
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3" align="right">
+        <button onclick="window.location = '{% url 'advancedsearch' %}'">Advanced Search</button>
+      </td>
+    </tr>
+    <tr>
+      <td>
+        &nbsp;
+      </td>
+    </tr>
+  <FORM name="searchform" method="post" action="">
+    {% csrf_token %}
+    <tr>
+      <td colspan="3">
+        <B>{{ form.colation.label }}</B>
+        {% for r in form.colation %}
+          {{ r }}
+        {% endfor %}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <B>{{ form.prj_schno.label }}</B>
+      </td>
+      <td colspan="2">
+        {{ form.prj_schno }}
+      </td>
+    </tr>
+    <tr>
+      <td>
+        &nbsp;
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3">
+        <input type="submit" value="Submit Search">
+      </td>
+    </tr>
+  </form>
+</table>
+
+{% endblock content %}

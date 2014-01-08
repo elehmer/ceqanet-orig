@@ -1,0 +1,110 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Pending Document Listing{% endblock title %}
+
+{% block listing %}
+
+  <h4>Pending Documents for this Lead Agency:</h4>
+
+  {% if object_list %}
+ 	<TABLE border="1">
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+ 	  <TR>
+ 	  	<TH align="center" width="60%">
+        Project Title
+ 	  	</TH>
+ 	  	<TH align="center" width="20%">
+ 	  	  Document Type
+ 	  	</TH>
+ 	  	<TH align="center" width="20%">
+ 	  	  Date Submitted
+ 	  	</TH>
+ 	  </TR> 
+    {% for pending in pendingsbylag %}
+      <TR>
+      	<TD align="center">
+          {% if pending.doc_doctype = 'NOE' or pending.doc_docname.strip = 'Notice of Exemption' %}
+            <a href="{% url 'docdesp_noe' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
+          {% elif pending.doc_doctype = 'NOD' or pending.doc_docname.strip = 'Notice of Determination' %}
+            <a href="{% url 'docdesp_nod' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
+          {% elif pending.doc_doctype = 'NOP' or pending.doc_docname.strip = 'Notice of Preperation' %}
+            <a href="{% url 'docdesp_nop' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
+          {% else %}
+            <a href="{% url 'docdesp_noc' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
+          {% endif %}
+    	  </TD>
+      	<TD align="center">
+          {{ pending.doc_doctype }}
+    	  </TD>
+      	<TD align="center">
+          {{ pending.doc_received }}
+    	  </TD>
+      </TR>
+  	{% endfor %}
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+    </TABLE>
+  {% else %}
+  <TABLE>
+    <TR>
+      <TD ALIGN="middle">
+        No Pending Documents currently for this Lead Agency.
+      </TD>
+    </TR>
+  </TABLE>
+  {% endif %}
+
+{% endblock listing %}

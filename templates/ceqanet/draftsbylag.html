@@ -1,0 +1,119 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Draft Document Listing{% endblock title %}
+
+{% block listing %}
+
+  <h4>Draft Documents in process by this Lead Agency:</h4>
+
+  {% if object_list %}
+ 	<TABLE border="1">
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+ 	  <TR>
+ 	  	<TH align="center" width="40%">
+        Project Title
+ 	  	</TH>
+ 	  	<TH align="center" width="15%">
+ 	  	  Document Type
+ 	  	</TH>
+ 	  	<TH align="center" width="15%">
+ 	  	  Date Draft Opened
+ 	  	</TH>
+      <TH colspan="2" align="center" width="30%">
+        Editing Options
+      </TH>
+ 	  </TR> 
+    {% for draft in draftsbylag %}
+      <TR>
+      	<TD align="center">
+          {{ draft.doc_prj_fk.prj_title }}
+    	  </TD>
+      	<TD align="center">
+          {{ draft.doc_doctype }}
+    	  </TD>
+      	<TD align="center">
+          {{ draft.doc_added }}
+    	  </TD>
+        <TD align="center">
+          {% if draft.doc_doctype = 'NOE' or draft.doc_docname.strip = 'Notice of Exemption' %}
+            <a href="{% url 'draftedit_noe' %}?doc_pk={{ draft.doc_pk }}">Edit Draft</a>
+          {% elif draft.doc_doctype = 'NOD' or draft.doc_docname.strip = 'Notice of Determination' %}
+            <a href="{% url 'draftedit_nod' %}?doc_pk={{ draft.doc_pk }}">Edit Draft</a>
+          {% elif draft.doc_doctype = 'NOP' or draft.doc_docname.strip = 'Notice of Preperation' %}
+            <a href="{% url 'draftedit_nop' %}?doc_pk={{ draft.doc_pk }}">Edit Draft</a>
+          {% else %}
+            <a href="{% url 'draftedit_noc' %}?doc_pk={{ draft.doc_pk }}">Edit Draft</a>
+          {% endif %}
+        </TD>
+        <TD align="center">
+          <a href="{% url 'attachments' %}?doc_pk={{ draft.doc_pk }}">Edit Attachments</a>
+        </TD>
+      </TR>
+  	{% endfor %}
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+    </TABLE>
+  {% else %}
+  <TABLE>
+    <TR>
+      <TD ALIGN="middle">
+        No Draft Documents currently for this Lead Agency.
+      </TD>
+    </TR>
+  </TABLE>
+  {% endif %}
+
+{% endblock listing %}
