@@ -1,0 +1,119 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+  <h4>Latest Accepted Documents</h4>
+  {% if object_list %}
+  <TABLE border="1">
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+    <TR>
+      <TH align="center" width="10%">
+        SCHNO
+      </TH>
+      <TH align="center" width="10%">
+        Lead Agency
+      </TH>
+      <TH align="center" width="10%">
+        Project Title
+      </TH>
+      <TH align="center" width="40%">
+        Description
+      </TH>
+      <TH align="center" width="10%">
+        Document Type
+      </TH>
+      <TH align="center" width="10%">
+        Date Received
+      </TH>
+    </TR> 
+    {% for latest in latests %}
+      <TR>
+        <TD align="center">
+          {{ latest.doc_schno }}
+        </TD>
+        <TD align="center">
+          {{ latest.doc_prj_fk.prj_leadagency }}
+        </TD>
+        <TD align="center">
+          {% if latest.doc_doctype = 'NOE' or latest.doc_docname.strip = 'Notice of Exemption' %}
+            <a href="{% url 'docedit_noc' %}?doc_pk={{ latest.doc_pk }}"><i>{{ latest.doc_prj_fk.prj_title }}</i></a>
+          {% elif latest.doc_doctype = 'NOD' or latest.doc_docname.strip = 'Notice of Determination' %}
+            <a href="{% url 'docedit_nod' %}?doc_pk={{ latest.doc_pk }}"><i>{{ latest.doc_prj_fk.prj_title }}</i></a>
+          {% elif latest.doc_doctype = 'NOP' or latest.doc_docname.strip = 'Notice of Preperation' %}
+            <a href="{% url 'docedit_nop' %}?doc_pk={{ latest.doc_pk }}"><i>{{ latest.doc_prj_fk.prj_title }}</i></a>
+          {% else %}
+            <a href="{% url 'docedit_noc' %}?doc_pk={{ latest.doc_pk }}"><i>{{ latest.doc_prj_fk.prj_title }}</i></a>
+          {% endif %}
+        </TD>
+        <TD align="center">
+          {{ latest.doc_prj_fk.prj_description }}
+        </TD>
+        <TD align="center">
+          {{ latest.doc_doctype }}
+        </TD>
+        <TD align="center">
+          {{ latest.doc_received }}
+        </TD>
+      </TR>
+    {% endfor %}
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+  </TABLE>
+  {% endif %}
+
+{% endblock content %}
