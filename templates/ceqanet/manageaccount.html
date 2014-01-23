@@ -1,0 +1,41 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+<FORM name="settingsform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD colspan="2" align="left">
+        <h3>Account Settings</h3>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        {{ form.confirstname.label }} {{ form.confirstname }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        {{ form.conlastname.label }} {{ form.conlastname }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        {{ form.conemail.label }} {{ form.conemail }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        {{ form.conphone.label }} {{ form.conphone }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        <input type="submit" value="Update">
+      </TD>
+    </TR>
+  </TABLE>
+</FORM>
+{% endblock content %}
