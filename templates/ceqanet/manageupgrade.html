@@ -1,0 +1,76 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<FORM name="manageupgradeform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD align="left" colspan="2">
+        <h3>Manage Account Upgrade</h3>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        <B>User Id:</b> {{ rqstupgrd.user_id }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        <B>Requested Group:</b> {{ rqstupgrd.rqst_type|title }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        <B>Requested Agency:</b>
+          {% if rqstupgrd.rqst_type = 'lead' %}
+            {{ rqstupgrd.rqst_lag_fk.lag_name }}
+          {% else %}
+            {{ rqstupgrd.rqst_rag_fk.rag_name }}
+          {% endif %}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        <B>Request Reason:</b> {{ rqstupgrd.rqst_reason }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        {{ form.allowupgrade.label}}
+      </TD>
+    </TR>
+    <TR> 
+      {% for r in form.allowupgrade %}
+      <TD>
+        {{ r }}
+      </TD>
+      {% endfor %}
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        {{ form.rejectreason.label }} {{ form.rejectreason }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        <input type="submit" value="Update Account">
+      </TD>
+    </TR>
+  </TABLE>
+  <input type="hidden" name="user_id" value="{{ rqstupgrd.user_id.pk }}">
+</FORM>
+
+{% endblock content %}

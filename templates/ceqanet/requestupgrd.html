@@ -1,0 +1,106 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+{% if not isrequested %}
+
+<FORM name="requestupgrdform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD align="left" colspan="2">
+        <h3>Request Account Upgrade</h3>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        In order to submit documents or make comments on documents via this online system, you must request to have your account elevated into a special permissions user group related to these tasks. Please have your <a href="{% url 'manageaccount' %}">account contact information</a> filled out before making this request.
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+    {% for r in form.rqst_type %}
+      {% if forloop.counter = 1 %}
+    <TR> 
+      <TD colspan="2">
+        {{ r }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD width="5%">
+        &nbsp;
+      </TD>
+      <TD>
+        [Lead Agencies Group is able to submit documents online. Choose the Lead Agency you wish to represent.]
+      </TD>
+    </TR>
+    <TR> 
+      <TD width="5%">
+        &nbsp;
+      </TD>
+      <TD>
+        {{ form.rqst_lag_fk.label }} {{ form.rqst_lag_fk }}
+      </TD>
+    </TR>
+      {% else %}
+    <TR> 
+      <TD colspan="2">
+        {{ r }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD width="5%">
+        &nbsp;
+      </TD>
+      <TD>
+        [Reviewing Agencies Group is able to comment on documents online. Choose the Reviewing Agency you wish to represent.]
+      </TD>
+    </TR>
+    <TR> 
+      <TD width="5%">
+        &nbsp;
+      </TD>
+      <TD>
+        {{ form.rqst_rag_fk.label }} {{ form.rqst_rag_fk }}
+      </TD>
+    </TR>
+      {% endif %}
+   {% endfor %}
+    <TR> 
+      <TD colspan="2">
+        {{ form.rqst_reason.label }} {{ form.rqst_reason }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        <input type="submit" value="Send Request">
+      </TD>
+    </TR>
+  </TABLE>
+</FORM>
+<script>
+  $(document).ready(function() {
+      $("#id_rqst_lag_fk").attr('disabled', true);
+      $("#id_rqst_rag_fk").attr('disabled', true);
+
+      $("#rqst_type_0").click(function() {
+        $("#id_rqst_lag_fk").attr('disabled', false);
+        $("#id_rqst_rag_fk").attr('disabled', true);
+      });
+      $("#rqst_type_1").click(function() {
+        $("#id_rqst_lag_fk").attr('disabled', true);
+        $("#id_rqst_rag_fk").attr('disabled', false);
+      });
+  });
+</script>
+
+{% else %}
+Request Already Made to CEQANet. Thank you.
+{% endif %}
+
+{% endblock content %}

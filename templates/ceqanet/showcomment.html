@@ -1,0 +1,89 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse Document Comment Detail{% endblock title %}
+
+{% block listing %}
+  {% load staticfiles %}
+    <h3>Document Comment:</h3>
+    <table width="767" border="0" cellpadding="3">
+      <tr> 
+        <td> 
+          <b>SCH Number:</b>{{ docreview.drag_doc_fk.doc_schno }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Title:</b> {{ docreview.drag_doc_fk.doc_prj_fk.prj_title }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Description:</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ docreview.drag_doc_fk.doc_prj_fk.prj_description }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Alternate Title:</b> {{ docreview.drag_doc_fk.doc_title }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Alternate Description:</b>
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          {{ docreview.drag_doc_fk.doc_description }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Document Type:</b> {{ docreview.drag_doc_fk.doc_doctype }}  - {{ docreview.drag_doc_fk.doc_docname }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Lead Agency:</b> {{ docreview.drag_doc_fk.doc_prj_fk.prj_leadagency }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <h5>Comment Section:</5>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Reviewing Agency Making Comment:</b> {{ docreview.drag_rag_fk.rag_name }}
+        </td>
+      </tr>
+      {% if docreview.drag_ragcomment %}
+      <tr> 
+        <td> 
+          <b>Text Comment:</b>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          {{ docreview.drag_ragcomment }}
+        </td>
+      </tr>
+      {% endif %}
+      {% if docreview.drag_file %}
+      <tr> 
+        <td> 
+          <b>Comment Attached as PDF:</b> <a href="{{ docreview.drag_file.url }}">{{ docreview.drag_file.name }}</a>
+        </td>
+      </tr>
+      {% endif %}
+      <tr> 
+        <td> 
+          <b>Date of Comment:</b> {{ docreview.drag_received }}
+        </td>
+      </tr>
+    </table>
+{% endblock listing %}

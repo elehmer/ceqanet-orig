@@ -1,0 +1,28 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+{{ form.media }}
+<form class='addEditForm' action="" method="post">
+<h3>Add a New Reviewing Agency to the Database</h3>
+{% csrf_token %}
+<div id="{{ form.formID }}">
+  <table border="0">
+    {{ form.as_table }}
+    <tr>
+      <td colspan="2">
+		&nbsp;
+	  </td>
+	</tr>
+    <tr>
+      <td colspan="2">
+		<input type="submit" value="Add New Reviewing Agency" />
+	  </td>
+	</tr>
+  </table>
+</div>
+</form>
+
+{% endblock %}

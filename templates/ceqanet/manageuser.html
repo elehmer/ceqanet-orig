@@ -1,0 +1,107 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<FORM id="manageuserform" name="manageuserform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TD align="left" colspan="2">
+        <h3>Manage User</h3>
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>User Id:</b> {{ usr.pk }}
+      </TD>
+      <TD>
+        <B>{{ form.usr_grp.label }}</B>
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>User Name:</b> {{ usr.username }}
+      </TD>
+      <TD rowspan="7">
+        <table>
+          <tr>
+            <td>
+              <select name="usr_grp" size="5">
+                {% for pk,choice in form.usr_grp.field.widget.choices %}
+                  {% if usr.groups.all.0.pk = pk %}
+                    <option selected value="{{pk}}">{{choice}}</option>
+                  {% else %}
+                    <option value="{{pk}}">{{choice}}</option>
+                  {% endif %}
+                {% endfor %}
+              </select>
+            </td>
+          </tr>
+          <tr>
+            <TD>
+              <input id="assign" type="button" value="Assign Group">
+            </TD>
+          </tr>
+        </table>
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>First Name:</b> {{ usr.first_name }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Last Name:</b> {{ usr.last_name }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Email:</b> {{ usr.email }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Date Joined:</b> {{ usr.date_joined }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Is Active?:</b> {{ usr.is_active }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Last Login:</b> {{ usr.last_login }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        <input id="delete" type="button" value="Delete User">
+      </TD>
+    </TR>
+  </TABLE>
+  <input type="hidden" id="mode" name="mode" value="">
+  <input type="hidden" name="user_id" value="{{ usr.pk }}">
+  <script>
+    $(document).ready(function() {
+        $("#assign").click(function() {
+          $("#mode").val("assign");
+          $("#manageuserform").submit();
+        });
+        $("#delete").click(function() {
+          $("#mode").val("delete");
+          $("#manageuserform").submit();
+        });
+    });
+  </script>
+</FORM>
+
+{% endblock content %}

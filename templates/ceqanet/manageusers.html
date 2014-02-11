@@ -1,0 +1,105 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+  <h4>CEQANet User List</h4>
+  {% if object_list %}
+  <TABLE border="1">
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+    <TR>
+      <TH align="center" width="10%">
+        User Name
+      </TH>
+      <TH align="center" width="10%">
+        First Name
+      </TH>
+      <TH align="center" width="40%">
+        Last Name
+      </TH>
+      <TH align="center" width="10%">
+        Email
+      </TH>
+      <TH align="center" width="10%">
+        Date Joined
+      </TH>
+    </TR> 
+    {% for u in users %}
+      <TR>
+        <TD align="center">
+          <a href="{% url 'manageuser' %}?user_id={{ u.pk }}"><i>{{ u.username }}</i></a>
+        </TD>
+        <TD align="center">
+          {{ u.first_name }}
+        </TD>
+        <TD align="center">
+          {{ u.last_name }}
+        </TD>
+        <TD align="center">
+          {{ u.email }}
+        </TD>
+        <TD align="center">
+          {{ u.date_joined }}
+        </TD>
+      </TR>
+    {% endfor %}
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+  </TABLE>
+  {% endif %}
+
+{% endblock content %}

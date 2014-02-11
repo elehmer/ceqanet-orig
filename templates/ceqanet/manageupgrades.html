@@ -1,0 +1,47 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+  <h4>Manage Account Upgrade Requests</h4>
+  {% if object_list %}
+  <TABLE border="1" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR>
+      <TH align="center" width="20%">
+        User Name
+      </TH>
+      <TH align="center" width="20%">
+        Requested Group
+      </TH>
+      <TH align="center" width="20%">
+        Requested Agency
+      </TH>
+      <TH align="center" width="40%">
+        Request Reason
+      </TH>
+    </TR> 
+    {% for up in upgrades %}
+      <TR>
+        <TD align="center">
+         <a href="{% url 'manageupgrade' %}?user_id={{ up.user_id.pk }}"><i>{{ up.user_id }}</i></a> ({{ up.user_id.first_name }}&nbsp;{{ up.user_id.last_name }})
+        </TD>
+        <TD align="center">
+          {{ up.rqst_type|title }}
+        </TD>
+        <TD align="center">
+          {% if up.rqst_type = 'lead' %}
+            {{ up.rqst_lag_fk }}
+          {% else %}
+            {{ up.rqst_rag_fk }}
+          {% endif %}
+        </TD>
+        <TD align="center">
+          {{ up.rqst_reason }}          
+        </TD>
+      </TR>
+    {% endfor %}
+    </TABLE>
+  {% endif %}
+
+{% endblock content %}
