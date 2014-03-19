@@ -4,7 +4,7 @@
 
 {% block content %}
 
-  <h4>Current Review Documents</h4>
+  <h4>Current Documents in Review for your Region</h4>
   {% if object_list %}
   <TABLE border="1">
     {% if is_paginated %}
@@ -43,7 +43,7 @@
         Project Title
       </TH>
       <TH align="center" width="40%">
-        Description
+        Project Description
       </TH>
       <TH align="center" width="10%">
         Document Type
@@ -58,18 +58,30 @@
           {{ review.doc_prj_fk.prj_leadagency }}
         </TD>
         <TD align="center">
-          {% if review.doc_doctype = 'NOE' or review.doc_docname.strip = 'Notice of Exemption' %}
-            <a href="{% url 'reviewdetail_noe' %}?doc_pk={{ review.doc_pk }}"><i>{{ review.doc_prj_fk.prj_title }}</i></a>
-          {% elif review.doc_doctype = 'NOD' or review.doc_docname.strip = 'Notice of Determination' %}
-            <a href="{% url 'reviewdetail_nod' %}?doc_pk={{ review.doc_pk }}"><i>{{ review.doc_prj_fk.prj_title }}</i></a>
-          {% elif review.doc_doctype = 'NOP' or review.doc_docname.strip = 'Notice of Preperation' %}
-            <a href="{% url 'reviewdetail_nop' %}?doc_pk={{ review.doc_pk }}"><i>{{ review.doc_prj_fk.prj_title }}</i></a>
+          {% if review.doc_doct_fk.keyw_pk = 102 %}
+            <a href="{% url 'reviewdetail_nop' %}?doc_pk={{ review.doc_pk }}"><i>
+              {% if review.doc_title %}
+                {{ review.doc_title }}
+              {% else %}
+                {{ review.doc_prj_fk.prj_title }}
+              {% endif %}
+            </i></a>
           {% else %}
-            <a href="{% url 'reviewdetail_noc' %}?doc_pk={{ review.doc_pk }}"><i>{{ review.doc_prj_fk.prj_title }}</i></a>
+            <a href="{% url 'reviewdetail_noc' %}?doc_pk={{ review.doc_pk }}"><i>
+              {% if review.doc_title %}
+                {{ review.doc_title }}
+              {% else %}
+                {{ review.doc_prj_fk.prj_title }}
+              {% endif %}
+            </i></a>
           {% endif %}
         </TD>
         <TD align="center">
-          {{ review.doc_prj_fk.prj_description }}
+          {% if review.doc_description %}
+            {{ review.doc_description }}
+          {% else %}
+            {{ review.doc_prj_fk.prj_description }}
+          {% endif %}
         </TD>
         <TD align="center">
           {{ review.doc_doctype }}
@@ -112,7 +124,7 @@
   <TABLE>
     <TR>
       <TD ALIGN="middle">
-        No Documents Currently Under Review for this Region
+        No Documents Currently Need to be Reviewed
       </TD>
     </TR>
   </TABLE>

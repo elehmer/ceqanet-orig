@@ -20,6 +20,7 @@
 {% block content %}
 <FORM name="reviewdetailform" method="post" action="">
   {% csrf_token %}
+  <h1>Review and Accept or Reject Document:</h1>
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
       <TH align="left" colspan="3">
@@ -47,6 +48,22 @@
         <h3>Document Information:</h3>
       </TH>
     </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_title.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_title }} {{ form.doc_title.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_description.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_description }} {{ form.doc_description.errors }}
+      </TD>
+    </TR>
     <TR> 
       <TH align="left" colspan="3">
         Lead Agency Contact Information:
@@ -54,7 +71,7 @@
     </TR>
     <tr>
       <TH width="25%" align="left" valign="top">
-        {{ form.doc_conagency.label }}
+        Lead Agency:
       </TH>
       <td colspan="2"> 
         {{ form.doc_conagency }}
@@ -155,19 +172,19 @@
     </TR>
     <TR>
       <TD width="25%" valign="top">
-        <b>City:</b>
-      </TD>
-      <TD colspan="2"> 
-        {{ form.doc_city }} {{ form.doc_city.errors }}
-      </TD>
-    </TR>
-    <TR>
-      <TD width="25%" valign="top">
         <b>County:</b>
       </TD>
       <td colspan="2"> 
         {{ form.doc_county }} {{ form.doc_county.errors }}
       </td>
+    </TR>
+    <TR>
+      <TD width="25%" valign="top">
+        <b>City:</b>
+      </TD>
+      <TD colspan="2"> 
+        {{ form.doc_city }} {{ form.doc_city.errors }}
+      </TD>
     </TR>
     <TR> 
       <TD width="25%" valign="top">
@@ -228,6 +245,6 @@
       </TD>
     </TR>
   </table>
-  <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
+  <input type="hidden" name="doc_pk" value="{{ docinfo.doc_pk }}">
 </form>
 {% endblock content %}

@@ -4,12 +4,8 @@
 
 {% block listing %}
   {% load staticfiles %}
+    <h3>Document Description:</h3>
     <table width="767" border="0" cellpadding="3">
-      <tr>
-        <td align="center">
-          <h3>{{ doc.doc_prj_fk.prj_title }}</h3>
-        </td>
-      </tr>
       <tr> 
         <td> 
           <b>SCH Number:</b> <a href="{% url 'doclist' %}?prj_schno={{ doc.doc_prj_fk.prj_schno }}&sortfld=-doc_received&mode=basic">{{ doc.doc_prj_fk.prj_schno }}</a>
@@ -17,36 +13,36 @@
       </tr>
       <tr> 
         <td> 
-          <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
-        </td>
-      </tr>
-      {% if doc.doc_title %}
-        {% if doc.doc_title.strip != '' %}
-      <tr> 
-        <td> 
-          <b>Alternate Title:</b> {{ doc.doc_title }}
-        </td>
-      </tr>
-        {% endif %}
-      {% endif %}
-      <tr> 
-        <td> 
-          <b>Project Lead Agency:</b> {{ doc.doc_prj_fk.prj_leadagency }}
-        </td>
-      </tr>
-      <tr>
-        <td> 
-          <hr width="100%">
+          <b>Project Title:</b> 
+          {% if doc.doc_title %}
+            {{ doc.doc_title }}
+          {% else %}
+            {{ doc.doc_prj_fk.prj_title }}
+          {% endif %}
         </td>
       </tr>
       <tr> 
         <td> 
-          <b>Project Description</b>
+          <b>Project Description:</b>
         </td>
       </tr>
       <tr> 
         <td>
-          {{ doc.doc_description }}
+          {% if doc.doc_description %}
+            {{ doc.doc_description }}
+          {% else %}
+            {{ doc.doc_prj_fk.prj_description }}
+          {% endif %}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Document Type:</b> {{ doc.doc_doctype }}  - {{ doc.doc_docname }}
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Project Lead Agency:</b> {{ doc.doc_prj_fk.prj_leadagency }}
         </td>
       </tr>
       <tr> 
@@ -315,10 +311,14 @@
         <td>
           <ul> 
             {% for rev in reviews %}
-              {% if rev.drag_received = None %}
-                <li>{{ rev.drag_rag_fk.rag_name }}
+              {% if rev.drag_received != None %}
+                {% if rev.drag_iscomment %}
+                  <li><a href="{% url 'showcomment' rev.drag_pk %}"><B>{{ rev.drag_rag_fk.rag_name }}</B></a>
+                {% else %}
+                  <li><B>{{ rev.drag_rag_fk.rag_name }}</B>
+                {% endif %}
               {% else %}
-                <li><B>{{ rev.drag_rag_fk.rag_name }}</B>
+                  <li>{{ rev.drag_rag_fk.rag_name }}
               {% endif %}</li>
             {% endfor %}
           </ul>

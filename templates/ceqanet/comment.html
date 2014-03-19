@@ -4,7 +4,6 @@
 
 {% block content %}
 
-
   <h4>Current Open Comment Period Documents</h4>
   {% if object_list %}
   <TABLE border="1">
@@ -59,15 +58,7 @@
           {{ comment.drag_doc_fk.doc_prj_fk.prj_leadagency }}
         </TD>
         <TD align="center">
-          {% if comment.doc_doctype = 'NOE' or comment.doc_docname.strip = 'Notice of Exemption' %}
-            <a href="{% url 'commenetdetail_noe' %}?doc_pk={{ comment.drag_doc_fk.doc_pk }}"><i>{{ comment.drag_doc_fk.doc_prj_fk.prj_title }}</i></a>
-          {% elif comment.doc_doctype = 'NOD' or comment.doc_docname.strip = 'Notice of Determination' %}
-            <a href="{% url 'commentdetail_nod' %}?doc_pk={{ comment.drag_doc_fk.doc_pk }}"><i>{{ comment.drag_doc_fk.doc_prj_fk.prj_title }}</i></a>
-          {% elif comment.doc_doctype = 'NOP' or comment.doc_docname.strip = 'Notice of Preperation' %}
-            <a href="{% url 'commentdetail_nop' %}?doc_pk={{ comment.drag_doc_fk.doc_pk }}"><i>{{ comment.drag_doc_fk.doc_prj_fk.prj_title }}</i></a>
-          {% else %}
-            <a href="{% url 'commentdetail_noc' %}?doc_pk={{ comment.drag_doc_fk.doc_pk }}"><i>{{ comment.drag_doc_fk.doc_prj_fk.prj_title }}</i></a>
-          {% endif %}
+            <a href="{% url 'commentdetail' %}?doc_pk={{ comment.drag_doc_fk.doc_pk }}"><i>{{ comment.drag_doc_fk.doc_prj_fk.prj_title }}</i></a>
         </TD>
         <TD align="center">
           {{ comment.drag_doc_fk.doc_prj_fk.prj_description }}

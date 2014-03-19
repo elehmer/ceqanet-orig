@@ -47,9 +47,9 @@
 			<a class="p_h_button p_h_contact" href="/Contact.html"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Contact Us" /></a>
 			<!--<a class="p_h_button p_h_search" onclick="toggle_search();"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Search" /></a>-->
 			{% if user.is_anonymous %}
-			<a class="p_h_button p_h_search" href="{% url 'login' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Login" /></a>
+			<a class="p_h_button p_h_search" href="{% url 'auth_login' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Login" /></a>
             {% else %}
-			<a class="p_h_button p_h_search" href="{% url 'logout' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Logout" /></a>
+			<a class="p_h_button p_h_search" href="{% url 'auth_logout' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Logout" /></a>
             {% endif %}
 		</div>
 		<div class="logo_and_banner">
@@ -59,11 +59,22 @@
 	</div>
 	<div class="head_loginout">
 			{% if user.is_anonymous %}
-				<a class="head_login" href="{% url 'login' %}">{% trans "Log in" %}</a>
+				<a class="head_login" href="{% url 'auth_login' %}">{% trans "Log in" %}</a>
 			{% else %}
-				<a class="head_logout" href="{% url 'logout' %}">{% trans "Log out" %} [{{ user.username }}]</a>
+				<a class="head_logout" href="{% url 'auth_logout' %}">{% trans "Log out" %} [{{ user.username }}]</a>
 			{% endif %}
 	</div>
+
+	<!--
+	{% for g in user.groups.all %}
+		{% if g.name = "clearinghouse" or g.name = "planners" %}
+	<div id="head_search">
+
+	</div>
+		{% endif %}
+	{% endfor %}
+	-->
+
 
 	<!--
 	<div id="head_search">
@@ -85,32 +96,98 @@
 	</div>
 -->
 	
-	<nav id="navigation" class="singlelevelnav">
+	<nav id="navigation" class="megadropdown">
 		<ul id="nav_list">
 			<li><a href="{% url 'index' %}" class="nav_level1_link"><span id="nav_home_container"></span><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Home" />&nbsp;</a></li>
 			
-			<li><a href="{% url 'basicquery' %}" class="nav_level1_link">{% trans "Search" %}</a></li>
+			<li><a href="{% url 'basicsearch' %}" class="nav_level1_link">{% trans "Search" %}</a>
+				<div class="nav_panel">
+					<ul>
+						<li><a href="{% url 'basicsearch' %}" class="nav_p_heading">Basic Search</a> 
+						<div class="nav_p_description">Search CEQANet database with simple interface</div></li>
+					</ul>
+					<ul>
+						<li><a href="{% url 'advancedsearch' %}" class="nav_p_heading">Advanced Search</a> 
+						<div class="nav_p_description">Search CEQANet database with power interface</div></li>
+					</ul>
+					<div class="nav_d_arrow_container"></div>
+				</div>
+			</li>
             <li><a href="{% url 'map' %}" class="nav_level1_link">{% trans "Map" %}</a></li>
 
 			{% for g in user.groups.all %}
 			{% if g.name = "leads" or g.name = "planners" or g.name = "clearinghouse" %}
-			<li><a href="{% url 'submit' %}" class="nav_level1_link">{% trans "Submit" %}</a></li>
+			<li><a href="{% url 'submit' %}" class="nav_level1_link">{% trans "Submit" %}</a>
+				<div class="nav_panel">
+					<ul>
+						<li><a href="{% url 'submit' %}" class="nav_p_heading">Submit New Document</a> 
+						<div class="nav_p_description">Fill out new CEQANet document for addition to the database</div></li>
+					</ul>
+					<ul>
+						<li><a href="{% url 'draftsbylag' %}" class="nav_p_heading">Draft Documents</a> 
+						<div class="nav_p_description">Review documents started but not yet completed or submitted</div></li>
+					</ul>
+					<ul>
+						<li><a href="{% url 'pendingsbylag' %}" class="nav_p_heading">Pending Documents</a> 
+						<div class="nav_p_description">Review documents submitted but not yet accepted by the clearinghouse</div></li>
+					</ul>
+					<div class="nav_d_arrow_container"></div>
+				</div>
+			</li>
 			{% endif %}
 			{% if g.name = "clearinghouse" or g.name = "planners" %}
-			<li><a href="{% url 'pending' %}" class="nav_level1_link">{% trans "Pending" %}</a></li>
-			{% endif %}
-			{% if g.name = "reviewers" or g.name = "planners" or g.name = "clearinghouse" %}
-			<li><a href="{% url 'comment' %}" class="nav_level1_link">{% trans "Comment" %}</a></li>
+			<li><a href="{% url 'pending' %}" class="nav_level1_link">{% trans "Control" %}</a>
+				<div class="nav_panel">
+					<ul>
+						<li><a href="{% url 'pending' %}" class="nav_p_heading">Pending</a> 
+						<div class="nav_p_description">Process pending clearinghouse documents</div></li>
+						<li><a href="{% url 'addleadagency' %}" class="nav_p_heading">Add Lead Agency</a> 
+						<div class="nav_p_description">Create new Lead Agency record in database</div></li>
+					</ul>
+					<ul>
+						<li><a href="{% url 'latest' %}" class="nav_p_heading">Latest</a> 
+						<div class="nav_p_description">See latest documents accepted to CEQANet</div></li>
+						<li><a href="{% url 'addreviewingagency' %}" class="nav_p_heading">Add Reviewing Agency</a> 
+						<div class="nav_p_description">Create new Reviewing Agency record in database</div></li>
+					</ul>
+					<ul>
+						<li><a href="{% url 'manageupgrades' %}" class="nav_p_heading">Account Upgrade Requests</a> 
+						<div class="nav_p_description">Manage Users requesting higher level permissions on site</div></li>
+						<li><a href="{% url 'manageusers' %}" class="nav_p_heading">Manage Users</a> 
+						<div class="nav_p_description">Change group, delete, etc. CEQANet Users</div></li>
+					</ul>
+					<div class="nav_d_arrow_container"></div>
+				</div>
+			</li>
 			{% endif %}
 			{% if g.name = "planners" %}
 			<li><a href="{% url 'review' %}" class="nav_level1_link">{% trans "Review" %}</a></li>
 			{% endif %}
-			{% endfor %}
-			{% if user.is_active %}
-			<li><a href="{% url 'usersettings' %}" class="nav_level1_link">{% trans "Settings" %}</a></li>
+			{% if g.name = "reviewers" or g.name = "planners" or g.name = "clearinghouse" %}
+			<li><a href="{% url 'comment' %}" class="nav_level1_link">{% trans "Comment" %}</a></li>
 			{% endif %}
+			{% endfor %}
 			{% if not user.is_active %}
-            <li><a href="{% url 'account' %}" class="nav_level1_link">{% trans "Account" %}</a></li>
+            <li><a href="{% url 'registration_register' %}" class="nav_level1_link">{% trans "Account" %}</a></li>
+            {% else %}
+			<li><a href="{% url 'manageaccount' %}" class="nav_level1_link">{% trans "Account" %}</a>
+				<div class="nav_panel">
+					<ul>
+						<li><a href="{% url 'manageaccount' %}" class="nav_p_heading">Manage Account</a> 
+						<div class="nav_p_description">Change account settings</div></li>
+					</ul>
+					<ul>
+						<li><a href="{% url 'usersettings' %}" class="nav_p_heading">Settings</a> 
+						<div class="nav_p_description">Manage user settings</div></li>
+					</ul>
+					{% if user.groups.all.count = 0 %}
+						<ul>
+							<li><a href="{% url 'requestupgrd' %}" class="nav_p_heading">Request Account Upgrade</a> 
+							<div class="nav_p_description">Upgrade Account to allow for submitting or reviewing documents.</div></li>
+						</ul>
+					{% endif %}
+				</div>
+			</li>
 			{% endif %}
 		</ul>
 	</nav>

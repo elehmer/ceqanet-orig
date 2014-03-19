@@ -1,6 +1,7 @@
 #from django.db import models
 from django.contrib.gis.db import models
 from django.contrib.auth.models import User
+from django.db.models.signals import post_save
 
 # Create your models here.
 class counties(models.Model):
@@ -50,8 +51,16 @@ class docreviews(models.Model):
     dscode = models.CharField(null=True,blank=True,max_length=5)
     dsloc = models.CharField(null=True,blank=True,max_length=30)
     drag_lateletter = models.DateField(null=True,blank=True)
+    drag_iscomment = models.NullBooleanField(null=True,blank=True)
     drag_ragcomment = models.TextField(null=True,blank=True)
     drag_file = models.FileField(null=True,blank=True,upload_to='documents/%Y/%m/%d')
+
+class doccomments(models.Model):
+    dcom_pk = models.AutoField(primary_key=True)
+    dcom_drag_fk = models.ForeignKey("docreviews",db_column="dcom_drag_fk")
+    dcom_commentdate = models.DateField(null=True,blank=True)
+    dcom_textcomment = models.TextField(null=True,blank=True)
+    dcom_filecomment = models.FileField(null=True,blank=True,upload_to='documents/%Y/%m/%d')
 
 class docattachments(models.Model):
     datt_pk = models.AutoField(primary_key=True)
@@ -64,7 +73,7 @@ class documents(models.Model):
     doc_cnty_fk = models.ForeignKey("counties",null=True,blank=True,db_column="doc_cnty_fk")
     doc_schno = models.CharField(null=True,blank=True,max_length=12,db_index=True)
     doc_doct_fk = models.ForeignKey("doctypes",null=True,blank=True,db_column="doc_doct_fk")
-    doc_doctype = models.CharField(null=True,blank=True,max_length=3)
+    doc_doctype = models.CharField(null=True,blank=True,max_length=32)
     doc_docname = models.CharField(null=True,blank=True,max_length=64)
     doc_title = models.TextField(null=True,blank=True)
     doc_description = models.TextField(null=True,blank=True)
@@ -159,6 +168,7 @@ class documents(models.Model):
     doc_exstatus = models.IntegerField()
     doc_added = models.DateField(null=True,blank=True)
     doc_draft = models.BooleanField()
+    doc_clerknotes = models.TextField(null=True,blank=True)
 
     class Meta:
         #ordering = ['name']
@@ -184,6 +194,7 @@ class geowords(models.Model):
     geow_originalcontrolid = models.CharField(max_length=10)
     geow_recordsource = models.CharField(max_length=10)
     inlookup = models.BooleanField(default=True)
+    geow_parent_fk = models.ForeignKey("geowords",db_column="geow_parent_fk")
 
     def __unicode__(self):
         return self.geow_shortname        
@@ -274,7 +285,7 @@ class projects(models.Model):
     prj_title = models.CharField(null=True,blank=True,max_length=160)
     prj_comments = models.TextField(null=True,blank=True)
     prj_doc_fk = models.ForeignKey("documents",db_column="prj_doc_fk")
-    prj_status = models.CharField(null=True,blank=True,max_length=3)
+    prj_status = models.CharField(null=True,blank=True,max_length=32)
     prj_description = models.TextField(null=True,blank=True)
     prj_datefirst = models.DateField(null=True,blank=True)
     prj_datelast = models.DateField(null=True,blank=True)
@@ -320,10 +331,23 @@ class reviewingagencies(models.Model):
 
 class UserProfile(models.Model):
     user = models.ForeignKey(User,unique=True)
-    region = models.IntegerField(blank=True)
     set_lag_fk = models.ForeignKey("leadagencies",blank=True,null=True,db_column="set_lag_fk")
     set_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="set_rag_fk")
     conphone = models.CharField(null=True,blank=True,max_length=32)
+
+def create_user_profile(sender, instance, created, **kwargs):
+    if created:
+        UserProfile.objects.create(user=instance)
+
+post_save.connect(create_user_profile, sender=User)
+
+class requestupgrade(models.Model):
+    user_id = models.ForeignKey(User,unique=True,db_column="user_id")
+    rqst_pending = models.NullBooleanField(null=True,blank=True)
+    rqst_type = models.CharField(null=True,blank=True,max_length=10)
+    rqst_lag_fk = models.ForeignKey("leadagencies",blank=True,null=True,db_column="rqst_lag_fk")
+    rqst_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="rqst_rag_fk")
+    rqst_reason = models.TextField(null=True,blank=True)
     
 class clearinghouse(models.Model):
     schnoprefix = models.CharField(max_length=6)

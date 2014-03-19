@@ -6,12 +6,24 @@
 
 {{ form.media }}
 <form class='addEditForm' action="" method="post">
+<h3>Add a New Lead Agency to the Database</h3>
 {% csrf_token %}
-<div id={{ form.formID }}>
-    {{ form.as_ul }}
+<div id="{{ form.formID }}">
+  <table border="0">
+    {{ form.as_table }}
+    <tr>
+      <td colspan="2">
+		&nbsp;
+	  </td>
+	</tr>
+    <tr>
+      <td colspan="2">
+		<input type="submit" value="Add New Lead Agency" />
+	  </td>
+	</tr>
+  </table>
 </div>
 <div class="submit-row">
-<input type="submit" value="Save" />
 </div>
 </form>
 

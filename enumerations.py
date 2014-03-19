@@ -1,8 +1,14 @@
 DOCUMENT_TYPES = (
-    ('NOC','NOC'),
-    ('NOD','NOD'),
-    ('NOE','NOE'),
-    ('NOP','NOP')
+    ('108','Notice of Determination (NOD)'),
+    ('109','Notice of Exemption (NOE)'),
+    ('107','Negative Declaration (NEG)'),
+    ('500008','Mitigated Negative Declaration (MND)'),
+    ('106','Draft EIR (EIR)'),
+    ('110','Supplemental EIR (SIR)'),
+    ('124','Subsequent EIR (SBE)'),
+    ('114','Final Document (FIN)'),
+    ('102','Notice of Preperation (NOP)'),
+    ('None','Other Notice of Completion (NOC)')
 )
 
 PRJ_SORT_FIELDS = (
@@ -29,9 +35,19 @@ DOC_SORT_FIELDS = (
     ('doc_received','Date Received (Ascending)'),
 )
 
+COMMENT_CHOICES = (
+    ('text', 'Submit Text Comment'),
+    ('file', 'Submit PDF Comment')
+)
+
 COLATION_CHOICES = (
     ('project', 'Project'),
     ('document', 'Document')
+)
+
+UPGRADE_CHOICES = (
+    ('lead', 'Request to Become Part of Lead Agencies Group:'),
+    ('review', 'Request to Become Part of Reviewing Agencies Group:')
 )
 
 NODAGENCY_CHOICES = (
@@ -109,14 +125,7 @@ EXEMPT_STATUS_CHOICES = (
 )
 
 PLANNERREGION_CHOICES = (
-    (0,'0'),
-    (1,'1'),
-    (2,'2'),
-    (3,'3'),
-    (4,'4'),
-    (5,'5'),
-    (6,'6'),
-    (7,'7'),
-    (8,'8'),
-    (9,'9')
+    (1,'1 (South)'),
+    (2,'2 (North)'),
+    (4,'4 (Federal)')
 )

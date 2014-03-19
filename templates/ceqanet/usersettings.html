@@ -12,28 +12,6 @@
       </TD>
     </TR>
     <TR> 
-      <TD colspan="2" align="left">
-        <h5>Account Settings</h5>
-      </TD>
-    </TR>
-    <tr colspan="2">
-      <td>
-        <input id="changepw" type="submit" value="Change Password >>">
-      </td>
-    </tr>
-    <TR> 
-      <TD colspan="2" align="left">
-        <h5>Contact Information</h5>
-      </TD>
-    </TR>
-    <TR> 
-      <TD colspan="2">
-        {% if isplanner %}
-        Region: {{ form.region }}
-        {% endif %}
-      </TD>
-    </TR>
-    <TR> 
       <TD colspan="2">
         {% if islead or isclearinghouse or isplanner %}
         Lead Agency: {{ form.set_lag_fk }}
@@ -49,30 +27,9 @@
     </TR>
     <TR> 
       <TD colspan="2">
-        Contact Person's First Name: {{ form.confirstname }}
-      </TD>
-    </TR>
-    <TR> 
-      <TD colspan="2">
-        Contact Person's Last Name: {{ form.conlastname }}
-      </TD>
-    </TR>
-    <TR> 
-      <TD colspan="2">
-        E-mail: {{ form.conemail }}
-      </TD>
-    </TR>
-    <TR> 
-      <TD colspan="2">
-        Phone Number: {{ form.conphone }}
-      </TD>
-    </TR>
-    <TR> 
-      <TD colspan="2">
         <input type="submit" value="Update">
       </TD>
     </TR>
   </TABLE>
-  <input type="hidden" name="user_id" value="{{user_id}}">
 </FORM>
 {% endblock content %}

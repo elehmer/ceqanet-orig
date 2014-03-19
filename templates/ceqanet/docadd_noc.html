@@ -13,13 +13,15 @@
 <script type="text/javascript" src="{% static "admin/js/SelectBox.js" %}"></script>
 <script type="text/javascript" src="{% static "admin/js/SelectFilter2.js" %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/admin_styles.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
 
 {% endblock extrajs %}
 
 {% block content %}
 
-<FORM name="adddoc" method="post" action="">
+<FORM name="adddoc" class="adddocform" method="post" action="">
   {% csrf_token %}
+  <h1>Add New Notice of Completion Document:</h1>
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
       <TH align="left" colspan="3">
@@ -42,19 +44,44 @@
         {{ form.prj_description }} {{ form.prj_description.errors }}
       </TD>
     </TR>
+    {% if prj_pk != 'None' %}
     <TR>
       <TH width="25%" align="left" valign="top">
         Project Clearinghouse Number:
       </TH>
       <TD colspan="2">
-        {{ document.doc_prj_fk.prj_schno }}
+        {{ prjinfo.prj_schno }}
       </TD>
     </TR>
+    {% endif %}
     <TR> 
       <TH align="left" colspan="3">
         <h3>Document Information:</h3>
       </TH>
     </TR>
+    {% if prj_pk != 'None' %}
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_title.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_title }} {{ form.doc_title.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_description.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_description }} {{ form.doc_description.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TD colspan="3">
+        &nbsp;
+      </TD>
+    </TR>
+    {% endif %}
     <TR> 
       <TH align="left" colspan="3">
         Lead Agency Contact Information:
@@ -163,20 +190,46 @@
     </TR>
     <TR>
       <TD width="25%" valign="top">
-        <b>City:</b>
-      </TD>
-      <TD colspan="2"> 
-        {{ form.doc_city }} {{ form.doc_city.errors }}
-      </TD>
-    </TR>
-    <TR>
-      <TD width="25%" valign="top">
         <b>County:</b>
       </TD>
       <td colspan="2"> 
         {{ form.doc_county }} {{ form.doc_county.errors }}
       </td>
     </TR>
+    <TR>
+      <TD width="25%" valign="top">
+        <b>City:</b>
+      </TD>
+      <TD colspan="2"> 
+        {{ form.doc_city }} {{ form.doc_city.errors }}
+      </TD>
+    </TR>
+    <script>
+      $(document).ready(function() {
+          $("#id_doc_city").html("<option>Select County First...</option>");
+          $("#id_doc_city").attr('disabled', true);
+
+          $("#id_doc_county").change(function() {
+            if ($(this).val() == '') {
+              $("#id_doc_city").html("<option>Select County First...</option>");
+              $("#id_doc_city").attr('disabled', true);
+            }
+            else {
+              var url = "/county/" + $(this).val() + "/citiesforcounty_json";
+              var county = $(this).val();
+              $.getJSON(url, function(cities) {
+                var options = '<option value="">[Select City]</option>';
+                for (var i = 0; i < cities.length; i++) {
+                  options += '<option value="' + cities[i].pk + '">' + cities[i].fields['geow_shortname'] + '</option>';
+                }
+                $("#id_doc_city").html(options);
+                $("#id_doc_city option:first").attr('selected', 'selected');
+                $("#id_doc_city").attr('disabled', false);
+              });
+            }
+          });
+      });
+    </script>
     <tr> 
       <td colspan="3">&nbsp;</td>
     </tr>
@@ -317,54 +370,31 @@
     <TR> 
       <TD colspan="3"> 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
-          <tr>
-            <td>
-              <table>
-                {% for pk, choice in form.actions.field.widget.choices %}
-                  {% if forloop.counter < 12 %}
-                    {% if choice.strip != 'Other Action' %}
-                      <tr>
-                        <td>
-                          <label for="id_actions_{{ forloop.counter0 }}">
-                            <input type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
-                          </label>
-                        </td>
-                      </tr>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </table>
-            </td>
-            <td>
-              <table>
-                {% for pk, choice in form.actions.field.widget.choices %}
-                  {% if forloop.counter > 11 %}
-                    {% if choice.strip != 'Other Action' %}
-                      <tr>
-                        <td>
-                          <label for="id_actions_{{ forloop.counter0 }}">
-                            <input type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
-                          </label>
-                        </td>
-                      </tr>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </table>
-            </td>
-          </tr>            
-          {% for pk, choice in form.actions.field.widget.choices %}
-            {% if choice.strip = 'Other Action' %}
-              <tr>
-                <td>
-                  <label for="id_actions_{{ forloop.counter0 }}">
-                    <input type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
-                  </label>
-                  {{ form.dkey_comment_actions }} {{ form.dkey_comment_actions.errors }}
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}     
+          <TR>
+            <TD>
+              <input type="button" id="selalllat" value="Select All">
+            </TD>
+          </TR>
+          <TR>
+            <TD>
+              &nbsp;
+            </TD>
+          </TR>
+          <TR>
+            <TD>
+              {{ form.actions }}
+              {{ form.dkey_comment_actions }} {{ form.dkey_comment_actions.errors }}
+              <script>
+                $(document).ready(function() {
+                  $("label[for='id_actions_9']").parent().parent().append($("label[for='id_actions_9']"));
+
+                  $("#selalllat").click(function() {
+                    $(".lat").prop('checked', true);
+                  });
+                });
+              </script>
+            </TD>
+          </TR>
         </table>
       </TD>
     </TR>
@@ -378,9 +408,9 @@
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="dev6001" value="1">
+              {{ form.dev6001 }}
             </td>
-            <td width="15%" class="subtitle">Residential:</td>
+            <td width="15%" class="subtitle">{{ form.dev6001.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev6001_val1.label }}</i> 
               {{ form.dev6001_val1 }}
             </td>
@@ -391,9 +421,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="dev6002" value="1">
+              {{ form.dev6002 }}
             </td>
-            <td width="15%" class="subtitle">Office:</td>
+            <td width="15%" class="subtitle">{{ form.dev6002.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev6002_val1.label }}</i> 
               {{ form.dev6002_val1 }}
             </td>
@@ -406,9 +436,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="dev6003" value="1">
+              {{ form.dev6003 }}
             </td>
-            <td width="15%" class="subtitle">Commercial:</td>
+            <td width="15%" class="subtitle">{{ form.dev6003.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev6003_val1.label }}</i> 
               {{ form.dev6003_val1 }}
             <td width="25%" class="content"><i>{{ form.dev6003_val2.label }}</i> 
@@ -420,9 +450,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="dev6004" value="1">
+              {{ form.dev6004 }}
             </td>
-            <td width="15%" class="subtitle">Industrial:</td>
+            <td width="15%" class="subtitle">{{ form.dev6004.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev6004_val1.label }}</i> 
               {{ form.dev6004_val1 }}
             </td>
@@ -435,9 +465,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="dev7001" value="1">
+              {{ form.dev7001 }}
             </td>
-            <td width="15%" class="subtitle">Educational</td>
+            <td width="15%" class="subtitle">{{ form.dev7001.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev7001_val1.label }}</i> 
               {{ form.dev7001_val1 }}
             </td>
@@ -446,9 +476,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="dev8001" value="1">
+              {{ form.dev8001 }}
             </td>
-            <td width="15%" class="subtitle">Recreational</td>
+            <td width="15%" class="subtitle">{{ form.dev8001.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev8001_val1.label }}</i> 
               {{ form.dev8001_val1 }}
             </td>
@@ -457,7 +487,7 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="devtrans" value="1">
+              {{ form.devtrans }}
             </td>
             <td>
               {{ form.devtrans_id }}
@@ -468,7 +498,7 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="devpower" value="1">
+              {{ form.devpower }}
             </td>
             <td width="15%" class="subtitle">
               {{ form.devpower_id }}
@@ -480,10 +510,10 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="devwaste" value="1">
+              {{ form.devwaste }}
             </td>
             <td>
-              {{ form.devwaste_id}}
+              {{ form.devwaste_id }}
             </td>
             <td colspan="3">
               <i>{{ form.devwaste_comment.label }}</i> {{ form.devwaste_comment }}
@@ -491,9 +521,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="dev9001" value="1">
+              {{ form.dev9001 }}
             </td>
-            <td width="15%" class="subtitle">Water Facilities:</td>
+            <td width="15%" class="subtitle">{{ form.dev9001.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev9001_val1.label }}</i> 
               {{ form.dev9001_val1 }}
             </td>
@@ -503,16 +533,16 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="dev10001" value="1">
+              {{ form.dev10001 }}
             </td>
-            <td width="15%" class="subtitle">Mining:</td>
+            <td width="15%" class="subtitle">{{ form.dev10001.label }}</td>
             <td colspan="3"><i>{{ form.dev10001_val1.label }}</i> 
               {{ form.dev10001_val1 }}
             </td>
           </tr>
           <tr> 
             <td width="5%"> 
-              <input type="checkbox" name="dev11001" value="1">
+              {{ form.dev11001 }}
             </td>
             <td width="15%" class="subtitle">{{ form.dkey_comment_dev.label }}:</td>
             <td colspan="3"> 
@@ -532,52 +562,29 @@
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
           <TR>
             <TD>
-              <TABLE>
-                {% for pk, choice in form.issues.field.widget.choices %}
-                  {% if forloop.counter < 19 %}
-                    {% if choice.strip != 'Other Issues' %}
-                      <tr>
-                        <td>
-                          <label for="id_issues_{{ forloop.counter0 }}">
-                            <input type="checkbox" id="id_issues_{{ forloop.counter0 }}" value="{{ pk }}" name="issues" />&nbsp;{{ choice }}
-                          </label>
-                        </td>
-                      </tr>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </TABLE>
+              <input type="button" id="selalliss" value="Select All">
             </TD>
+          </TR>
+          <TR>
             <TD>
-              <TABLE>
-                {% for pk, choice in form.issues.field.widget.choices %}
-                  {% if forloop.counter > 18 %}
-                    {% if choice.strip != 'Other Issues' %}
-                      <tr>
-                        <td>
-                          <label for="id_issues_{{ forloop.counter0 }}">
-                            <input type="checkbox" id="id_issues_{{ forloop.counter0 }}" value="{{ pk }}" name="issues" />&nbsp;{{ choice }}
-                          </label>
-                        </td>
-                      </tr>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </TABLE>
+              &nbsp;
             </TD>
-          </TR>     
-          {% for pk, choice in form.issues.field.widget.choices %}
-            {% if choice.strip = 'Other Issues' %}
-              <tr>
-                <td>
-                  <label for="id_issues_{{ forloop.counter0 }}">
-                    <input type="checkbox" id="id_issues_{{ forloop.counter0 }}" value="{{ pk }}" name="issues" />&nbsp;{{ choice }}
-                  </label>
-                  {{ form.dkey_comment_issues }} {{ form.dkey_comment_issues.errors }}
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}     
+          </TR>
+          <TR>
+            <TD>
+              {{ form.issues }}
+              {{ form.dkey_comment_issues }} {{ form.dkey_comment_issues.errors }}
+              <script>
+                $(document).ready(function() {
+                  $("label[for='id_issues_19']").parent().parent().append($("label[for='id_issues_19']"));
+
+                  $("#selalliss").click(function() {
+                    $(".iss").prop('checked', true);
+                  });
+                });
+              </script>
+            </TD>
+          </TR>
         </table>
       </TD>
     </TR>
@@ -588,7 +595,7 @@
     </tr>
     <tr> 
       <td colspan="3">
-        <B>Reviewing Agencies (Double click on values in the left box to add. Double click on values in the right box to remove.):</B>
+        <B>Reviewing Agencies:</B>
       </td>
     </tr>
     <tr> 

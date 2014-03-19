@@ -1,6 +1,6 @@
 {% extends "ceqanet/listpage.html" %}
 
-{% block title %}OPR Data Clearinghouse Project Listing{% endblock title %}
+{% block title %}OPR Data Clearinghouse Document Listing{% endblock title %}
 
 {% block listing %}
 
@@ -11,13 +11,13 @@
         <TABLE width="100%">
           <tr>
             <td colspan="2">
-              <button onclick="window.location = '{% url 'basicquery' %}'"><< Basic Query</button>
-              <button onclick="window.location = '{% url 'advancedquery' %}'"><< Advanced Query</button>
+              <button onclick="window.location = '{% url 'basicsearch' %}'"><< Basic Search</button>
+              <button onclick="window.location = '{% url 'advancedsearch' %}'"><< Advanced Search</button>
             </td>
           </tr>
           <TR>
             <TD>
-              <B>Query Type:</B> Document Listing - {{ mode|title }}
+              <B>Search Type:</B> Document Listing - {{ mode|title }}
             </TD>
             <TD align="right">
               <B>Sorted By:</B>
@@ -195,11 +195,11 @@
     {% for doc in docs %}
       <TR>
       	<TD align="center">
-        {% if doc.doc_doctype = 'NOE' or doc.doc_docname.strip = 'Notice of Exemption' %}
+        {% if doc.doc_doct_fk.keyw_pk = 109 %}
           <a href="{% url 'docdesp_noe' doc.doc_pk %}">{{ doc.doc_prj_fk.prj_schno }}</a>
-        {% elif doc.doc_doctype = 'NOD' or doc.doc_docname.strip = 'Notice of Determination' %}
+        {% elif doc.doc_doct_fk.keyw_pk = 108 %}
           <a href="{% url 'docdesp_nod' doc.doc_pk %}">{{ doc.doc_prj_fk.prj_schno }}</a>
-        {% elif doc.doc_doctype = 'NOP' or doc.doc_docname.strip = 'Notice of Preperation' %}
+        {% elif doc.doc_doct_fk.keyw_pk = 102 %}
           <a href="{% url 'docdesp_nop' doc.doc_pk %}">{{ doc.doc_prj_fk.prj_schno }}</a>
         {% else %}
           <a href="{% url 'docdesp_noc' doc.doc_pk %}">{{ doc.doc_prj_fk.prj_schno }}</a>
@@ -266,7 +266,7 @@
   <TABLE>
     <TR>
       <TD ALIGN="middle">
-        Query Returned No Records. Please use the Back button on your browser and try again.
+        Search Returned No Records. Please use the Back button on your browser and try again.
       </TD>
     </TR>
   </TABLE>

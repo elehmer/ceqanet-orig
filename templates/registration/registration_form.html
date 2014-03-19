@@ -2,10 +2,15 @@
 {% load i18n %}
 
 {% block content %}
+<h3>Register for CEQANet</h3>
+<p>
+  If you are not a registered user of CEQANet, you can fill out the entries below to become one. Once submitted you will receive an automated e-mail containing a link to verify your account. Once a registered user you can login and request to have your account priviledges elevated.
+</p>
+<h5>Create New Account</h5>
 <form method="post" action=".">
   {% csrf_token %}
   {{ form.as_p }}
 
-  <input type="submit" value="{% trans 'Submit' %}" />
+  <input type="submit" value="{% trans 'Create New Account' %}" />
 </form>
 {% endblock %}

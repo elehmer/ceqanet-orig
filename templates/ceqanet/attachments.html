@@ -19,23 +19,78 @@
 <FORM id="attachments" name="attachments" method="post" action="" enctype="multipart/form-data">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
-    <TR colspan="3"> 
-      <TH align="left">
+    <TR> 
+      <TH colspan="3" align="left">
         <h3>Attach Related Electronic Information:</h3>
       </TH>
     </TR>
-    <TR colspan="3"> 
-      <TH align="left">
+    <TR> 
+      <TD colspan="3" align="left">
+        Use the interface below to attach PDF files to this document:
+      </TD>
+    </TR>  
+    <TR> 
+      <TD colspan="3" align="left">
+        <TABLE>
+          <TR>
+            <TH align="left">
+              Project Title:
+            </TH>
+            <TD align="left">
+              {{ doc.doc_prj_fk.prj_title }}
+            </TD>
+          </TR>
+          <TR>
+            <TH align="left">
+              Document Type:
+            </TH>
+            <TD align="left">
+              {{ doc.doc_doctype }}
+            </TD>
+          </TR>
+          <TR>
+            <TD align="left">
+              {% if doc.doc_doctype = 'NOE' or doc.doc_docname.strip = 'Notice of Exemption' %}
+                 <a href="{% url 'draftedit_noe' %}?doc_pk={{ doc.doc_pk }}">Edit Draft</a>
+              {% elif doc.doc_doctype = 'NOD' or doc.doc_docname.strip = 'Notice of Determination' %}
+                 <a href="{% url 'draftedit_nod' %}?doc_pk={{ doc.doc_pk }}">Edit Draft</a>
+              {% elif doc.doc_doctype = 'NOP' or doc.doc_docname.strip = 'Notice of Preperation' %}
+                 <a href="{% url 'draftedit_nop' %}?doc_pk={{ doc.doc_pk }}">Edit Draft</a>
+              {% else %}
+                 <a href="{% url 'draftedit_noc' %}?doc_pk={{ doc.doc_pk }}">Edit Draft</a>
+              {% endif %}
+            </TD>
+          </TR>
+        </TABLE>
+      </TD>
+    </TR>
+    <TR> 
+      <TH colspan="3" align="left">
+        <h5>Attachment Inteface</h5>
+      </TH>
+    </TR>    
+    <TR> 
+      <TH colspan="3" align="left">
         <B>{{ form.datt_file.label }}</B> {{ form.datt_file }}
       </TH>
     </TR>    
-    <TR colspan="3"> 
-      <TD align="left"> 
+    <TR>
+      <TD colspan="3">
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="3" align="left"> 
         <input id="attach" type="submit" value="Attach File...">
       </TD>
     </TR>
-    <TR colspan="3">
-      <TD>
+    <script>
+      $("#attach").click(function() {
+        alert($("#id_datt_file").val());
+      });
+    </script>
+    <TR>
+      <TD colspan="3">
         &nbsp;
       </TD>
     </TR>
@@ -70,8 +125,8 @@
         </TABLE>
       </TD>
     </TR>
-    <TR colspan="3">
-      <TD>
+    <TR>
+      <TD colspan="3">
         &nbsp;
       </TD>
     </TR>

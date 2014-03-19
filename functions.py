@@ -1,5 +1,6 @@
 import os
 from ceqanet.models import documents,projects,latlongs,dockeywords,docreviews,docattachments,clearinghouse
+from django.contrib.auth.models import User,Group
 from django.core.mail import send_mail
 
 def generate_schno(region):
@@ -51,7 +52,7 @@ def email_rejection(self):
     if doc.doc_conemail != self.request.user.email:
         emaillist += "," + self.request.user.email
 
-    strFrom = "ceqanet@opr.ca.gov"
+    strFrom = "opr@ceqanet.ca.gov"
     ToList = [emaillist]
     strSubject = "CEQANet: Rejection of Submittal - " + doc.doc_doctype
     strBody = "The " + doc.doc_docname + " document submitted to the State Clearinghouse on " + doc.doc_received.strftime('%m/%d/%Y') + " was rejected for the following reason:  \n \n"
@@ -64,7 +65,6 @@ def email_rejection(self):
     strBody += "    City: " + doc.doc_city + "\n"
     strBody += "    County: " + doc.doc_county + "\n"
     strBody += "Project Description: " + doc.doc_prj_fk.prj_description + "\n"
-    strBody += "Agency Approving Project: " + doc.doc_prj_fk.prj_leadagency + "\n"
     strBody += "Primary Contact:  " + "\n"
     strBody += "    Name: " + doc.doc_conname + "\n"
     strBody += "    Phone: " + doc.doc_conphone + "\n"
@@ -82,13 +82,13 @@ def email_demotiontodraft(self):
     if doc.doc_conemail != self.request.user.email:
         emaillist += "," + self.request.user.email
 
-    strFrom = "ceqanet@opr.ca.gov"
+    strFrom = "opr@ceqanet.ca.gov"
     ToList = [emaillist]
     strSubject = "CEQANet: Rejection of Submittal - " + doc.doc_doctype
     strBody = "The " + doc.doc_docname + " document submitted to the State Clearinghouse on " + doc.doc_received.strftime('%m/%d/%Y') + " was rejected for the following reason:  \n \n"
     strBody += self.request.POST.get('rejectreason')
-    strBody += "The document has been returned to draft mode and you may attempt to submit it again later."
-    strBody += "\n \n" + "Please reply to this email if you have any questions regarding this rejection."
+    strBody += "The document has been returned to draft mode and you may attempt to submit it again later." + "\n"
+    strBody += "\n \n" + "Please reply to this email if you have any questions regarding this rejection." + "\n"
     strBody += "\n \n" + "--- Information Submitted ---" + "\n"
     strBody += "Document Type: " + doc.doc_doctype + "\n"        
     strBody += "Project Title: " + doc.doc_prj_fk.prj_title + "\n"
@@ -96,7 +96,6 @@ def email_demotiontodraft(self):
     strBody += "    City: " + doc.doc_city + "\n"
     strBody += "    County: " + doc.doc_county + "\n"
     strBody += "Project Description: " + doc.doc_prj_fk.prj_description + "\n"
-    strBody += "Agency Approving Project: " + doc.doc_prj_fk.prj_leadagency + "\n"
     strBody += "Primary Contact:  " + "\n"
     strBody += "    Name: " + doc.doc_conname + "\n"
     strBody += "    Phone: " + doc.doc_conphone + "\n"
@@ -108,13 +107,12 @@ def email_demotiontodraft(self):
     except Exception as detail:
         print "Not Able to Send Email:", detail
 
-def email_submission(self):
-    doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
+def email_submission(self,doc):
     emaillist = doc.doc_conemail
     if doc.doc_conemail != self.request.user.email:
         emaillist += "," + self.request.user.email
 
-    strFrom = "ceqanet@opr.ca.gov"
+    strFrom = "opr@ceqanet.ca.gov"
     ToList = [emaillist]
     strSubject = "Confirmation of Submittal - " + doc.doc_doctype
     strBody = "This confirms receipt of your electronic " + doc.doc_docname + " form submission on " + doc.doc_received.strftime('%m/%d/%Y') + ".  \n \n"
@@ -127,12 +125,115 @@ def email_submission(self):
     strBody += "    City: " + doc.doc_city + "\n"
     strBody += "    County: " + doc.doc_county + "\n"
     strBody += "Project Description: " + doc.doc_prj_fk.prj_description + "\n"
-    strBody += "Agency Approving Project: " + doc.doc_prj_fk.prj_leadagency + "\n"
     strBody += "Primary Contact:  " + "\n"
     strBody += "    Name: " + doc.doc_conname + "\n"
     strBody += "    Phone: " + doc.doc_conphone + "\n"
     strBody += "    E-mail: " + doc.doc_conemail + "\n"
     strBody += "DATE: " + doc.doc_received.strftime('%m/%d/%Y') + "\n"
+
+    try:
+        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
+    except Exception as detail:
+        print "Not Able to Send Email:", detail
+
+def email_inreview(self):
+    doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
+    emaillist = doc.doc_conemail
+    if doc.doc_conemail != self.request.user.email:
+        emaillist += "," + self.request.user.email
+
+    grp = Group.objects.get(name='reviewers')
+    usrs =grp.user_set.all()
+    for u in usrs:
+        for ra in self.request.POST.get('ragencies'):
+            if u.get_profile().set_rag_fk == ra:
+                emaillist += "," + u.email
+
+    strFrom = "opr@ceqanet.ca.gov"
+    ToList = [emaillist]
+    strSubject = "CEQANet: Beginning of Review Period - " + doc.doc_doctype
+    strBody = "The " + doc.doc_docname + " document submitted to the State Clearinghouse on " + doc.doc_received.strftime('%m/%d/%Y') + " has entered a review period:  \n \n"
+    strBody += "Review Start Date: " +  doc.doc_dept.strftime('%m/%d/%Y') + "\n"
+    strBody += "Review End Date: " +  doc.doc_clear.strftime('%m/%d/%Y') + "\n"
+    strBody += "\n \n" + "Please reply to this email if you have any questions regarding this document."
+    strBody += "\n \n" + "--- Information Submitted ---" + "\n"
+    strBody += "Document Type: " + doc.doc_doctype + "\n"        
+    strBody += "Project Title: " + doc.doc_prj_fk.prj_title + "\n"
+    strBody += "Project Location: " + doc.doc_location + "\n"
+    strBody += "    City: " + doc.doc_city + "\n"
+    strBody += "    County: " + doc.doc_county + "\n"
+    strBody += "Project Description: " + doc.doc_prj_fk.prj_description + "\n"
+    strBody += "Primary Contact:  " + "\n"
+    strBody += "    Name: " + doc.doc_conname + "\n"
+    strBody += "    Phone: " + doc.doc_conphone + "\n"
+    strBody += "    E-mail: " + doc.doc_conemail + "\n"
+    strBody += "Date Recieved: " + doc.doc_received.strftime('%m/%d/%Y') + "\n"
+
+    try:
+        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
+    except Exception as detail:
+        print "Not Able to Send Email:", detail
+
+def email_upgradeacceptance(self):
+    emaillist = User.objects.get(pk=self.request.POST.get('user_id')).email
+    
+    strFrom = "opr@ceqanet.ca.gov"
+    ToList = [emaillist]
+    strSubject = "CEQANet: Acceptance of Account Upgrade Request"
+    strBody = "Your request to have your CEQANet account upgraded has been accepted." + "\n"
+    strBody += "\n \n" + "Please reply to this email if you have any questions regarding this rejection."
+
+    try:
+        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
+    except Exception as detail:
+        print "Not Able to Send Email:", detail
+
+def email_upgraderejection(self):
+    emaillist = User.objects.get(pk=self.request.POST.get('user_id')).email
+    
+    strFrom = "opr@ceqanet.ca.gov"
+    ToList = [emaillist]
+    strSubject = "CEQANet: Rejection of Account Upgrade Request"
+    strBody = "Your request to have your CEQANet account upgraded has been rejected. Reason for rejection follows:" + "\n"
+    strBody += self.request.POST.get('rejectreason')
+    strBody += "\n \n" + "Please reply to this email if you have any questions regarding this rejection."
+
+    try:
+        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
+    except Exception as detail:
+        print "Not Able to Send Email:", detail
+
+def email_commentacceptance(self):
+    doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
+
+    usrprof = self.request.user.get_profile()
+    usr_rag_pk = usrprof.set_rag_fk
+    
+    emaillist = doc.doc_conemail
+
+    grp = Group.objects.get(name='reviewers')
+    usrs =grp.user_set.all()
+    for u in usrs:
+        if u.get_profile().set_rag_fk == usr_rag_pk:
+            emaillist += "," + u.email
+    
+    strFrom = "opr@ceqanet.ca.gov"
+    ToList = [emaillist]
+    strSubject = "CEQANet: Comment Added to Document by Reveiwing Agency"
+    strBody = "A new comment has been added to the following document:" + "\n"
+    strBody += "\n \n" + "--- Information Submitted ---" + "\n"
+    strBody += "Document Type: " + doc.doc_doctype + "\n"        
+    strBody += "Project Title: " + doc.doc_prj_fk.prj_title + "\n"
+    strBody += "Project Location: " + doc.doc_location + "\n"
+    strBody += "    City: " + doc.doc_city + "\n"
+    strBody += "    County: " + doc.doc_county + "\n"
+    strBody += "Project Description: " + doc.doc_prj_fk.prj_description + "\n"
+    strBody += "Primary Contact:  " + "\n"
+    strBody += "    Name: " + doc.doc_conname + "\n"
+    strBody += "    Phone: " + doc.doc_conphone + "\n"
+    strBody += "    E-mail: " + doc.doc_conemail + "\n"
+    strBody += "DATE: " + doc.doc_received.strftime('%m/%d/%Y') + "\n"
+    strBody += "\n \n" + "Please reply to this email if you have any questions regarding this action."
 
     try:
         send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)

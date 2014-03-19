@@ -10,7 +10,7 @@
       <tr><td colspan="3">&nbsp;</td></tr>
       <tr>
         <td colspan="3">
-          <B>Begin document submission process by selecting type below:</B>
+          <h4>Submit New Document to CEQANet Clearinghouse:</h4>
         </td>
       </tr>
       <tr>
@@ -47,110 +47,27 @@
           &nbsp;
         </TD>
       </TR>
+      <script>
+        $("#id_doctype").change(function() {
+          if ($(this).val() == 'NOE') {
+            $("#prjtoggle_1").prop('checked', true)
+            $(".prjtoggle").prop('disabled', true);
+          }
+          else {
+            $(".prjtoggle").prop('disabled', false);            
+          }
+        });
+      </script>
       <TR>
         <TD colspan="3">
-          <input type="submit" value="Next >>">
+          <input id="next" type="submit" value="Next >>">
         </TD>
       </TR>
-      <TR>
-        <TD colspan="3">
-          &nbsp;
-        </TD>
-      </TR>
-      <TR>
-        <TD colspan="3">
-          <B>Draft Documents:</B>
-        </TD>
-      </TR>
-      <TR> 
-        <TD colspan="3">
-          <TABLE BORDER="1" WIDTH="100%">
-            <TR>
-              <TH>
-                Project Title
-              </TH>
-              <TH>
-                Document Type
-              </TH>
-              <TH>
-                Date Draft Opened
-              </TH>
-            </TR>
-            {% if drafts %}
-              {% for d in drafts %}
-                <TR>
-                  <TD align="middle" width="60%">
-                    <a href="{% url 'attachments' %}?doc_pk={{ d.doc_pk }}">{{ d.doc_prj_fk.prj_title }}</a>
-                  </TD>
-                  <TD align="middle" width="20%">
-                    {{ d.doc_doctype }}
-                  </TD>
-                  <TD align="middle" width="20%">
-                    {{ d.doc_added }}
-                  </TD>
-                </TR>
-              {% endfor %}
-            {% else %}
-              <TR>
-                <TD align="center" colspan="3">
-                  NO DRAFT DOCUMENTS
-                </TD>
-              </TR>      
-            {% endif %}
-          </TABLE>
-        </TD>
-      </TR>
-      <TR>
-        <TD colspan="3">
-          <B>Pending Documents:</B>
-        </TD>
-      </TR>
-      <TR> 
-        <TD colspan="3">
-          <TABLE BORDER="1" WIDTH="100%">
-            <TR>
-              <TH>
-                Project Title
-              </TH>
-              <TH>
-                Document Type
-              </TH>
-              <TH>
-                Date Submitted
-              </TH>
-            </TR>
-            {% if pending %}
-              {% for p in pending %}
-                <TR>
-                  <TD align="middle" width="60%">
-                    {% if p.doc_doctype = 'NOE' or p.doc_docname.strip = 'Notice of Exemption' %}
-                      <a href="{% url 'docdesp_noe' p.doc_pk %}">{{ p.doc_prj_fk.prj_title }}</a>
-                    {% elif p.doc_doctype = 'NOD' or p.doc_docname.strip = 'Notice of Determination' %}
-                      <a href="{% url 'docdesp_nod' p.doc_pk %}">{{ p.doc_prj_fk.prj_title }}</a>
-                    {% elif p.doc_doctype = 'NOP' or p.doc_docname.strip = 'Notice of Preperation' %}
-                      <a href="{% url 'docdesp_nop' p.doc_pk %}">{{ p.doc_prj_fk.prj_title }}</a>
-                    {% else %}
-                      <a href="{% url 'docdesp_noc' p.doc_pk %}">{{ p.doc_prj_fk.prj_title }}</a>
-                    {% endif %}
-                  </TD>
-                  <TD align="middle" width="20%">
-                    {{ p.doc_doctype }}
-                  </TD>
-                  <TD align="middle" width="20%">
-                    {{ p.doc_received }}
-                  </TD>
-                </TR>
-              {% endfor %}
-            {% else %}
-              <TR>
-                <TD align="center" colspan="3">
-                  NO PENDING DOCUMENTS
-                </TD>
-              </TR>      
-            {% endif %}
-          </TABLE>
-        </TD>
-      </TR>
+      <script>
+        $("#next").click(function() {
+          $(".prjtoggle").prop('disabled', false);        
+        });
+      </script>
     </table>
   </FORM>
 

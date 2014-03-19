@@ -58,18 +58,46 @@
           {{ pending.doc_prj_fk.prj_leadagency }}
         </TD>
         <TD align="center">
-          {% if pending.doc_doctype = 'NOE' or pending.doc_docname.strip = 'Notice of Exemption' %}
-            <a href="{% url 'pendingdetail_noe' %}?doc_pk={{ pending.doc_pk }}"><i>{{ pending.doc_prj_fk.prj_title }}</i></a>
-          {% elif pending.doc_doctype = 'NOD' or pending.doc_docname.strip = 'Notice of Determination' %}
-            <a href="{% url 'pendingdetail_nod' %}?doc_pk={{ pending.doc_pk }}"><i>{{ pending.doc_prj_fk.prj_title }}</i></a>
-          {% elif pending.doc_doctype = 'NOP' or pending.doc_docname.strip = 'Notice of Preperation' %}
-            <a href="{% url 'pendingdetail_nop' %}?doc_pk={{ pending.doc_pk }}"><i>{{ pending.doc_prj_fk.prj_title }}</i></a>
+          {% if pending.doc_doct_fk.keyw_pk = 109 %}
+            <a href="{% url 'pendingdetail_noe' %}?doc_pk={{ pending.doc_pk }}"><i>
+              {% if pending.doc_title %}
+                {{ pending.doc_title }}
+              {% else %}
+                {{ pending.doc_prj_fk.prj_title }}
+              {% endif %}
+            </i></a>
+          {% elif pending.doc_doct_fk.keyw_pk = 108 %}
+            <a href="{% url 'pendingdetail_nod' %}?doc_pk={{ pending.doc_pk }}"><i>
+              {% if pending.doc_title %}
+                {{ pending.doc_title }}
+              {% else %}
+                {{ pending.doc_prj_fk.prj_title }}
+              {% endif %}
+            </i></a>
+          {% elif pending.doc_doct_fk.keyw_pk = 102 %}
+            <a href="{% url 'pendingdetail_nop' %}?doc_pk={{ pending.doc_pk }}"><i>
+              {% if pending.doc_title %}
+                {{ pending.doc_title }}
+              {% else %}
+                {{ pending.doc_prj_fk.prj_title }}
+              {% endif %}
+            </i></a>
           {% else %}
-            <a href="{% url 'pendingdetail_noc' %}?doc_pk={{ pending.doc_pk }}"><i>{{ pending.doc_prj_fk.prj_title }}</i></a>
+            <a href="{% url 'pendingdetail_noc' %}?doc_pk={{ pending.doc_pk }}"><i>
+              {% if pending.doc_title %}
+                {{ pending.doc_title }}
+              {% else %}
+                {{ pending.doc_prj_fk.prj_title }}
+              {% endif %}
+            </i></a>
           {% endif %}
         </TD>
         <TD align="center">
-          {{ pending.doc_prj_fk.prj_description }}
+          {% if pending.doc_description %}
+            {{ pending.doc_description }}
+          {% else %}
+            {{ pending.doc_prj_fk.prj_description }}
+          {% endif %}
         </TD>
         <TD align="center">
           {{ pending.doc_doctype }}

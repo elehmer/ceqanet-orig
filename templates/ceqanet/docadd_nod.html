@@ -15,6 +15,7 @@
 {{ form.media }}
 <FORM name="adddoc" method="post" action="">
   {% csrf_token %}
+  <h1>Add New Notice of Determination Document:</h1>
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
       <TH align="left" colspan="3">
@@ -37,7 +38,7 @@
         {{ form.prj_description }} {{ form.prj_description.errors }}
       </TD>
     </TR>
-    {% if prj_pk != '-9999' %}
+    {% if prj_pk != 'None' %}
     <TR>
       <TH width="25%" align="left" valign="top">
         Project Clearinghouse Number:
@@ -46,12 +47,35 @@
         {{ prjinfo.prj_schno }}
       </TD>
     </TR>
-    {% endif %}    
+    {% endif %}
     <TR> 
       <TH align="left" colspan="3">
         <h3>Document Information:</h3>
       </TH>
     </TR>
+    {% if prj_pk != 'None' %}
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_title.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_title }} {{ form.doc_title.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_description.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_description }} {{ form.doc_description.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TD colspan="3">
+        &nbsp;
+      </TD>
+    </TR>
+    {% endif %}
     <TR> 
       <TH align="left" colspan="3">
         Lead Agency Contact Information:
@@ -160,20 +184,46 @@
     </TR>
     <TR>
       <TD width="25%" valign="top">
-        <b>City:</b>
-      </TD>
-      <TD colspan="2"> 
-        {{ form.doc_city }} {{ form.doc_city.errors }}
-      </TD>
-    </TR>
-    <TR>
-      <TD width="25%" valign="top">
         <b>County:</b>
       </TD>
       <td colspan="2"> 
         {{ form.doc_county }} {{ form.doc_county.errors }}
       </td>
     </TR>
+    <TR>
+      <TD width="25%" valign="top">
+        <b>City:</b>
+      </TD>
+      <TD colspan="2"> 
+        {{ form.doc_city }} {{ form.doc_city.errors }}
+      </TD>
+    </TR>
+    <script>
+      $(document).ready(function() {
+          $("#id_doc_city").html("<option>Select County First...</option>");
+          $("#id_doc_city").attr('disabled', true);
+
+          $("#id_doc_county").change(function() {
+            if ($(this).val() == '') {
+              $("#id_doc_city").html("<option>Select County First...</option>");
+              $("#id_doc_city").attr('disabled', true);
+            }
+            else {
+              var url = "/county/" + $(this).val() + "/citiesforcounty_json";
+              var county = $(this).val();
+              $.getJSON(url, function(cities) {
+                var options = '<option value="">[Select City]</option>';
+                for (var i = 0; i < cities.length; i++) {
+                  options += '<option value="' + cities[i].pk + '">' + cities[i].fields['geow_shortname'] + '</option>';
+                }
+                $("#id_doc_city").html(options);
+                $("#id_doc_city option:first").attr('selected', 'selected');
+                $("#id_doc_city").attr('disabled', false);
+              });
+            }
+          });
+      });
+    </script>
     <tr> 
       <td colspan="3">
         <h5>Determinations:</h5>
@@ -197,6 +247,18 @@
         {{ form.doc_nodagency }}
       </td>
     </tr>
+    <script>
+      $(document).ready(function() {
+        $("#lorr_0").click(function() {
+          $("#nodagency").prop('disabled', true);
+          $("#nodagency").val('{{laglist.lag_pk}}');
+        });
+        $("#lorr_1").click(function() {
+          $("#nodagency").prop('disabled', false);
+          $("#nodagency").val('');
+        });
+      });
+    </script>
     <tr> 
       <td colspan="3">
         has approved the project described above on 
@@ -299,9 +361,14 @@
     </tr>
     <TR> 
       <TD align="left" colspan="3"> 
-        <input type="submit" value="Submit to CEQANet >>">
+        <input id="next" type="submit" value="Submit to CEQANet >>">
       </TD>
     </TR>
+    <script>
+      $("#next").click(function() {
+        $("#nodagency").prop('disabled', false);        
+      });
+    </script>
   </TABLE>
   <input type="hidden" name="prj_pk" value="{{ prj_pk }}">
   <input type="hidden" name="doctype" value="{{ doctype }}">

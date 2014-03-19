@@ -11,13 +11,13 @@
         <TABLE width="100%">
           <tr>
             <td colspan="2">
-              <button onclick="window.location = '{% url 'basicquery' %}'">Basic Query</button>
-              <button onclick="window.location = '{% url 'advancedquery' %}'">Advanced Query</button>
+              <button onclick="window.location = '{% url 'basicsearch' %}'">Basic Search</button>
+              <button onclick="window.location = '{% url 'advancedsearch' %}'">Advanced Search</button>
             </td>
           </tr>
           <TR>
             <TD>
-              <B>Query Type:</B> Project Listing - {{ mode|title }}
+              <B>Search Type:</B> Project Listing - {{ mode|title }}
             </TD>
             <TD align="right">
               <B>Sorted By:</B>
@@ -264,7 +264,7 @@
   <TABLE>
     <TR>
       <TD ALIGN="middle">
-        Query Returned No Records. Please use the Back button on your browser and try again.
+        Search Returned No Records. Please use the Back button on your browser and try again.
       </TD>
     </TR>
   </TABLE>
