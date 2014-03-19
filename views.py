@@ -18,6 +18,7 @@ from ceqanet.forms import addleadagencyform,addreviewingagencyform
 from ceqanet.forms import reviewdetailnocform,reviewdetailnopform
 from ceqanet.forms import commentaddform
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords,docattachments,requestupgrade,doccomments
+from ceqanet.forms import geocode, locationEditForm
 #split geo imports for simplicity
 from ceqanet.models import Locations
 from django.contrib.auth.models import User,Group
@@ -4311,6 +4312,20 @@ def doc_location(request,doc_id):
 
 
 def map(request):
+    #form = basicqueryform()
+    form = geocode()
     t = loader.get_template("ceqanet/map.html")
-    c = RequestContext(request,{})
+    c = RequestContext(request,{'form':form})
     return HttpResponse(t.render(c))
+    
+class locationEdit(UpdateView):
+    model = Locations
+    form_class = locationEditForm
+    template_name="ceqanet/mapform.html"
+    slug_field = "document"
+    
+    def get_queryset(self):
+        slug = self.kwargs['slug']
+        queryset = Locations.objects.filter(document=slug)
+        return queryset
+

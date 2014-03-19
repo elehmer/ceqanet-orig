@@ -1,12 +1,23 @@
 from django import forms
 from django.forms import ModelForm
+from olwidget.forms import  MapModelForm
+from olwidget.fields import EditableLayerField
+from olwidget.widgets import EditableMap
 from datetime import datetime, date, timedelta
-from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments
 from django.contrib.auth.models import Group
+from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments,Locations
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
 from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES,RDOLAT_CHOICES,RDODEVTYPE_CHOICES,RDOISSUE_CHOICES,RDOTITLE_CHOICES,RDODESCRIPTION_CHOICES,UPGRADE_CHOICES,COMMENT_CHOICES
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
+class MapForm(forms.Form):
+    '''Reusable Map enhancement to forms, inherited by document forms needing location entry'''
+    geom = forms.CharField(widget=EditableMap(options={'layers': ['osm.mapnik'],
+                                                    'isCollection':True, 
+                                                    'geometry':['point','linestring','polygon'],
+                                                    'default_lat': 37.424431833728114,
+                                                    'default_lon': -121.90515908415186,'default_zoom':6},template=None))
+    
 class basicsearchform(forms.Form):
     prj_schno = forms.CharField(label="Clearinghouse Number:",required=True,max_length=12)
     colation = forms.ChoiceField(label="Search Database By:",required=True,choices=COLATION_CHOICES,initial='document',widget=forms.RadioSelect())
@@ -46,7 +57,7 @@ class submitform(forms.Form):
     doctype = forms.ChoiceField(required=True,choices=DOCUMENT_TYPES,initial='NOC')
     prjtoggle = forms.ChoiceField(required=True,choices=PROJECT_EXISTS,initial='no',widget=forms.RadioSelect(attrs={'id':'prjtoggle','class':'prjtoggle'}))
 
-class basedocumentform(forms.Form):
+class basedocumentform(MapForm):
     prj_title = forms.CharField(label="Project Title:",required=True,max_length=160,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
     prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
     doc_title = forms.CharField(label="Alternate Title:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
@@ -283,4 +294,23 @@ class chqueryform(forms.Form):
 
 class findprojectform(forms.Form):
     pass
+    
+class geocode(forms.Form):
+    address = forms.CharField(label="",max_length=254, widget=forms.TextInput(attrs={'onkeydown':"if (event.keyCode == 13) doBasicSearchClick()"}))
+    
+class locationEditForm(MapModelForm):
+    document = forms.CharField()
+    geom = EditableLayerField()
+
+    class Meta:
+        model = Locations
+        maps = (
+            (('geom',),
+                {'layers': ['osm.mapnik'],
+                'isCollection':True,
+                'geometry':['point','linestring','polygon'],
+                } ),
+        )
+ 
+    
 

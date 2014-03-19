@@ -9,6 +9,10 @@ class counties(models.Model):
     geow_shortname = models.CharField(max_length=32)
     geow_longname = models.CharField(max_length=64)
 
+    class Meta:
+        verbose_name = "County"
+        verbose_name_plural = "Counties"
+
 class doctypes(models.Model):
     keyw_pk = models.AutoField(primary_key=True)
     keyw_shortname = models.CharField(max_length=32)
@@ -176,7 +180,7 @@ class documents(models.Model):
         verbose_name_plural = "Documents"
 
     def __unicode__(self):
-        return self.doc_pk
+        return str(self.doc_pk)
 
 class geowordlists(models.Model):
     geol_pk = models.AutoField(primary_key=True)
@@ -195,6 +199,10 @@ class geowords(models.Model):
     geow_recordsource = models.CharField(max_length=10)
     inlookup = models.BooleanField(default=True)
     geow_parent_fk = models.ForeignKey("geowords",db_column="geow_parent_fk")
+
+    class Meta:
+        verbose_name = "Geoword"
+        verbose_name_plural = "Geowords"
 
     def __unicode__(self):
         return self.geow_shortname        
@@ -224,6 +232,10 @@ class keywords(models.Model):
     keyw_caption3 = models.CharField(max_length=10)
     keyw_originalcontrolid = models.CharField(max_length=10)
     keyw_recordsource = models.CharField(max_length=10)
+
+    class Meta:
+        verbose_name = "Keyword"
+        verbose_name_plural = "Keywords"
 
     def __unicode__(self):
         return self.keyw_longname        
@@ -265,6 +277,10 @@ class leadagencies(models.Model):
     lag_note = models.CharField(max_length=60)
     inlookup = models.BooleanField(default=True)
 
+    class Meta:
+        verbose_name = "Lead Agency"
+        verbose_name_plural = "Lead Agencies"
+
     def __unicode__(self):
         return self.lag_name
 
@@ -304,6 +320,10 @@ class projects(models.Model):
     prj_visible = models.BooleanField()
     prj_plannerreview = models.BooleanField()
 
+    class Meta:
+        verbose_name = "Project"
+        verbose_name_plural = "Projects"
+
     def natural_key(self):
         return (self.prj_title, self.prj_pk)
 
@@ -325,6 +345,10 @@ class reviewingagencies(models.Model):
     rag_acronym = models.CharField(max_length=10)
     rag_disable = models.BooleanField()
     inlookup = models.BooleanField(default=True)
+
+    class Meta:
+        verbose_name = "Reviewing Agency"
+        verbose_name_plural = "Reviewing Agencies"
 
     def __unicode__(self):
         return self.rag_title
@@ -349,9 +373,17 @@ class requestupgrade(models.Model):
     rqst_rag_fk = models.ForeignKey("reviewingagencies",blank=True,null=True,db_column="rqst_rag_fk")
     rqst_reason = models.TextField(null=True,blank=True)
     
+    class Meta:
+        verbose_name = "User Profile"
+        verbose_name_plural = "User Profiles"
+    
 class clearinghouse(models.Model):
     schnoprefix = models.CharField(max_length=6)
     currentid = models.IntegerField()
+
+    class Meta:
+        verbose_name = "Clearinghouse"
+        verbose_name_plural = "Clearing House Relate?"
 
 class Locations(models.Model):
     '''Spatial model to store locations associations with Documents'''
@@ -362,4 +394,7 @@ class Locations(models.Model):
     class Meta:
         verbose_name = "Location"
         verbose_name_plural = "Locations"
+    
+    def __unicode__(self):
+        return ','.join(["Location",str(self.document)])
 

@@ -14,6 +14,12 @@
 <script type="text/javascript" src="{% static "admin/js/SelectFilter2.js" %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/admin_styles.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+<script type="text/javascript" src="{% static 'olwidget/js/olwidget.js' %}"></script>
+<link rel="stylesheet" href="{% static 'olwidget/css/olwidget.css' %}">
 
 {% endblock extrajs %}
 
@@ -172,6 +178,11 @@
         {{ form.doc_location }} {{ form.doc_location.errors }}
       </TD>
     </TR>
+    <TR>
+       <TD colspan="3">
+        {{ form.geom}}
+       </TD>
+    <TR>
     <TR>
       <TH width="25%" align="left" valign="top">
         {{ form.doc_latitude.label }}

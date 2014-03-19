@@ -1,14 +1,13 @@
 /* Javascript for GeoWeb Map*/
 //Set domain to allow all ice subdomains to be used in json calls
 //document.domain = "ceqa.ice.ucdavis.edu";
-var map;
+var map, ceqadoc;
 var mercator = new OpenLayers.Projection("EPSG:900913");
 var geographic = new OpenLayers.Projection("EPSG:4326");
 
 var world = new OpenLayers.Bounds(-180, -89, 180, 89).transform(
     geographic, mercator
 );
-var california = new OpenLayers.Bounds(-132,32,-110,42).transform(geographic,mercator);
 var center = new OpenLayers.LonLat(-121.90515908415186, 37.424431833728114).transform(
     geographic, mercator
 );
@@ -18,7 +17,7 @@ map = new OpenLayers.Map('map',{
 	projection: new OpenLayers.Projection("EPSG:900913"),
       displayProjection: new OpenLayers.Projection("EPSG:4326"),
       units: "m",
-      numZoomLevels: 18,
+      numZoomLevels: 16,
       maxResolution: 156543.0339,
       maxExtent: new OpenLayers.Bounds(-20037508, -20037508,
 						     20037508, 20037508.34),
@@ -41,7 +40,7 @@ map = new OpenLayers.Map('map',{
         "http://c.tile.stamen.com/toner-lite/${z}/${x}/${y}.png",
         "http://d.tile.stamen.com/toner-lite/${z}/${x}/${y}.png"],
         {wrapDateLine: true, visibility:true,
-        buffer: 1,numZoomLevels: 18, minZoom:0,
+        buffer: 1,numZoomLevels: 16, minZoom:0,
         isBaseLayer:true,sphericalMecator:true}
         );
 
@@ -52,7 +51,7 @@ map = new OpenLayers.Map('map',{
         "http://c.tile.stamen.com/toner/${z}/${x}/${y}.png",
         "http://d.tile.stamen.com/toner/${z}/${x}/${y}.png"],
         {wrapDateLine: true, visibility:false,
-        buffer: 1,numZoomLevels: 18, minZoom:0,
+        buffer: 1,numZoomLevels: 16, minZoom:0,
         isBaseLayer:true,sphericalMecator:true}
         );
 
@@ -69,7 +68,7 @@ map = new OpenLayers.Map('map',{
         "CEQA Documents",
         ["http://ceqa.ice.ucdavis.edu/tiles/docpoints/${z}/${x}/${y}.png"],
         {wrapDateLine: true, enabled:false,
-        buffer: 1,numZoomLevels: 18, minZoom:0,
+        buffer: 1,numZoomLevels: 16, minZoom:0,
         isBaseLayer:false,sphericalMecator:true}
         );
 
@@ -119,6 +118,21 @@ map = new OpenLayers.Map('map',{
 
         map.addPopup(popup);
     };
+    
+    docurl="/api/doc/location/"+doc+"/";
+    //document.getElementById("attributes").innerHTML = msg3;
+    feature = '{"crs": null, "type": "FeatureCollection","features": [{"geometry":{"type": "Point","coordinates": [-121.847, 37.5763]},"type": "Feature","id": 2420, "properties": {} }  ]}';
+    
+    ceqadoc = new OpenLayers.Layer.Vector("Document", {
+		 projection: map.displayProjection,
+         //strategies: [new OpenLayers.Strategy.Fixed()],
+         //protocol: new OpenLayers.Protocol.HTTP({
+            //url: docurl,
+         format: new OpenLayers.Format.GeoJSON()
+         //})
+     });
+    
+    ceqadoc.addFeatures(feature);
     
     var getData = function(coords,msg,id) {
         var result = msg
@@ -174,21 +188,7 @@ map = new OpenLayers.Map('map',{
     });
 
 
-map.addLayers([tonerlite,toner,terrain,ceqapoints,utfgrid]);
+map.addLayers([tonerlite,toner,terrain,ceqadoc]);
 map.setCenter(center);
 map.zoomTo(6);
-//dynamically resize map to fit page - temp solution, requires jquery
-$("#map").height($(window).height()*0.70) 
-}
-
-
-function recenter(wgscenter){
-        var sphmr_center = wgscenter.transform(
-            new OpenLayers.Projection("EPSG:4326"),map.getProjectionObject());
-        var newZoom = map.getZoom();
-        if (map.getZoom() < 10) {
-            newZoom = 14;
-            };
-        map.setCenter(sphmr_center,newZoom);
-                
 }

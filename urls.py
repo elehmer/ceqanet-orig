@@ -10,7 +10,7 @@ from ceqanet.views import pending,pendingdetail_noc,pendingdetail_nod,pendingdet
 from ceqanet.views import review,reviewdetail_noc,reviewdetail_nop
 from ceqanet.views import comment,commentdetail,commentadd,showcomment,commentaccept
 #map related views
-from ceqanet.views import locations_geojson, map
+from ceqanet.views import locations_geojson, map, locationEdit
 #document api
 from ceqanet.views import doc_json,doc_location
 
@@ -75,6 +75,7 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^api/doc/short/(?P<doc_id>\d+)/$','doc_json',name="doc_json"),
     url(r'^api/doc/location/(?P<doc_id>\d+)/$','doc_location',name="doc_location"), 
     url(r'^map/$','map',name="map"),
+    url(r'^document/location/edit/(?P<slug>\d+)/$',locationEdit.as_view(),name='map_edit'),
 ) 
 #+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

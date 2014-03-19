@@ -1,0 +1,25 @@
+{% load staticfiles %}
+
+{% block extrajs %}
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/minimap.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/minimap.css' %}">
+<script type="text/javascript">
+//take the doc id get the geojson and add it to the map centering on the data
+var doc={{doc}};
+</script>
+{% endblock extrajs %}
+
+{% block content %}
+    <div id="map">
+    </div>
+    <div id="sources">
+    Background Map Sources: 
+    <a href="http://maps.stamen.com/">Stamen Designs</a> and 
+    <a href="http://www.openstreetmap.org">©OpenStreetMap contributors.</a>
+    </div>
+    <div id="attributes"></div>
+
+{% endblock content %}
+
