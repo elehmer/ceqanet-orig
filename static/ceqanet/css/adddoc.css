@@ -1,0 +1,24 @@
+.adddocform {
+    margin-top: 0px;
+}
+
+.adddocform label {
+    display: table-cell;
+    width: 15em;
+    margin-left: 0px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    vertical-align: top;
+}
+
+.adddocform li {
+    display: inline;
+}
+
+#id_dkey_comment_actions {
+	margin-left: 40px;
+}
+
+#id_dkey_comment_issues {
+	margin-left: 40px;
+}

@@ -1,0 +1,78 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block content %}
+
+<FORM name="commentadd" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
+  <h1>Add New Official CEQA Comment to Document:</h1>
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR>
+      <TD colspan="2">
+        <B>Select Format of Comment:</B>
+      </TD>
+    </TR>
+    <TR>
+      {% for r in form.commenttype %}
+      <TD>
+        {{ r }}
+      </TD>
+      {% endfor %}
+    </TR>
+    <TR>
+      <TD colspan="2">
+        &nbsp;
+      </TD>
+    </TR>
+  </TABLE>
+  <DIV class="textentry">
+    <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+      <tr> 
+        <TD colspan="2">
+          <B>{{ form.dcom_textcomment.label }}</B> {{ form.dcom_textcomment }}
+        </td>
+      </tr>
+    </TABLE>
+  </DIV>
+  <DIV class="fileentry">
+    <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+      <tr> 
+        <TD colspan="2">
+          <B>{{ form.dcom_filecomment.label }}</B> {{ form.dcom_filecomment }}
+        </td>
+      </tr>
+    </TABLE>
+  </DIV>
+  <script>
+    $(document).ready(function() {
+        $(".fileentry").hide();
+
+        $(".commenttype").change(function() {
+          if ($(this).val() == 'text') {
+            $(".textentry").show();
+            $(".fileentry").hide();
+          }
+          else {
+            $(".textentry").hide();
+            $(".fileentry").show();
+          }
+        });
+    });
+  </script>
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <tr>
+      <TD colspan="2">
+        &nbsp;
+      </td>
+    </tr>
+    <TR> 
+      <TD align="left" colspan="2"> 
+        <input type="submit" value="Add Comment">
+      </TD>
+    </TR>
+  </TABLE>
+  <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
+</FORM>
+
+{% endblock content %}
