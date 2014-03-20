@@ -2,18 +2,6 @@
 
 {% block title %}OPR Data Clearinghouse Search{% endblock title %}
 
-{% block formabove %}
-<div id="search">
-    <form>
-        <ul>
-        {{ form.as_ul }}
-        <li><input type="submit" value="Search" class="button" title='Click to search'></li>
-        <li><button onclick="window.location = '{% url 'advancedquery' %}'">Advanced Search</button></li>
-        </ul>
-    </form>
-</div>
-{% endblock formabove %}
-
 {% block content %}
 
 <table>
