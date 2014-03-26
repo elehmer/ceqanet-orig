@@ -1,0 +1,543 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block extrajs %}
+
+<script type="text/javascript" src="/admin/jsi18n"></script>
+<script type="text/javascript" src="{% static "admin/js/core.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/admin/RelatedObjectLookups.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/jquery.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/jquery.init.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/actions.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/SelectBox.js" %}"></script>
+<script type="text/javascript" src="{% static "admin/js/SelectFilter2.js" %}"></script>
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/admin_styles.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+<script type="text/javascript" src="{% static 'olwidget/js/olwidget.js' %}"></script>
+<link rel="stylesheet" href="{% static 'olwidget/css/olwidget.css' %}">
+
+{% endblock extrajs %}
+
+{% block content %}
+
+<FORM name="editdoc" class="adddocform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TH align="left" colspan="3">
+        <h3>Project Information:</h3>
+      </TH>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.prj_title.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.prj_title.errors }}
+        {{ form.prj_title }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.prj_description.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.prj_description.errors }}
+        {{ form.prj_description }}
+      </TD>
+    </TR>
+    <TR> 
+      <TH align="left" colspan="3">
+        <h3>Document Information:</h3>
+      </TH>
+    </TR>
+    <TR> 
+      <TH align="left" colspan="3">
+        Lead Agency Contact Information:
+      </TH>
+    </TR>
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        Agency Name:
+      </TH>
+      <td colspan="2"> 
+        {{ doc.doc_conagency }}
+      </td>
+    </tr>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conname.label }}
+      </TH>
+      <TD colspan="2"> 
+        {{ form.doc_conname }}
+        {{ form.doc_conname.errors }}
+      </TD>
+    </TR>
+    <TR> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conemail.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_conemail }}
+        {{ form.doc_conemail.errors }}
+      </TD>
+    </TR>
+    <TR>   
+      <TD width="25%" valign="top">
+        <B>Phone:</B>
+      </TD>
+      <TD colspan="2">
+        {{ form.doc_conphone }}
+        {{ form.doc_conphone.errors }}
+      </TD>
+    </TR>
+    <tr> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conaddress1.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_conaddress1 }}
+        {{ form.doc_conaddress1.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conaddress2.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_conaddress2 }}
+        {{ form.doc_conaddress2.errors }}
+      </td>
+    </tr>
+    <TR> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_concity.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_concity }}
+        {{ form.doc_concity.errors }}
+      </td>
+    </TR>
+    <TR> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_constate.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_constate }}
+        {{ form.doc_constate.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conzip.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_conzip }}
+        {{ form.doc_conzip.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3" height="20">
+        <h5>Location Information:</h5>
+      </td>
+    </tr>
+    <TR>
+      <TH width="25%" align="left" valign="top"> 
+        {{ form.doc_location.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_location.errors }}
+        {{ form.doc_location }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top"> 
+        {{ form.geom.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.geom.errors }}
+        {{ form.geom }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_latitude.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_latitude }}
+        {{ form.doc_latitude.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_longitude.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_longitude }}
+        {{ form.doc_longitude.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TD width="25%" valign="top">
+        <b>County:</b>
+      </TD>
+      <td colspan="2"> 
+        {{ form.doc_county }}
+        {{ form.doc_county.errors }}
+      </td>
+    </TR>
+    <TR>
+      <TD width="25%" valign="top">
+        <b>City:</b>
+      </TD>
+      <TD colspan="2"> 
+        {{ form.doc_city }}
+        {{ form.doc_city.errors }}
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="3"> 
+        <B>{{ form.doc_parcelno.label }}</B>{{ form.doc_parcelno.errors }}{{ form.doc_parcelno }}
+      </td>
+    </tr>
+    <tr>
+      <td colspan="3"> 
+        <B>{{ form.doc_xstreets.label }}</B>{{ form.doc_xstreets.errors }}{{ form.doc_xstreets }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_township.label }}</B>{{ form.doc_township }}{{ form.doc_township.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_range.label }}</B>{{ form.doc_range }}{{ form.doc_range.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_section.label }}</B>{{ form.doc_section }}{{ form.doc_section.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_base.label }}</B>{{ form.doc_base }}{{ form.doc_base.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">&nbsp;</td>
+    </tr>
+    <tr> 
+      <td colspan="3" align="left"><b>Within 2 Miles:</b></td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_highways.label }}</B>{{ form.doc_highways.errors }}{{ form.doc_highways }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_railways.label }}</B>{{ form.doc_railways.errors }}{{ form.doc_railways }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_airports.label }}</B>{{ form.doc_airports.errors }}{{ form.doc_airports }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_schools.label }}</B>{{ form.doc_schools.errors }}{{ form.doc_schools }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3"> 
+        <B>{{ form.doc_waterways.label }}</B>{{ form.doc_waterways.errors }}{{ form.doc_waterways }}
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3" align="left">
+        <B>Present Land Use/Zoning/General Plan Designation:</B>
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="3">
+        {{ form.doc_landuse.errors }}
+        {{ form.doc_landuse }}
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Local Action Type:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3"> 
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <TR>
+            <TD class="modlist">
+              {{ form.actions }}
+              {{ form.dkey_comment_actions }}
+              {{ form.dkey_comment_actions.errors }}
+              <script>
+                $(document).ready(function() {
+                  $("label[for='id_actions_9']").parent().parent().append($("label[for='id_actions_9']"));
+                });
+              </script>
+            </TD>
+          </TR>
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Development Type:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3"> 
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <tr> 
+            <td width="5%"> 
+              {{ form.dev6001 }}
+            </td>
+            <td width="15%" class="subtitle">{{ form.dev6001.label }}</td>
+            <td width="25%" class="content"><i>{{ form.dev6001_val1.label }}</i> 
+              {{ form.dev6001_val1 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6001_val2.label }}</i> 
+              {{ form.dev6001_val2 }}
+            </td>
+            <td width="11%">&nbsp;</td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.dev6002 }}
+            </td>
+            <td width="15%" class="subtitle">{{ form.dev6002.label }}</td>
+            <td width="25%" class="content"><i>{{ form.dev6002_val1.label }}</i> 
+              {{ form.dev6002_val1 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6002_val2.label }}</i> 
+              {{ form.dev6002_val2 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6002_val3.label }}</i> 
+              {{ form.dev6002_val3 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.dev6003 }}
+            </td>
+            <td width="15%" class="subtitle">{{ form.dev6003.label }}</td>
+            <td width="25%" class="content"><i>{{ form.dev6003_val1.label }}</i> 
+              {{ form.dev6003_val1 }}
+            <td width="25%" class="content"><i>{{ form.dev6003_val2.label }}</i> 
+              {{ form.dev6003_val2 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6003_val3.label }}</i> 
+              {{ form.dev6003_val3 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.dev6004 }}
+            </td>
+            <td width="15%" class="subtitle">{{ form.dev6004.label }}</td>
+            <td width="25%" class="content"><i>{{ form.dev6004_val1.label }}</i> 
+              {{ form.dev6004_val1 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6004_val2.label }}</i> 
+              {{ form.dev6004_val2 }}
+            </td>
+            <td width="25%" class="content"><i>{{ form.dev6004_val3.label }}</i> 
+              {{ form.dev6004_val3 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.dev7001 }}
+            </td>
+            <td width="15%" class="subtitle">{{ form.dev7001.label }}</td>
+            <td width="25%" class="content"><i>{{ form.dev7001_val1.label }}</i> 
+              {{ form.dev7001_val1 }}
+            </td>
+            <td width="25%" class="content">&nbsp; </td>
+            <td width="25%" class="content">&nbsp; </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.dev8001 }}
+            </td>
+            <td width="15%" class="subtitle">{{ form.dev8001.label }}</td>
+            <td width="25%" class="content"><i>{{ form.dev8001_val1.label }}</i> 
+              {{ form.dev8001_val1 }}
+            </td>
+            <td width="25%" class="content">&nbsp; </td>
+            <td width="25%" class="content">&nbsp; </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.devtrans }}
+            </td>
+            <td>
+              {{ form.devtrans_id }}
+            </td>
+            <td colspan="3">
+              <i>{{ form.devtrans_comment.label }}</i> {{ form.devtrans_comment }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.devpower }}
+            </td>
+            <td width="15%" class="subtitle">
+              {{ form.devpower_id }}
+            </td>
+            <td colspan="3">
+              <i>{{ form.devtrans_comment.label }}</i> {{ form.devtrans_comment }}
+              <i>{{ form.devpower_val1.label }}</i> {{ form.devpower_val1 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.devwaste }}
+            </td>
+            <td>
+              {{ form.devwaste_id }}
+            </td>
+            <td colspan="3">
+              <i>{{ form.devwaste_comment.label }}</i> {{ form.devwaste_comment }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.dev9001 }}
+            </td>
+            <td width="15%" class="subtitle">{{ form.dev9001.label }}</td>
+            <td width="25%" class="content"><i>{{ form.dev9001_val1.label }}</i> 
+              {{ form.dev9001_val1 }}
+            </td>
+            <td colspan="2"><i>{{ form.dev9001_val2.label }}</i> 
+              {{ form.dev9001_val2 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.dev10001 }}
+            </td>
+            <td width="15%" class="subtitle">{{ form.dev10001.label }}</td>
+            <td colspan="3"><i>{{ form.dev10001_val1.label }}</i> 
+              {{ form.dev10001_val1 }}
+            </td>
+          </tr>
+          <tr> 
+            <td width="5%"> 
+              {{ form.dev11001 }}
+            </td>
+            <td width="15%" class="subtitle">{{ form.dkey_comment_dev.label }}:</td>
+            <td colspan="3"> 
+              {{ form.dkey_comment_dev }}
+              {{ form.dkey_comment_dev.errors }}
+            </td>
+          </tr>
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Project Issues Discussed in Document:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3"> 
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <TR>
+            <TD class="modlist">
+              {{ form.issues }}
+              {{ form.dkey_comment_issues }}
+              {{ form.dkey_comment_issues.errors }}
+              <script>
+                $(document).ready(function() {
+                  $("label[for='id_issues_19']").parent().parent().append($("label[for='id_issues_19']"));
+                });
+              </script>
+            </TD>
+          </TR>
+        </table>
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Reviewing Agencies Checklist:</h5>
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        <B>Reviewing Agencies:</B>
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        {{ form.ragencies.errors }}
+        {{ form.ragencies }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        <h5>Attachments:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3">
+        <TABLE BORDER="1" WIDTH="100%">
+          <TR>
+            <TH BGCOLOR="#000000">
+              <FONT COLOR="#FFFFFF">
+                List of Files Attached to Document
+              </FONT>
+            </TH>
+          </TR>
+          {% if attachments %}
+            {% for a in attachments %}
+              <TR>
+                <TD>
+                  <a href="{{ a.datt_file.url }}">{{ a.datt_file.name }}</a>
+                </TD>
+              </TR>
+            {% endfor %}
+          {% else %}
+            <TR>
+              <TD align="center">
+                NO FILES ATTACHED
+              </TD>
+            </TR>      
+          {% endif %}
+        </TABLE>
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        &nbsp;
+      </TD>
+    </TR>
+    <TR> 
+      <TD align="left" colspan="3"> 
+        <input type="submit" value="Update">
+      </TD>
+    </TR>
+  </TABLE>
+  <input type="hidden" name="doc_pk" value="{{ doc.doc_pk }}">
+</FORM>
+
+{% endblock content %}
