@@ -65,6 +65,7 @@ class doccomments(models.Model):
     dcom_commentdate = models.DateField(null=True,blank=True)
     dcom_textcomment = models.TextField(null=True,blank=True)
     dcom_filecomment = models.FileField(null=True,blank=True,upload_to='documents/%Y/%m/%d')
+    dcom_reviewer_userid = models.ForeignKey(User,db_column="dcom_reviewer_userid")
 
 class docattachments(models.Model):
     datt_pk = models.AutoField(primary_key=True)
@@ -173,6 +174,10 @@ class documents(models.Model):
     doc_added = models.DateField(null=True,blank=True)
     doc_draft = models.BooleanField()
     doc_clerknotes = models.TextField(null=True,blank=True)
+    doc_added_userid = models.ForeignKey(User,db_column="doc_added_userid",related_name="+")
+    doc_assigned_userid = models.ForeignKey(User,db_column="doc_assigned_userid",related_name="+")
+    doc_approve_noe = models.CharField(null=True,blank=True,max_length=64)
+    doc_carryout_noe = models.CharField(null=True,blank=True,max_length=64)
 
     class Meta:
         #ordering = ['name']
@@ -212,7 +217,7 @@ class holidays(models.Model):
     hday_name = models.CharField(max_length=40)
     hday_date = models.DateField()
     hday_dow = models.CharField(max_length=10)
-    hday_note = models.TextField()
+    hday_note = models.TextField(blank=True,null=True)
 
 class keywordlists(models.Model):
     keyl_pk = models.AutoField(primary_key=True)
@@ -244,15 +249,15 @@ class latlongs(models.Model):
     doc_pk = models.AutoField(primary_key=True)
     doc_prj_fk = models.ForeignKey("projects",db_column="doc_prj_fk")
     doc_schno = models.CharField(null=True,blank=True,max_length=12)
-    doc_doctype = models.CharField(max_length=3)
+    doc_doctype = models.CharField(max_length=32)
     doc_lat_deg = models.CharField(null=True,blank=True,max_length=12)
     doc_lat_min = models.CharField(null=True,blank=True,max_length=10)
     doc_lat_sec = models.CharField(null=True,blank=True,max_length=10)
     doc_long_deg = models.CharField(null=True,blank=True,max_length=12)
     doc_long_min = models.CharField(null=True,blank=True,max_length=10)
     doc_long_sec = models.CharField(null=True,blank=True,max_length=10)
-    doc_latitude = models.CharField(max_length=30)
-    doc_longitude = models.CharField(max_length=30)
+    doc_latitude = models.CharField(null=True,blank=True,max_length=30)
+    doc_longitude = models.CharField(null=True,blank=True,max_length=30)
     doc_map_link = models.CharField(null=True,blank=True,max_length=240)
 
 class leadagencies(models.Model):
@@ -283,11 +288,6 @@ class leadagencies(models.Model):
 
     def __unicode__(self):
         return self.lag_name
-
-class prinfo(models.Model):
-    info_prjdate = models.DateField()
-    info_docdate = models.DateField()
-
 
 class projectsManager(models.Manager):
     def get_by_natural_key(self, prj_title):

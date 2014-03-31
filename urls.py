@@ -5,7 +5,7 @@ from ceqanet.views import index,basicsearch,advancedsearch,prjlist,doclist,proje
 from ceqanet.views import docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
 from ceqanet.views import docadd_noc,docadd_nod,docadd_noe,docadd_nop
 from ceqanet.views import docedit_noc,docedit_noe,docedit_nod,docedit_nop
-from ceqanet.views import draftedit_noc,draftedit_nod,draftedit_noe,draftedit_nop
+from ceqanet.views import draftedit_noc,draftedit_nop
 from ceqanet.views import pending,pendingdetail_noc,pendingdetail_nod,pendingdetail_noe,pendingdetail_nop,latest,addleadagency,addreviewingagency
 from ceqanet.views import review,reviewdetail_noc,reviewdetail_nop
 from ceqanet.views import comment,commentdetail,commentadd,showcomment,commentaccept
@@ -30,8 +30,6 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^project/find$',findproject.as_view(),name='findproject'),
     url(r'^attachments/$',attachments.as_view(),name='attachments'),
     url(r'^draft/noc/edit/$',draftedit_noc.as_view(),name='draftedit_noc'),
-    url(r'^draft/nod/edit/$',draftedit_nod.as_view(),name='draftedit_nod'),
-    url(r'^draft/noe/edit/$',draftedit_noe.as_view(),name='draftedit_noe'),
     url(r'^draft/nop/edit/$',draftedit_nop.as_view(),name='draftedit_nop'),
     url(r'^document/noc/description/(?P<pk>\d+)/$',docdesp_noc.as_view(),name='docdesp_noc'),
     url(r'^document/nod/description/(?P<pk>\d+)/$',docdesp_nod.as_view(),name='docdesp_nod'),

@@ -62,11 +62,7 @@
           {{ draft.doc_added }}
     	  </TD>
         <TD align="center">
-          {% if draft.doc_doctype = 'NOE' or draft.doc_docname.strip = 'Notice of Exemption' %}
-            <a href="{% url 'draftedit_noe' %}?doc_pk={{ draft.doc_pk }}">Edit Draft</a>
-          {% elif draft.doc_doctype = 'NOD' or draft.doc_docname.strip = 'Notice of Determination' %}
-            <a href="{% url 'draftedit_nod' %}?doc_pk={{ draft.doc_pk }}">Edit Draft</a>
-          {% elif draft.doc_doctype = 'NOP' or draft.doc_docname.strip = 'Notice of Preperation' %}
+          {% if draft.doc_doct_fk.keyw_pk = 102 %}
             <a href="{% url 'draftedit_nop' %}?doc_pk={{ draft.doc_pk }}">Edit Draft</a>
           {% else %}
             <a href="{% url 'draftedit_noc' %}?doc_pk={{ draft.doc_pk }}">Edit Draft</a>

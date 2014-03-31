@@ -28,6 +28,13 @@
 <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/admin_styles.css" %}">
 <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
 
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+<script type="text/javascript" src="{% static 'olwidget/js/olwidget.js' %}"></script>
+<link rel="stylesheet" href="{% static 'olwidget/css/olwidget.css' %}">
+
 {% endblock extrajs %}
 
 {% block content %}
@@ -45,7 +52,8 @@
         {{ form.prj_title.label }}
       </TH>
       <TD colspan="2">
-        {{ form.prj_title }} {{ form.prj_title.errors }}
+        {{ form.prj_title.errors }}
+        {{ form.prj_title }}
       </TD>
     </TR>
     <TR>
@@ -53,7 +61,8 @@
         {{ form.prj_description.label }}
       </TH>
       <TD colspan="2">
-        {{ form.prj_description }} {{ form.prj_description.errors }}
+        {{ form.prj_description.errors }}
+        {{ form.prj_description }}
       </TD>
     </TR>
     <TR> 
@@ -66,7 +75,8 @@
         {{ form.doc_title.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_title }} {{ form.doc_title.errors }}
+        {{ form.doc_title.errors }}
+        {{ form.doc_title }}
       </TD>
     </TR>
     <TR>
@@ -74,7 +84,8 @@
         {{ form.doc_description.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_description }} {{ form.doc_description.errors }}
+        {{ form.doc_description.errors }}
+        {{ form.doc_description }}
       </TD>
     </TR>
     <TR> 
@@ -95,7 +106,8 @@
         {{ form.doc_conname.label }}
       </TH>
       <TD colspan="2"> 
-        {{ form.doc_conname }} {{ form.doc_conname.errors }}
+        {{ form.doc_conname }}
+        {{ form.doc_conname.errors }}
       </TD>
     </TR>
     <TR> 
@@ -103,7 +115,8 @@
         {{ form.doc_conemail.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_conemail }}  {{ form.doc_conemail.errors }}
+        {{ form.doc_conemail }}
+        {{ form.doc_conemail.errors }}
       </TD>
     </TR>
     <TR>   
@@ -111,7 +124,8 @@
         <B>Phone:</B>
       </TD>
       <TD colspan="2">
-        {{ form.doc_conphone }} {{ form.doc_conphone.errors }}
+        {{ form.doc_conphone }}
+        {{ form.doc_conphone.errors }}
       </TD>
     </TR>
     <tr> 
@@ -119,7 +133,8 @@
         {{ form.doc_conaddress1.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conaddress1 }} {{ form.doc_conaddress1.errors }}
+        {{ form.doc_conaddress1 }}
+        {{ form.doc_conaddress1.errors }}
       </td>
     </tr>
     <tr> 
@@ -127,7 +142,8 @@
         {{ form.doc_conaddress2.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conaddress2 }} {{ form.doc_conaddress2.errors }}
+        {{ form.doc_conaddress2 }}
+        {{ form.doc_conaddress2.errors }}
       </td>
     </tr>
     <TR> 
@@ -135,7 +151,8 @@
         {{ form.doc_concity.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_concity }} {{ form.doc_concity.errors }}
+        {{ form.doc_concity }}
+        {{ form.doc_concity.errors }}
       </td>
     </TR>
     <TR> 
@@ -143,7 +160,8 @@
         {{ form.doc_constate.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_constate }} {{ form.doc_constate.errors }}
+        {{ form.doc_constate }}
+        {{ form.doc_constate.errors }}
       </td>
     </tr>
     <tr> 
@@ -151,7 +169,8 @@
         {{ form.doc_conzip.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conzip }} {{ form.doc_conzip.errors }}
+        {{ form.doc_conzip }}
+        {{ form.doc_conzip.errors }}
       </td>
     </tr>
     <tr> 
@@ -164,7 +183,17 @@
         {{ form.doc_location.label }}
       </TH>
       <TD colspan="2"> 
-        {{ form.doc_location }} {{ form.doc_location.errors }}
+        {{ form.doc_location.errors }}
+        {{ form.doc_location }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top"> 
+        {{ form.geom.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.geom.errors }}
+        {{ form.geom }}
       </TD>
     </TR>
     <TR>
@@ -172,7 +201,8 @@
         {{ form.doc_latitude.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_latitude }} {{ form.doc_latitude.errors }}
+        {{ form.doc_latitude }}
+        {{ form.doc_latitude.errors }}
       </TD>
     </TR>
     <TR>
@@ -180,7 +210,8 @@
         {{ form.doc_longitude.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_longitude }} {{ form.doc_longitude.errors }}
+        {{ form.doc_longitude }}
+        {{ form.doc_longitude.errors }}
       </TD>
     </TR>
     <TR>
@@ -188,7 +219,8 @@
         <b>County:</b>
       </TD>
       <td colspan="2"> 
-        {{ form.doc_county }} {{ form.doc_county.errors }}
+        {{ form.doc_county }}
+        {{ form.doc_county.errors }}
       </td>
     </TR>
     <TR>
@@ -196,7 +228,8 @@
         <b>City:</b>
       </TD>
       <TD colspan="2"> 
-        {{ form.doc_city }} {{ form.doc_city.errors }}
+        {{ form.doc_city }}
+        {{ form.doc_city.errors }}
       </TD>
     </TR>
     <tr> 
@@ -204,32 +237,32 @@
     </tr>
     <tr>
       <td colspan="3"> 
-        <B>{{ form.doc_parcelno.label }}</B> {{ form.doc_parcelno }} {{ form.doc_parcelno.errors }}
+        <B>{{ form.doc_parcelno.label }}</B>{{ form.doc_parcelno.errors }}{{ form.doc_parcelno }}
       </td>
     </tr>
     <tr>
       <td colspan="3"> 
-        <B>{{ form.doc_xstreets.label }}</B> {{ form.doc_xstreets }} {{ form.doc_xstreets.errors }}
+        <B>{{ form.doc_xstreets.label }}</B>{{ form.doc_xstreets.errors }}{{ form.doc_xstreets }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_township.label }}</B> {{ form.doc_township }} {{ form.doc_township.errors }}
+        <B>{{ form.doc_township.label }}</B>{{ form.doc_township }}{{ form.doc_township.errors }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_range.label }}</B> {{ form.doc_range }} {{ form.doc_range.errors }}
+        <B>{{ form.doc_range.label }}</B>{{ form.doc_range }}{{ form.doc_range.errors }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_section.label }}</B> {{ form.doc_section }} {{ form.doc_section.errors }}
+        <B>{{ form.doc_section.label }}</B>{{ form.doc_section }}{{ form.doc_section.errors }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_base.label }}</B> {{ form.doc_base }} {{ form.doc_base.errors }}
+        <B>{{ form.doc_base.label }}</B>{{ form.doc_base }}{{ form.doc_base.errors }}
       </td>
     </tr>
     <tr> 
@@ -240,27 +273,27 @@
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_highways.label }}</B> {{ form.doc_highways }} {{ form.doc_highways.errors }}
+        <B>{{ form.doc_highways.label }}</B>{{ form.doc_highways.errors }}{{ form.doc_highways }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_railways.label }}</B> {{ form.doc_railways }}{{ form.doc_railways.errors }}
+        <B>{{ form.doc_railways.label }}</B>{{ form.doc_railways.errors }}{{ form.doc_railways }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_airports.label }}</B> {{ form.doc_airports }} {{ form.doc_airports.errors }}
+        <B>{{ form.doc_airports.label }}</B>{{ form.doc_airports.errors }}{{ form.doc_airports }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_schools.label }}</B> {{ form.doc_schools }} {{ form.doc_schools.errors }}
+        <B>{{ form.doc_schools.label }}</B>{{ form.doc_schools.errors }}{{ form.doc_schools }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_waterways.label }}</B> {{ form.doc_waterways }} {{ form.doc_waterways.errors }}
+        <B>{{ form.doc_waterways.label }}</B>{{ form.doc_waterways.errors }}{{ form.doc_waterways }}
       </td>
     </tr>
     <TR> 
@@ -269,8 +302,9 @@
       </TD>
     </TR>
     <TR> 
-      <TD colspan="3"> 
-        {{ form.doc_landuse }} {{ form.doc_landuse.errors }}
+      <TD colspan="3">
+        {{ form.doc_landuse.errors }}
+        {{ form.doc_landuse }}
       </TD>
     </TR>
     <tr> 
@@ -340,9 +374,10 @@
       <TD colspan="3"> 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
           <TR>
-            <TD>
+            <TD class="modlist">
               {{ form.actions }}
-              {{ form.dkey_comment_actions }} {{ form.dkey_comment_actions.errors }}
+              {{ form.dkey_comment_actions }}
+              {{ form.dkey_comment_actions.errors }}
               <script>
                 $(document).ready(function() {
                   $("label[for='id_actions_9']").parent().parent().append($("label[for='id_actions_9']"));
@@ -502,6 +537,7 @@
             <td width="15%" class="subtitle">{{ form.dkey_comment_dev.label }}:</td>
             <td colspan="3"> 
               {{ form.dkey_comment_dev }}
+              {{ form.dkey_comment_dev.errors }}
             </td>
           </tr>
         </table>
@@ -516,9 +552,10 @@
       <TD colspan="3"> 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
           <TR>
-            <TD>
+            <TD class="modlist">
               {{ form.issues }}
-              {{ form.dkey_comment_issues }} {{ form.dkey_comment_issues.errors }}
+              {{ form.dkey_comment_issues }}
+              {{ form.dkey_comment_issues.errors }}
               <script>
                 $(document).ready(function() {
                   $("label[for='id_issues_19']").parent().parent().append($("label[for='id_issues_19']"));
@@ -541,6 +578,7 @@
     </tr>
     <tr> 
       <td colspan="3">
+        {{ form.ragencies.errors }}
         {{ form.ragencies }}
       </td>
     </tr>
@@ -577,6 +615,18 @@
         </TABLE>
       </TD>
     </TR>
+    <TR>
+      <TD>
+        &nbsp;
+      </TD>
+    </TR>
+    <TR>
+      <TD colspan="3">
+        <B>{{ form.doc_clerknotes.label }}</B>
+        {{ form.doc_clerknotes.errors }}
+        {{ form.doc_clerknotes }}
+      </TD>
+    </TR>
     <tr> 
       <td colspan="3"> 
         <hr width="100%">
@@ -594,7 +644,9 @@
     </TR>
     <TR> 
       <TD align="left" colspan="3"> 
-        <B>{{ form.rejectreason.label }}</B> {{ form.rejectreason }}
+        <B>{{ form.rejectreason.label }}</B>
+        {{ form.rejectreason.errors }}
+        {{ form.rejectreason }}
       </TD>
     </TR>
   </TABLE>
