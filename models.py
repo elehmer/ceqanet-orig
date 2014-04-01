@@ -55,13 +55,12 @@ class docreviews(models.Model):
     dscode = models.CharField(null=True,blank=True,max_length=5)
     dsloc = models.CharField(null=True,blank=True,max_length=30)
     drag_lateletter = models.DateField(null=True,blank=True)
-    drag_iscomment = models.NullBooleanField(null=True,blank=True)
-    drag_ragcomment = models.TextField(null=True,blank=True)
-    drag_file = models.FileField(null=True,blank=True,upload_to='documents/%Y/%m/%d')
+    drag_numcomments = models.IntegerField(null=True,blank=True)
 
 class doccomments(models.Model):
     dcom_pk = models.AutoField(primary_key=True)
     dcom_drag_fk = models.ForeignKey("docreviews",db_column="dcom_drag_fk")
+    dcom_doc_fk = models.ForeignKey("documents",db_column="dcom_doc_fk")
     dcom_commentdate = models.DateField(null=True,blank=True)
     dcom_textcomment = models.TextField(null=True,blank=True)
     dcom_filecomment = models.FileField(null=True,blank=True,upload_to='documents/%Y/%m/%d')
@@ -176,6 +175,7 @@ class documents(models.Model):
     doc_clerknotes = models.TextField(null=True,blank=True)
     doc_added_userid = models.ForeignKey(User,db_column="doc_added_userid",related_name="+")
     doc_assigned_userid = models.ForeignKey(User,db_column="doc_assigned_userid",related_name="+")
+    doc_lastlooked_userid = models.ForeignKey(User,db_column="doc_lastlooked_userid",related_name="+")
     doc_approve_noe = models.CharField(null=True,blank=True,max_length=64)
     doc_carryout_noe = models.CharField(null=True,blank=True,max_length=64)
 
@@ -380,6 +380,8 @@ class requestupgrade(models.Model):
 class clearinghouse(models.Model):
     schnoprefix = models.CharField(max_length=6)
     currentid = models.IntegerField()
+    biayear = models.CharField(max_length=4)
+    biaid = models.IntegerField()
 
     class Meta:
         verbose_name = "Clearinghouse"

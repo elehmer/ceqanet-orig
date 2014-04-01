@@ -494,7 +494,7 @@
               {{ form.devpower_id }}
             </td>
             <td colspan="3">
-              <i>{{ form.devtrans_comment.label }}</i> {{ form.devtrans_comment }}
+              <i>{{ form.devpower_comment.label }}</i> {{ form.devpower_comment }}
               <i>{{ form.devpower_val1.label }}</i> {{ form.devpower_val1 }}
             </td>
           </tr>
@@ -582,6 +582,24 @@
         {{ form.ragencies }}
       </td>
     </tr>
+    <TR>
+      <TD colspan="3">
+        &nbsp;
+      </TD>
+    </TR>
+    <tr> 
+      <td colspan="3"> 
+        <b>Date Received:</b> {{ docinfo.doc_received }}&nbsp; 
+        <b>Start of Review:</b>
+        {% if docinfo.doc_dept != None %} 
+          {{ docinfo.doc_dept }}&nbsp; 
+        {% endif %}&nbsp;&nbsp;&nbsp; 
+        <b>End of Review:</b> 
+        {% if docinfo.doc_clear != None %} 
+          {{ docinfo.doc_clear }} 
+        {% endif %}
+      </td>
+    </tr>
     <tr> 
       <td colspan="3">
         <h5>Attachments:</h5>
@@ -629,6 +647,19 @@
     </TR>
     <tr> 
       <td colspan="3"> 
+        <hr width="100%">
+      </td>
+    </tr>
+    <TR>
+      <TD colspan="3">
+        <B>Clearinghouse Variant Number Assignment:</B><BR>
+        {{ form.bia }}
+        {{ form.bia.label }}
+        {{ form.bia.errors }}
+      </TD>
+    </TR>
+    <tr>
+      <td colspan="3">
         <hr width="100%">
       </td>
     </tr>

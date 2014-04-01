@@ -6,15 +6,6 @@
 
 {% block extrajs %}
 
-  <script>
-    $(function() {
-        $( "#id_doc_dept" ).datepicker({dateFormat: "yy-mm-dd"});
-    });
-    $(function() {
-        $( "#id_doc_clear" ).datepicker({dateFormat: "yy-mm-dd"});
-    });
-  </script>
-
   <script type="text/javascript">
     function assigndoc() {
       document.pendingdetailform.mode.value = 'assign';
@@ -444,7 +435,7 @@
               {{ form.devpower_id }}
             </td>
             <td colspan="3">
-              <i>{{ form.devtrans_comment.label }}</i> {{ form.devtrans_comment }}
+              <i>{{ form.devpower_comment.label }}</i> {{ form.devpower_comment }}
               <i>{{ form.devpower_val1.label }}</i> {{ form.devpower_val1 }}
             </td>
           </tr>
@@ -575,16 +566,36 @@
         <table>
           <tr>
             <td>
-              <b>Start of Review:</b>{{ form.doc_dept }}{{ form.doc_dept.errors }}
+              <b>Start of Review:</b>
             </td>
             <td>
-              <b>End of Review:</b>{{ form.doc_clear }}{{ form.doc_clear.errors }}
+              <b>End of Review:</b>
             </td>
-            <td>
+            <td valign="middle" align="middle">
               <input type="button" id="days20" value="20 Day Period">
-              <input type="button" id="days30" value="30 Day Period">
+              <input type="button" id="days30" value="30 Day Period"><BR>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{ form.doc_dept }}
+            </td>
+            <td>
+              {{ form.doc_clear }}
+            </td>
+            <td valign="middle" align="middle">
               <input type="button" id="days45" value="45 Day Period">
               <input type="button" id="days60" value="60 Day Period">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{ form.doc_dept.errors }}
+            </td>
+            <td>
+              {{ form.doc_clear.errors }}
+            </td>
+            <td>
             </td>
           </tr>
         </table>

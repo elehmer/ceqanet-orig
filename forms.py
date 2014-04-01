@@ -5,7 +5,7 @@ from olwidget.fields import EditableLayerField
 from olwidget.widgets import EditableMap
 from datetime import datetime, date, timedelta
 from django.contrib.auth.models import Group
-from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments,Locations
+from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments,Locations,holidays
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
 from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES,RDOLAT_CHOICES,RDODEVTYPE_CHOICES,RDOISSUE_CHOICES,RDOTITLE_CHOICES,RDODESCRIPTION_CHOICES,UPGRADE_CHOICES,COMMENT_CHOICES
 from django.contrib.admin.widgets import FilteredSelectMultiple
@@ -281,12 +281,38 @@ class addreviewingagencyform(forms.Form):
 class manageuserform(forms.Form):
     usr_grp = forms.ModelChoiceField(label="Assign Group:",required=False,queryset=Group.objects.filter(pk__gt=1).filter(pk__lt=5),empty_label=None,widget=forms.Select(attrs={'size':5}))
 
-class pendingdetailnocform(editnocform):
+class pendingdetailnocform(nocform):
     doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
     doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+
+    def clean(self):
+        cleaned_data = super(pendingdetailnocform, self).clean()
+
+        msg_date_weekend = u"Date is on weekend."
+        msg_date_holiday = u"Date is on holiday."
+
+        if cleaned_data.get('doc_dept').weekday() in [5,6]:
+            self._errors['doc_dept'] = self.error_class([msg_date_weekend])
+            del cleaned_data['doc_dept']
+
+        if cleaned_data.get('doc_clear').weekday() in [5,6]:
+            self._errors['doc_clear'] = self.error_class([msg_date_weekend])
+            del cleaned_data['doc_clear']
+
+        allhdays = holidays.objects.all()
+
+        for hday in allhdays:
+            if cleaned_data.get('doc_dept') == hday.hday_date:
+                self._errors['doc_dept'] = self.error_class([msg_date_holiday])
+                del cleaned_data['doc_dept']        
+            if cleaned_data.get('doc_clear') == hday.hday_date:
+                self._errors['doc_clear'] = self.error_class([msg_date_holiday])
+                del cleaned_data['doc_clear']        
+
+        return cleaned_data
 
 class pendingdetailnodform(nodform):
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
@@ -303,13 +329,41 @@ class pendingdetailnopform(nopform):
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
 
+    def clean(self):
+        cleaned_data = super(pendingdetailnopform, self).clean()
+
+        msg_date_weekend = u"Date is on weekend."
+        msg_date_holiday = u"Date is on holiday."
+
+        if cleaned_data.get('doc_dept').weekday() in [5,6]:
+            self._errors['doc_dept'] = self.error_class([msg_date_weekend])
+            del cleaned_data['doc_dept']
+
+        if cleaned_data.get('doc_clear').weekday() in [5,6]:
+            self._errors['doc_clear'] = self.error_class([msg_date_weekend])
+            del cleaned_data['doc_clear']
+
+        allhdays = holidays.objects.all()
+
+        for hday in allhdays:
+            if cleaned_data.get('doc_dept') == hday.hday_date:
+                self._errors['doc_dept'] = self.error_class([msg_date_holiday])
+                del cleaned_data['doc_dept']        
+            if cleaned_data.get('doc_clear') == hday.hday_date:
+                self._errors['doc_clear'] = self.error_class([msg_date_holiday])
+                del cleaned_data['doc_clear']        
+
+        return cleaned_data
+
 class reviewdetailnocform(nocform):
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+    bia = forms.BooleanField(label="BIA - Bureau of Land Trust (YYYY-XXX)",required=False)
 
 class reviewdetailnopform(nopform):
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+    bia = forms.BooleanField(label="BIA - Bureau of Land Trust (YYYY-XXX)",required=False)
 
 class commentaddform(forms.Form):
     commenttype = forms.ChoiceField(required=True,choices=COMMENT_CHOICES,initial='text',widget=forms.RadioSelect(attrs={'id':'commenttype','class':'commenttype'}))

@@ -1,5 +1,5 @@
 import os
-from ceqanet.models import documents,projects,latlongs,dockeywords,docreviews,docattachments,clearinghouse
+from ceqanet.models import documents,projects,latlongs,dockeywords,docgeowords,docreviews,docattachments,clearinghouse,Locations,doccomments
 from django.contrib.auth.models import User,Group
 from django.core.mail import send_mail
 from datetime import datetime
@@ -26,6 +26,21 @@ def generate_schno(region):
     ch.save()
     return schno
 
+def generate_biaschno():
+    ch = clearinghouse.objects.get(pk=1)
+
+    biayear = ch.biayear
+    yearnow = datetime.now().strftime("%Y")
+    if yearnow != biayear:
+        ch.biayear = yearnow
+        ch.biaid = 1
+        ch.save()
+
+    schno = ch.biayear + "-" + str(ch.biaid)
+    ch.biaid = ch.biaid+1
+    ch.save()
+    return schno
+
 def delete_clearinghouse_document(self):
     doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
     doc_prj_fk = doc.doc_prj_fk
@@ -48,7 +63,10 @@ def delete_clearinghouse_document(self):
         projects.objects.filter(pk=doc_prj_fk.prj_pk).delete()
 
     latlongs.objects.filter(doc_pk=doc.doc_pk).delete()
+    Locations.objects.filter(document=doc.doc_pk).delete()
+    docgeowords.objects.filter(dgeo_doc_fk=doc.doc_pk).delete()
     dockeywords.objects.filter(dkey_doc_fk=doc.doc_pk).delete()
+    doccomments.objects.filter(dcom_doc_fk=doc.doc_pk).delete()
     docreviews.objects.filter(drag_doc_fk=doc.doc_pk).delete()
 
     docatts = docattachments.objects.filter(datt_doc_fk=doc.doc_pk)

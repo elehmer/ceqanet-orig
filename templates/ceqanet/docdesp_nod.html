@@ -83,6 +83,13 @@
                 {{ doc.doc_conphone }}
               </td>
             </tr>
+            {% if doc.doc_conemail %}
+            <tr>
+              <td align="left">
+                <a href="mailto:{{ doc.doc_conemail }}">{{ doc.doc_conemail }}</a>
+              </td>
+            </tr>
+            {% endif %}
             <tr>
               <td align="left">
                 {{ doc.doc_conaddress1 }}
