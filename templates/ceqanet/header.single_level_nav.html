@@ -122,6 +122,8 @@
 					<ul>
 						<li><a href="{% url 'submit' %}" class="nav_p_heading">Submit New Document</a> 
 						<div class="nav_p_description">Fill out new CEQANet document for addition to the database</div></li>
+						<li><a href="{% url 'reviewsbylag' %}" class="nav_p_heading">Documents in Review</a> 
+						<div class="nav_p_description">Review latest documents in review by your Agency</div></li>
 					</ul>
 					<ul>
 						<li><a href="{% url 'draftsbylag' %}" class="nav_p_heading">Draft Documents</a> 
@@ -129,7 +131,7 @@
 					</ul>
 					<ul>
 						<li><a href="{% url 'pendingsbylag' %}" class="nav_p_heading">Pending Documents</a> 
-						<div class="nav_p_description">Review documents submitted but not yet accepted by the clearinghouse</div></li>
+						<div class="nav_p_description">Review documents submitted but not yet accepted by the Clearinghouse</div></li>
 					</ul>
 					<div class="nav_d_arrow_container"></div>
 				</div>
@@ -143,6 +145,8 @@
 						<div class="nav_p_description">Process pending clearinghouse documents</div></li>
 						<li><a href="{% url 'addleadagency' %}" class="nav_p_heading">Add Lead Agency</a> 
 						<div class="nav_p_description">Create new Lead Agency record in database</div></li>
+						<li><a href="{% url 'manageusers' %}" class="nav_p_heading">Manage Users</a> 
+						<div class="nav_p_description">Change group, delete, etc. CEQANet Users</div></li>
 					</ul>
 					<ul>
 						<li><a href="{% url 'latest' %}" class="nav_p_heading">Latest</a> 
@@ -153,8 +157,8 @@
 					<ul>
 						<li><a href="{% url 'manageupgrades' %}" class="nav_p_heading">Account Upgrade Requests</a> 
 						<div class="nav_p_description">Manage Users requesting higher level permissions on site</div></li>
-						<li><a href="{% url 'manageusers' %}" class="nav_p_heading">Manage Users</a> 
-						<div class="nav_p_description">Change group, delete, etc. CEQANet Users</div></li>
+						<li><a href="{% url 'addholiday' %}" class="nav_p_heading">Add Holiday</a> 
+						<div class="nav_p_description">Create new Holiday record in database</div></li>
 					</ul>
 					<div class="nav_d_arrow_container"></div>
 				</div>

@@ -14,7 +14,7 @@ from ceqanet.forms import basicsearchform,prjlistform,doclistform,advancedsearch
 from ceqanet.forms import nocform,nodform,noeform,nopform
 from ceqanet.forms import editnocform,editnoeform,editnodform,editnopform
 from ceqanet.forms import pendingdetailnocform,pendingdetailnodform,pendingdetailnoeform,pendingdetailnopform
-from ceqanet.forms import addleadagencyform,addreviewingagencyform
+from ceqanet.forms import addleadagencyform,addreviewingagencyform,addholidayform
 from ceqanet.forms import reviewdetailnocform,reviewdetailnopform
 from ceqanet.forms import commentaddform
 from ceqanet.models import projects,documents,geowords,leadagencies,reviewingagencies,doctypes,dockeywords,docgeowords,docreviews,latlongs,counties,UserProfile,clearinghouse,keywords,docattachments,requestupgrade,doccomments,holidays
@@ -32,7 +32,7 @@ from django.core import serializers
 from ceqanet.functions import generate_schno,generate_biaschno,delete_clearinghouse_document,email_rejection,email_submission,email_inreview,email_upgraderejection,email_upgradeacceptance,email_commentacceptance,email_acceptance,email_requestforupgrade,email_assigned
 
 # Global switch for sending emails
-sendemail = False
+sendemail = True
 
 def index(request):
     t = loader.get_template("ceqanet/index.html")
@@ -429,7 +429,32 @@ class pendingsbylag(ListView):
         return queryset
 
 def PendingsByLAGQuery(request):
-    queryset = documents.objects.filter(projects__prj_lag_fk__lag_pk=request.user.get_profile().set_lag_fk.lag_pk).filter(doc_pending=True).order_by('-doc_received')
+    queryset = documents.objects.filter(projects__prj_lag_fk__lag_pk=request.user.get_profile().set_lag_fk.lag_pk).filter(doc_pending=True).order_by('-doc_received','-doc_pk')
+    return queryset
+
+class reviewsbylag(ListView):
+    template_name="ceqanet/reviewsbylag.html"
+    context_object_name = "reviewsbylag"
+    paginate_by = 25
+
+    def get_queryset(self):
+        queryset = ReviewsByLAGQuery(self.request)
+        return queryset
+
+    def get_context_data(self, **kwargs):
+        context = super(reviewsbylag, self).get_context_data(**kwargs)
+
+        qsminuspage = self.request.GET.copy()
+        
+        if "page" in qsminuspage:
+            qsminuspage.pop('page')
+
+        context['restofqs'] = qsminuspage.urlencode()
+
+        return context
+
+def ReviewsByLAGQuery(request):
+    queryset = documents.objects.filter(projects__prj_lag_fk__lag_pk=request.user.get_profile().set_lag_fk.lag_pk).filter(doc_review=True).order_by('-doc_received','-doc_pk')
     return queryset
 
 class chquery(FormView):
@@ -1212,7 +1237,7 @@ class projdoclist(ListView):
 def ProjDocListQuery(request):
     prj_pk = request.GET.get('prj_pk')
 
-    queryset = documents.objects.filter(doc_visible=True).filter(doc_prj_fk__exact=prj_pk).order_by('-doc_received')
+    queryset = documents.objects.filter(doc_visible=True).filter(doc_prj_fk__exact=prj_pk).order_by('-doc_received','-doc_pk')
     return queryset
 
 class docdesp_noc(DetailView):
@@ -1229,6 +1254,8 @@ class docdesp_noc(DetailView):
         context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
         context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        context['comments'] = doccomments.objects.filter(dcom_doc_fk=doc_pk)
+        context['attachments'] = docattachments.objects.filter(datt_doc_fk=doc_pk)
         return context
 
 class docdesp_nod(DetailView):
@@ -2274,6 +2301,37 @@ class addreviewingagency(FormView):
 
         return super(addreviewingagency,self).form_valid(form)
 
+class addholiday(FormView):
+    form_class = addholidayform
+    template_name="ceqanet/addholiday.html"
+
+    def get_success_url(self):
+        success_url = reverse_lazy('index')
+        return success_url
+
+    def get_context_data(self, **kwargs):
+        context = super(addholiday, self).get_context_data(**kwargs)
+        holidayslist = holidays.objects.filter(hday_date__gte=datetime.now())
+        hlist = "["
+        for h in holidayslist:
+            hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
+
+        hlist = hlist[:-1]
+        hlist += "];"
+        context['holidays'] = hlist
+
+        return context
+
+    def form_valid(self,form):
+        data = form.cleaned_data
+
+        gw = geowords.objects.get(pk=0)
+
+        newholiday = holidays(hday_name=data['hday_name'],hday_date=data['hday_date'],hday_dow=data['hday_date'].strftime('%A'),hday_note=data['hday_note'])
+        newholiday.save()
+
+        return super(addholiday,self).form_valid(form)
+
 class manageusers(ListView):
     template_name="ceqanet/manageusers.html"
     context_object_name = "users"
@@ -2380,7 +2438,7 @@ class latest(ListView):
         return context
 
 def LatestListQuery(request):
-    queryset = documents.objects.filter(doc_visible=True).order_by('-doc_pk')
+    queryset = documents.objects.exclude(doc_received__isnull=True).filter(doc_visible=True).order_by('-doc_received','-doc_pk')
     return queryset
 
 
@@ -4200,7 +4258,7 @@ class comment(ListView):
 
 def CommentListQuery(request):
     set_rag_fk = request.user.get_profile().set_rag_fk.rag_pk
-    queryset = docreviews.objects.filter(drag_rag_fk__rag_pk=set_rag_fk).filter(drag_doc_fk__doc_review=True).order_by('-drag_doc_fk__doc_received')
+    queryset = docreviews.objects.filter(drag_rag_fk__rag_pk=set_rag_fk).filter(drag_doc_fk__doc_review=True).order_by('-drag_doc_fk__doc_received','-drag_doc_fk__doc_pk')
     return queryset
 
 class commentdetail(ListView):

@@ -1,12 +1,12 @@
 from django.conf.urls import include,patterns, url
 from django.conf.urls.static import static
 from django.conf import settings
-from ceqanet.views import index,basicsearch,advancedsearch,prjlist,doclist,projectlist,projdoclist,submit,draftsbylag,pendingsbylag,chquery,findproject,accept,usersettings,attachments,manageaccount,requestupgrd,manageupgrades,manageupgrade,manageusers,manageuser
+from ceqanet.views import index,basicsearch,advancedsearch,prjlist,doclist,projectlist,projdoclist,submit,draftsbylag,pendingsbylag,chquery,findproject,accept,usersettings,attachments,manageaccount,requestupgrd,manageupgrades,manageupgrade,manageusers,manageuser,reviewsbylag
 from ceqanet.views import docdesp_noc,docdesp_noe,docdesp_nod,docdesp_nop
 from ceqanet.views import docadd_noc,docadd_nod,docadd_noe,docadd_nop
 from ceqanet.views import docedit_noc,docedit_noe,docedit_nod,docedit_nop
 from ceqanet.views import draftedit_noc,draftedit_nop
-from ceqanet.views import pending,pendingdetail_noc,pendingdetail_nod,pendingdetail_noe,pendingdetail_nop,latest,addleadagency,addreviewingagency
+from ceqanet.views import pending,pendingdetail_noc,pendingdetail_nod,pendingdetail_noe,pendingdetail_nop,latest,addleadagency,addreviewingagency,addholiday
 from ceqanet.views import review,reviewdetail_noc,reviewdetail_nop
 from ceqanet.views import comment,commentdetail,commentadd,showcomment,commentaccept
 #map related views
@@ -25,6 +25,7 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^submit/$',submit.as_view(),name='submit'),
     url(r'^draftsbylag/$',draftsbylag.as_view(),name='draftsbylag'),
     url(r'^pendingsbylag/$',pendingsbylag.as_view(),name='pendingsbylag'),
+    url(r'^reviewsbylag/$',reviewsbylag.as_view(),name='reviewsbylag'),
     url(r'^accept/$','accept',name='accept'),
     url(r'^chquery/$',chquery.as_view(),name='chquery'),
     url(r'^project/find$',findproject.as_view(),name='findproject'),
@@ -48,6 +49,7 @@ urlpatterns = patterns('ceqanet.views',
     url(r'^latest/$',latest.as_view(),name='latest'),
     url(r'^addleadagency/$',addleadagency.as_view(),name='addleadagency'),
     url(r'^addreviewingagency/$',addreviewingagency.as_view(),name='addreviewingagency'),
+    url(r'^addholiday/$',addholiday.as_view(),name='addholiday'),
     url(r'^review/$',review.as_view(),name='review'),
     url(r'^pending/noc/detail/$',pendingdetail_noc.as_view(),name='pendingdetail_noc'),
     url(r'^pending/nod/detail/$',pendingdetail_nod.as_view(),name='pendingdetail_nod'),

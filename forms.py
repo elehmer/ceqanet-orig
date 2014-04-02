@@ -278,6 +278,23 @@ class addreviewingagencyform(forms.Form):
     rag_zip = USZipCodeField(label="Zip:",required=True)
     rag_phone = USPhoneNumberField(label="Phone:",required=True)
 
+class addholidayform(forms.Form):
+    hday_name = forms.CharField(label="Holiday Name:",required=True,max_length=40,widget=forms.TextInput(attrs={'size':'40'}))
+    hday_date = forms.DateField(label="Holiday Date:",required=True,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
+    hday_note = forms.CharField(label="Holiday Note:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+
+    def clean(self):
+        cleaned_data = super(addholidayform, self).clean()
+
+        msg_date_weekend = u"Date is on weekend."
+        msg_date_holiday = u"Date is on holiday."
+
+        if cleaned_data.get('hday_date').weekday() in [5,6]:
+            self._errors['hday_date'] = self.error_class([msg_date_weekend])
+            del cleaned_data['hday_date']
+
+        return cleaned_data
+
 class manageuserform(forms.Form):
     usr_grp = forms.ModelChoiceField(label="Assign Group:",required=False,queryset=Group.objects.filter(pk__gt=1).filter(pk__lt=5),empty_label=None,widget=forms.Select(attrs={'size':5}))
 
