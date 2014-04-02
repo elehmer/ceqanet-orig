@@ -14,7 +14,7 @@ class MapForm(forms.Form):
     '''Reusable Map enhancement to forms, inherited by document forms needing location entry'''
     geom = forms.CharField(widget=EditableMap(options={'layers': ['osm.mapnik'],
                                                     'isCollection':True, 
-                                                    'geometry':['point','linestring','polygon'],
+                                                    'geometry':['point','polygon'],
                                                     'default_lat': 37.424431833728114,
                                                     'default_lon': -121.90515908415186,'default_zoom':6},template=None))
     
