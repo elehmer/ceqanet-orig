@@ -2,18 +2,18 @@
 
     /*for FilteredSelectMultiple*/
     .selector {
-    width: 580px;
+    width: 760px;
     float: left;
     }
 
     .selector select {
-    width: 270px;
+    width: 360px;
     height: 8em;
     }
 
     .selector-available, .selector-chosen {
     float: left;
-    width: 270px;
+    width: 360px;
     text-align: center;
     margin-bottom: 5px;
     }
@@ -21,16 +21,16 @@
     .selector-available h2, .selector-chosen h2 {
     border: 1px solid #ccc;
     font-family:"Lucida Grande","DejaVu Sans","Bitstream Vera Sans",Verdana,Arial,sans-serif;
-    font-size:11px;
+    font-size:13px;
     }
 
     .selector .selector-available h2 {
 
-    background: #a6a077 url(/images/admin/nav-bg.gif) bottom left repeat-x;
+    background: #000000 url(/images/admin/nav-bg.gif) bottom left repeat-x;
     color: white;
     }
     .selector .selector-chosen h2 {
-    background: #A29A63 url(/images/admin/default-bg.gif) repeat-x scroll left top;
+    background: #000000 url(/images/admin/default-bg.gif) repeat-x scroll left top;
     color: white;
     }
 
@@ -51,7 +51,7 @@
     }
 
     .selector .selector-available input {
-    width: 230px;
+    width: 300px;
     }
 
     .selector ul.selector-chooser {
@@ -78,7 +78,7 @@
     width: 16px;
     height: 16px;
     display: block;
-    text-indent: -3000px;
+    text-indent: -13000px;
     }
 
     .selector-add {
@@ -97,8 +97,9 @@
     margin-left: auto;
     margin-right: auto;
     font-weight: bold;
-    color: #666;
+    color: #000;
     padding: 3px 0 3px 18px;
+    text-indent: -13000px;
     }
 
     a.selector-chooseall:hover, a.selector-clearall:hover {
@@ -116,7 +117,7 @@
 
     .selector select {
     font-family:"Lucida Grande",Verdana,Arial,sans-serif;
-    font-size:11px;
+    font-size:13px;
     font-weight:normal;
     }
     .selector h2 {
