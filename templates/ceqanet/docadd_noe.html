@@ -3,18 +3,22 @@
 {% load staticfiles %}
 
 {% block extrajs %}
-<meta name="apple-mobile-web-app-capable" content="yes">
-<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
-<script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
-<link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
-<script type="text/javascript" src="{% static 'olwidget/js/olwidget.js' %}"></script>
-<link rel="stylesheet" href="{% static 'olwidget/css/olwidget.css' %}">
+
+  <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+  <script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+  <script type="text/javascript" src="{% static 'olwidget/js/olwidget.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'olwidget/css/olwidget.css' %}">
+
 {% endblock extrajs %}
 
 {% block content %}
 
 {{ form.media }}
-<FORM name="adddoc" method="post" action="">
+<FORM name="adddoc" class="adddocform" method="post" action="">
   {% csrf_token %}
   <h1>Add New Notice of Exemption Document:</h1>
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
@@ -28,7 +32,8 @@
         {{ form.prj_title.label }}
       </TH>
       <TD colspan="2">
-        {{ form.prj_title }} {{ form.prj_title.errors }}
+        {{ form.prj_title.errors }}
+        {{ form.prj_title }}
       </TD>
     </TR>
     <TR>
@@ -36,7 +41,8 @@
         {{ form.prj_description.label }}
       </TH>
       <TD colspan="2">
-        {{ form.prj_description }} {{ form.prj_description.errors }}
+        {{ form.prj_description.errors }}
+        {{ form.prj_description }}
       </TD>
     </TR>
     <TR> 
@@ -61,8 +67,9 @@
       <TH width="25%" align="left" valign="top">
         {{ form.doc_conname.label }}
       </TH>
-      <TD colspan="2"> 
-        {{ form.doc_conname }} {{ form.doc_conname.errors }}
+      <TD colspan="2">
+        {{ form.doc_conname }}
+        {{ form.doc_conname.errors }}
       </TD>
     </TR>
     <TR> 
@@ -70,7 +77,8 @@
         {{ form.doc_conemail.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_conemail }}  {{ form.doc_conemail.errors }}
+        {{ form.doc_conemail }}
+        {{ form.doc_conemail.errors }}
       </TD>
     </TR>
     <TR>   
@@ -78,47 +86,53 @@
         <B>Phone:</B>
       </TD>
       <TD colspan="2">
-        {{ form.doc_conphone }} {{ form.doc_conphone.errors }}
+        {{ form.doc_conphone }}
+        {{ form.doc_conphone.errors }}
       </TD>
     </TR>
     <tr> 
       <TH width="25%" align="left" valign="top">
         {{ form.doc_conaddress1.label }}
       </TH>
-      <td colspan="2"> 
-        {{ form.doc_conaddress1 }} {{ form.doc_conaddress1.errors }}
+      <td colspan="2">
+        {{ form.doc_conaddress1 }}
+        {{ form.doc_conaddress1.errors }}
       </td>
     </tr>
     <tr> 
       <TH width="25%" align="left" valign="top">
         {{ form.doc_conaddress2.label }}
       </TH>
-      <td colspan="2"> 
-        {{ form.doc_conaddress2 }} {{ form.doc_conaddress2.errors }}
+      <td colspan="2">
+        {{ form.doc_conaddress2 }}
+        {{ form.doc_conaddress2.errors }}
       </td>
     </tr>
     <TR> 
       <TH width="25%" align="left" valign="top">
         {{ form.doc_concity.label }}
       </TH>
-      <td colspan="2"> 
-        {{ form.doc_concity }} {{ form.doc_concity.errors }}
+      <td colspan="2">
+        {{ form.doc_concity }}
+        {{ form.doc_concity.errors }}
       </td>
     </TR>
     <TR> 
       <TH width="25%" align="left" valign="top">
         {{ form.doc_constate.label }}
       </TH>
-      <td colspan="2"> 
-        {{ form.doc_constate }} {{ form.doc_constate.errors }}
+      <td colspan="2">
+        {{ form.doc_constate }}
+        {{ form.doc_constate.errors }}
       </td>
     </tr>
     <tr> 
       <TH width="25%" align="left" valign="top">
         {{ form.doc_conzip.label }}
       </TH>
-      <td colspan="2"> 
-        {{ form.doc_conzip }} {{ form.doc_conzip.errors }}
+      <td colspan="2">
+        {{ form.doc_conzip }}
+        {{ form.doc_conzip.errors }}
       </td>
     </tr>
     <tr> 
@@ -130,21 +144,27 @@
       <TH width="25%" align="left" valign="top"> 
         {{ form.doc_location.label }}
       </TH>
-      <TD colspan="2"> 
-        {{ form.doc_location }} {{ form.doc_location.errors }}
+      <TD colspan="2">
+        {{ form.doc_location.errors }}
+        {{ form.doc_location }}
       </TD>
     </TR>
     <TR>
-       <TD colspan="3">
-        {{ form.geom}}
-       </TD>
-    <TR>
+      <TH width="25%" align="left" valign="top"> 
+        {{ form.geom.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.geom.errors }}
+        {{ form.geom }}
+      </TD>
+    </TR>
     <TR>
       <TH width="25%" align="left" valign="top">
         {{ form.doc_latitude.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_latitude }} {{ form.doc_latitude.errors }}
+        {{ form.doc_latitude }}
+        {{ form.doc_latitude.errors }}
       </TD>
     </TR>
     <TR>
@@ -152,57 +172,44 @@
         {{ form.doc_longitude.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_longitude }} {{ form.doc_longitude.errors }}
+        {{ form.doc_longitude }}
+        {{ form.doc_longitude.errors }}
       </TD>
     </TR>
     <TR>
       <TD width="25%" valign="top">
         <b>County:</b>
       </TD>
-      <td colspan="2"> 
-        {{ form.doc_county }} {{ form.doc_county.errors }}
+      <td colspan="2">
+        {{ form.doc_county }}
+        {{ form.doc_county.errors }}
       </td>
     </TR>
     <TR>
       <TD width="25%" valign="top">
         <b>City:</b>
       </TD>
-      <TD colspan="2"> 
-        {{ form.doc_city }} {{ form.doc_city.errors }}
+      <TD colspan="2">
+        {{ form.doc_city }}
+        {{ form.doc_city.errors }}
       </TD>
     </TR>
-    <script>
-      $(document).ready(function() {
-          $("#id_doc_city").html("<option>Select County First...</option>");
-          $("#id_doc_city").attr('disabled', true);
-
-          $("#id_doc_county").change(function() {
-            if ($(this).val() == '') {
-              $("#id_doc_city").html("<option>Select County First...</option>");
-              $("#id_doc_city").attr('disabled', true);
-            }
-            else {
-              var url = "/county/" + $(this).val() + "/citiesforcounty_json";
-              var county = $(this).val();
-              $.getJSON(url, function(cities) {
-                var options = '<option value="">[Select City]</option>';
-                for (var i = 0; i < cities.length; i++) {
-                  options += '<option value="' + cities[i].pk + '">' + cities[i].fields['geow_shortname'] + '</option>';
-                }
-                $("#id_doc_city").html(options);
-                $("#id_doc_city option:first").attr('selected', 'selected');
-                $("#id_doc_city").attr('disabled', false);
-              });
-            }
-          });
-      });
-    </script>
+    <TR> 
+      <TD width="25%" valign="top">
+        <B>Agency Approving Project:</b>
+      </td>
+      <td colspan="2">
+        {{ form.doc_approve_noe }}
+        {{ form.doc_approve_noe.errors }}
+      </td>
+    </tr>
     <TR> 
       <TD width="25%" valign="top">
         <B>Person or Agency Carrying Out Project:</b>
       </td>
-      <td colspan="2"> 
-        {{ form.strleadagency2 }} {{ form.strleadagency2.errors }}
+      <td colspan="2">
+        {{ form.doc_carryout_noe }}
+        {{ form.doc_carryout_noe.errors }}
       </td>
     </tr>
     <tr> 
@@ -220,14 +227,16 @@
         {{ radio.choice_label }}
       </td>
       <td>
-        {{ form.strsectionnumber }} {{ form.strsectionnumber.errors }}
+        {{ form.strsectionnumber.errors }}
+        {{ form.strsectionnumber }}
       </td>
       {% elif forloop.counter = 5 %}
       <td>
         {{ radio.choice_label }}
       </td>
       <td>
-        {{ form.strcodenumber }} {{ form.strcodenumber.errors }}
+        {{ form.strcodenumber.errors }}
+        {{ form.strcodenumber }}
       </td>
       {% else %}
       <td colspan="2">
@@ -241,7 +250,8 @@
         {{ form.doc_exreasons.label }}
       </TH>
       <td colspan="2">
-        {{ form.doc_exreasons }} {{ form.doc_exreasons.errors }}
+        {{ form.doc_exreasons.errors }}
+        {{ form.doc_exreasons }}
       </td>
     </tr>
     <TR> 

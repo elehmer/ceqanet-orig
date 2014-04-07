@@ -20,7 +20,7 @@
     </TR>
     <TR> 
       <TD colspan="2">
-        {% if isreview %}
+        {% if isreview or isclearinghouse or isplanner %}
         Reviewing Agency: {{ form.set_rag_fk }}
         {% endif %}
       </TD>

@@ -78,6 +78,13 @@
                 {{ doc.doc_conphone }}
               </td>
             </tr>
+            {% if doc.doc_conemail %}
+            <tr>
+              <td align="left">
+                <a href="mailto:{{ doc.doc_conemail }}">{{ doc.doc_conemail }}</a>
+              </td>
+            </tr>
+            {% endif %}
             <tr>
               <td align="left">
                 {{ doc.doc_conaddress1 }}
@@ -304,23 +311,53 @@
       </tr>
       <tr> 
         <td> 
-          <b>Reviewing Agencies</b>  (Agencies in <b>Bold Type</b> submitted comment letters to the State Clearinghouse) 
+          <b>Reviewing Agencies</b>  (Agencies in <b>Bold Type</b> submitted comments to the State Clearinghouse. Comment links appear after the Agency's name and if late are <I>italicized</I>.) 
         </td>
       </tr>
       <tr> 
         <td>
           <ul> 
             {% for rev in reviews %}
-              {% if rev.drag_received != None %}
-                {% if rev.drag_iscomment %}
-                  <li><a href="{% url 'showcomment' rev.drag_pk %}"><B>{{ rev.drag_rag_fk.rag_name }}</B></a>
-                {% else %}
+              {% if rev.drag_numcomments > 0 %}
                   <li><B>{{ rev.drag_rag_fk.rag_name }}</B>
-                {% endif %}
+                  {% for com in comments %}
+                    {% if com.dcom_drag_fk.drag_pk = rev.drag_pk %}
+                      {% if com.dcom_commentdate > doc.doc_clear %}
+                        &nbsp;<a href="{% url 'showcomment' com.dcom_pk %}"><I>{{ forloop.counter }}</I></a>
+                      {% else %}
+                        &nbsp;<a href="{% url 'showcomment' com.dcom_pk %}">{{ forloop.counter }}</a>
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
               {% else %}
                   <li>{{ rev.drag_rag_fk.rag_name }}
               {% endif %}</li>
             {% endfor %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <b>Document Attachments</b> 
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            {% if attachments %}
+              {% for a in attachments %}
+                <li>
+                  <a href="{{ a.datt_file.url }}">{{ a.datt_file.name }}</a>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li>NO ATTACHMENTS</li>
+            {% endif %}
           </ul>
         </td>
       </tr>

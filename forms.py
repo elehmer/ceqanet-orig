@@ -5,14 +5,14 @@ from olwidget.fields import EditableLayerField
 from olwidget.widgets import EditableMap
 from datetime import datetime, date, timedelta
 from django.contrib.auth.models import Group
-from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments,Locations
+from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments,Locations,holidays
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
 from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES,RDOLAT_CHOICES,RDODEVTYPE_CHOICES,RDOISSUE_CHOICES,RDOTITLE_CHOICES,RDODESCRIPTION_CHOICES,UPGRADE_CHOICES,COMMENT_CHOICES
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
 class MapForm(forms.Form):
     '''Reusable Map enhancement to forms, inherited by document forms needing location entry'''
-    geom = forms.CharField(widget=EditableMap(options={'layers': ['osm.mapnik'],
+    geom = forms.CharField(label="Geography:",widget=EditableMap(options={'layers': ['osm.mapnik'],
                                                     'isCollection':True, 
                                                     'geometry':['point','polygon'],
                                                     'default_lat': 37.424431833728114,
@@ -62,11 +62,11 @@ class basedocumentform(MapForm):
     prj_description = forms.CharField(label="Project Description:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
     doc_title = forms.CharField(label="Alternate Title:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
     doc_description = forms.CharField(label="Alternate Description:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
-    doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    doc_conemail = forms.EmailField(label="E-mail:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+    doc_conname = forms.CharField(label="Contact Person:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'50'}))
+    doc_conemail = forms.EmailField(label="E-mail:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'50'}))
     doc_conphone = USPhoneNumberField(label="Phone:",required=True)
-    doc_conaddress1 = forms.CharField(label="Street Address1:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+    doc_conaddress1 = forms.CharField(label="Street Address1:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'50'}))
+    doc_conaddress2 = forms.CharField(label="Street Address2:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'50'}))
     doc_concity = forms.CharField(label="City:",required=True,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
     doc_constate = USStateField(label="State:",required=True)
     doc_conzip = USZipCodeField(label="Zip:",required=True)
@@ -75,33 +75,47 @@ class basedocumentform(MapForm):
     doc_longitude = forms.FloatField(label="Document Longitude:",required=True,widget=forms.TextInput(attrs={'size':'30'}))
     doc_county = forms.ModelChoiceField(label="County:",required=True,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
     doc_city = forms.ModelChoiceField(label="City:",required=True,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
-    #doc_city = forms.ChoiceField(label="City:",required=True)
+
+    def clean(self):
+        cleaned_data = super(basedocumentform, self).clean()
+
+        msg_cityerror = u"City Not Within County Specified."
+
+        if cleaned_data.get('doc_city') != None:
+            if cleaned_data.get('doc_county') != None:
+                if cleaned_data.get('doc_city').geow_parent_fk.geow_pk != cleaned_data.get('doc_county').geow_pk:
+                    self._errors['doc_city'] = self.error_class([msg_cityerror])
+                    del cleaned_data['doc_city']
+
+        return cleaned_data
 
 class nodform(basedocumentform):
-    leadorresp = forms.ChoiceField(required=False,choices=NODAGENCY_CHOICES,widget=forms.RadioSelect(attrs={'id':'lorr','class':'lorr'}))
-    doc_nodagency = forms.ModelChoiceField(required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]",widget=forms.Select(attrs={'id':'nodagency','class':'nodagency'}))
-    doc_nod = forms.DateField(required=False,input_formats=['%Y-%m-%d'])
-    det1 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det1'}))
-    det2 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det2'}))
-    det3 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det3'}))
-    det4 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det4'}))
-    det5 = forms.ChoiceField(required=False,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det5'}))
+    leadorresp = forms.ChoiceField(required=True,choices=NODAGENCY_CHOICES,widget=forms.RadioSelect(attrs={'id':'lorr','class':'lorr'}))
+    doc_nodagency = forms.ModelChoiceField(required=True,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]",widget=forms.Select(attrs={'id':'nodagency','class':'nodagency'}))
+    doc_nod = forms.DateField(required=True,input_formats=['%Y-%m-%d'])
+    det1 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det1'}))
+    det2 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det2'}))
+    det3 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det3'}))
+    det4 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det4'}))
+    det5 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det5'}))
     doc_eiravailableat = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
 
 class editnodform(nodform):
     def __init__(self, *args, **kwargs):
         super(editnodform, self).__init__(*args, **kwargs)
+        self.fields['geom'].required = False
         self.fields['doc_conemail'].required = False
-        self.fields['doc_latitude'].required = False
-        self.fields['doc_longitude'].required = False
         self.fields['doc_city'].required = False    
         self.fields['doc_county'].required = False    
+    doc_latitude = forms.CharField(label="Document Latitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
+    doc_longitude = forms.CharField(label="Document Longitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_conphone = forms.CharField(required=True,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
-    #doc_nodagency = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+    doc_nodagency = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
 
 class noeform(basedocumentform):
-    strleadagency2 = forms.CharField(label="Person or Agency Carrying Out Project:",required=False,max_length=45,widget=forms.TextInput(attrs={'size':'45'}))
+    doc_approve_noe = forms.CharField(label="Agency Approving Project:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+    doc_carryout_noe = forms.CharField(label="Person or Agency Carrying Out Project:",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
     rdoexemptstatus = forms.ChoiceField(required=True,choices=EXEMPT_STATUS_CHOICES,initial=4,widget=forms.RadioSelect())
     strsectionnumber = forms.CharField(label="Section Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
     strcodenumber = forms.CharField(label="Code Number:",required=False,max_length=50,widget=forms.TextInput(attrs={'size':'50'}))
@@ -131,11 +145,12 @@ class noeform(basedocumentform):
 class editnoeform(noeform):
     def __init__(self, *args, **kwargs):
         super(editnoeform, self).__init__(*args, **kwargs)
+        self.fields['geom'].required = False
         self.fields['doc_conemail'].required = False
-        self.fields['doc_latitude'].required = False
-        self.fields['doc_longitude'].required = False
         self.fields['doc_city'].required = False    
         self.fields['doc_county'].required = False    
+    doc_latitude = forms.CharField(label="Document Latitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
+    doc_longitude = forms.CharField(label="Document Longitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
 
 class nopform(basedocumentform):
@@ -194,14 +209,41 @@ class nopform(basedocumentform):
     ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
     #ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=FilteredSelectMultiple("Reviewing Agencies",True,attrs={'rows':'10'}))
 
+    def clean(self):
+        cleaned_data = super(nopform, self).clean()
+
+        msg_actions = u"Other Type Required."
+        msg_dev = u"Other Type Required."
+        msg_issues = u"Other Issue Required."
+
+        for a in cleaned_data.get('actions'):
+            if a.keyw_pk == 1018:
+                if cleaned_data.get('dkey_comment_actions') == '':
+                    self._errors['dkey_comment_actions'] = self.error_class([msg_actions])
+                    del cleaned_data['dkey_comment_actions']
+
+        if cleaned_data.get('dev11001'):
+            if cleaned_data.get('dkey_comment_dev') == '':
+                self._errors['dkey_comment_dev'] = self.error_class([msg_dev])
+                del cleaned_data['dkey_comment_dev']
+
+        for i in cleaned_data.get('issues'):
+            if i.keyw_pk == 2034:
+                if cleaned_data.get('dkey_comment_issues') == '':
+                    self._errors['dkey_comment_issues'] = self.error_class([msg_issues])
+                    del cleaned_data['dkey_comment_issues']
+
+        return cleaned_data
+
 class editnopform(nopform):
     def __init__(self, *args, **kwargs):
         super(editnopform, self).__init__(*args, **kwargs)
+        self.fields['geom'].required = False
         self.fields['doc_conemail'].required = False
-        self.fields['doc_latitude'].required = False
-        self.fields['doc_longitude'].required = False
         self.fields['doc_city'].required = False    
         self.fields['doc_county'].required = False    
+    doc_latitude = forms.CharField(label="Document Latitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
+    doc_longitude = forms.CharField(label="Document Longitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
 
 class nocform(nopform):
@@ -209,7 +251,6 @@ class nocform(nopform):
 
 class editnocform(editnopform):
     doctypeid = forms.ModelChoiceField(required=True,queryset=doctypes.objects.filter(inlookup=True).filter(storfed__gt=0).order_by('ordinal'),empty_label=None,widget=forms.RadioSelect())
-    doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
 
 class attachmentsform(forms.Form):
     datt_file = forms.FileField(label='Select file to attach:',required=False,help_text='max. 42 megabytes')
@@ -237,32 +278,109 @@ class addreviewingagencyform(forms.Form):
     rag_zip = USZipCodeField(label="Zip:",required=True)
     rag_phone = USPhoneNumberField(label="Phone:",required=True)
 
+class addholidayform(forms.Form):
+    hday_name = forms.CharField(label="Holiday Name:",required=True,max_length=40,widget=forms.TextInput(attrs={'size':'40'}))
+    hday_date = forms.DateField(label="Holiday Date:",required=True,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
+    hday_note = forms.CharField(label="Holiday Note:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+
+    def clean(self):
+        cleaned_data = super(addholidayform, self).clean()
+
+        msg_date_weekend = u"Date is on weekend."
+        msg_date_holiday = u"Date is on holiday."
+
+        if cleaned_data.get('hday_date').weekday() in [5,6]:
+            self._errors['hday_date'] = self.error_class([msg_date_weekend])
+            del cleaned_data['hday_date']
+
+        return cleaned_data
+
 class manageuserform(forms.Form):
     usr_grp = forms.ModelChoiceField(label="Assign Group:",required=False,queryset=Group.objects.filter(pk__gt=1).filter(pk__lt=5),empty_label=None,widget=forms.Select(attrs={'size':5}))
 
-class pendingdetailnocform(editnocform):
+class pendingdetailnocform(nocform):
+    doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
+    doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
+    doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
+    doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+    rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+
+    def clean(self):
+        cleaned_data = super(pendingdetailnocform, self).clean()
+
+        msg_date_weekend = u"Date is on weekend."
+        msg_date_holiday = u"Date is on holiday."
+
+        if cleaned_data.get('doc_dept').weekday() in [5,6]:
+            self._errors['doc_dept'] = self.error_class([msg_date_weekend])
+            del cleaned_data['doc_dept']
+
+        if cleaned_data.get('doc_clear').weekday() in [5,6]:
+            self._errors['doc_clear'] = self.error_class([msg_date_weekend])
+            del cleaned_data['doc_clear']
+
+        allhdays = holidays.objects.all()
+
+        for hday in allhdays:
+            if cleaned_data.get('doc_dept') == hday.hday_date:
+                self._errors['doc_dept'] = self.error_class([msg_date_holiday])
+                del cleaned_data['doc_dept']        
+            if cleaned_data.get('doc_clear') == hday.hday_date:
+                self._errors['doc_clear'] = self.error_class([msg_date_holiday])
+                del cleaned_data['doc_clear']        
+
+        return cleaned_data
+
+class pendingdetailnodform(nodform):
+    doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+    rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+
+class pendingdetailnoeform(noeform):
+    doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+    rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+
+class pendingdetailnopform(nopform):
     doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'])
     doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'])
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
+    doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
 
-class pendingdetailnodform(editnodform):
-    rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+    def clean(self):
+        cleaned_data = super(pendingdetailnopform, self).clean()
 
-class pendingdetailnoeform(editnoeform):
-    rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+        msg_date_weekend = u"Date is on weekend."
+        msg_date_holiday = u"Date is on holiday."
 
-class pendingdetailnopform(editnopform):
-    doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'])
-    doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'])
-    doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
-    rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+        if cleaned_data.get('doc_dept').weekday() in [5,6]:
+            self._errors['doc_dept'] = self.error_class([msg_date_weekend])
+            del cleaned_data['doc_dept']
 
-class reviewdetailnocform(editnocform):
-    rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+        if cleaned_data.get('doc_clear').weekday() in [5,6]:
+            self._errors['doc_clear'] = self.error_class([msg_date_weekend])
+            del cleaned_data['doc_clear']
 
-class reviewdetailnopform(editnopform):
+        allhdays = holidays.objects.all()
+
+        for hday in allhdays:
+            if cleaned_data.get('doc_dept') == hday.hday_date:
+                self._errors['doc_dept'] = self.error_class([msg_date_holiday])
+                del cleaned_data['doc_dept']        
+            if cleaned_data.get('doc_clear') == hday.hday_date:
+                self._errors['doc_clear'] = self.error_class([msg_date_holiday])
+                del cleaned_data['doc_clear']        
+
+        return cleaned_data
+
+class reviewdetailnocform(nocform):
+    doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+    bia = forms.BooleanField(label="BIA - Bureau of Land Trust (YYYY-XXX)",required=False)
+
+class reviewdetailnopform(nopform):
+    doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
+    rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+    bia = forms.BooleanField(label="BIA - Bureau of Land Trust (YYYY-XXX)",required=False)
 
 class commentaddform(forms.Form):
     commenttype = forms.ChoiceField(required=True,choices=COMMENT_CHOICES,initial='text',widget=forms.RadioSelect(attrs={'id':'commenttype','class':'commenttype'}))

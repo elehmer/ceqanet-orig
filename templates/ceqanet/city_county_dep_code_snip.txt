@@ -1,0 +1,26 @@
+    <script>
+      $(document).ready(function() {
+          $("#id_doc_city").html("<option>Select County First...</option>");
+          $("#id_doc_city").attr('disabled', true);
+
+          $("#id_doc_county").change(function() {
+            if ($(this).val() == '') {
+              $("#id_doc_city").html("<option>Select County First...</option>");
+              $("#id_doc_city").attr('disabled', true);
+            }
+            else {
+              var url = "/county/" + $(this).val() + "/citiesforcounty_json";
+              var county = $(this).val();
+              $.getJSON(url, function(cities) {
+                var options = '<option value="">[Select City]</option>';
+                for (var i = 0; i < cities.length; i++) {
+                  options += '<option value="' + cities[i].pk + '">' + cities[i].fields['geow_shortname'] + '</option>';
+                }
+                $("#id_doc_city").html(options);
+                $("#id_doc_city option:first").attr('selected', 'selected');
+                $("#id_doc_city").attr('disabled', false);
+              });
+            }
+          });
+      });
+    </script>

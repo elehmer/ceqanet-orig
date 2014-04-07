@@ -42,14 +42,20 @@
       <TH align="center" width="10%">
         Project Title
       </TH>
-      <TH align="center" width="40%">
+      <TH align="center" width="30%">
         Description
       </TH>
-      <TH align="center" width="10%">
+      <TH align="center" width="7%">
         Document Type
       </TH>
-      <TH align="center" width="10%">
-        Date Received
+      <TH align="center" width="8%">
+        Start of Review
+      </TH>
+      <TH align="center" width="8%">
+        End of Review
+      </TH>
+      <TH align="center" width="7%">
+        Number of Comments
       </TH>
     </TR> 
     {% for comment in comments %}
@@ -67,7 +73,13 @@
           {{ comment.drag_doc_fk.doc_doctype }}
         </TD>
         <TD align="center">
-          {{ comment.drag_doc_fk.doc_received }}
+          {{ comment.drag_doc_fk.doc_dept }}
+        </TD>
+        <TD align="center">
+          {{ comment.drag_doc_fk.doc_clear }}
+        </TD>
+        <TD align="center">
+          {{ comment.drag_numcomments }}
         </TD>
       </TR>
     {% endfor %}

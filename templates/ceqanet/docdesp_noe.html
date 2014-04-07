@@ -45,6 +45,20 @@
           <b>Project Lead Agency:</b> {{ doc.doc_prj_fk.prj_leadagency }}
         </td>
       </tr>
+      {% if doc.doc_approve_noe %}
+      <tr> 
+        <td> 
+          <b>Agency Approving Project:</b> {{ doc.doc_approve_noe }}
+        </td>
+      </tr>
+      {% endif %}
+      {% if doc.doc_carryout_noe %}
+      <tr> 
+        <td> 
+          <b>Person or Agency Carrying Out Project:</b> {{ doc.doc_carryout_noe }}
+        </td>
+      </tr>
+      {% endif %}
       <tr> 
         <td> 
           <hr width="100%">
@@ -78,6 +92,13 @@
                 {{ doc.doc_conphone }}
               </td>
             </tr>
+            {% if doc.doc_conemail %}
+            <tr>
+              <td align="left">
+                <a href="mailto:{{ doc.doc_conemail }}">{{ doc.doc_conemail }}</a>
+              </td>
+            </tr>
+            {% endif %}
             <tr>
               <td align="left">
                 {{ doc.doc_conaddress1 }}

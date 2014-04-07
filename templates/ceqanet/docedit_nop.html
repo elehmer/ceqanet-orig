@@ -13,12 +13,20 @@
 <script type="text/javascript" src="{% static "admin/js/SelectBox.js" %}"></script>
 <script type="text/javascript" src="{% static "admin/js/SelectFilter2.js" %}"></script>
 <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/admin_styles.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+<script type="text/javascript" src="{% static 'olwidget/js/olwidget.js' %}"></script>
+<link rel="stylesheet" href="{% static 'olwidget/css/olwidget.css' %}">
 
 {% endblock extrajs %}
 
 {% block content %}
 
-<FORM name="editdoc" method="post" action="">
+<FORM name="editdoc" class="adddocform" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
@@ -31,7 +39,8 @@
         {{ form.prj_title.label }}
       </TH>
       <TD colspan="2">
-        {{ form.prj_title }} {{ form.prj_title.errors }}
+        {{ form.prj_title.errors }}
+        {{ form.prj_title }}
       </TD>
     </TR>
     <TR>
@@ -39,7 +48,8 @@
         {{ form.prj_description.label }}
       </TH>
       <TD colspan="2">
-        {{ form.prj_description }} {{ form.prj_description.errors }}
+        {{ form.prj_description.errors }}
+        {{ form.prj_description }}
       </TD>
     </TR>
     <TR> 
@@ -52,7 +62,8 @@
         {{ form.doc_title.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_title }} {{ form.doc_title.errors }}
+        {{ form.doc_title.errors }}
+        {{ form.doc_title }}
       </TD>
     </TR>
     <TR>
@@ -60,7 +71,8 @@
         {{ form.doc_description.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_description }} {{ form.doc_description.errors }}
+        {{ form.doc_description.errors }}
+        {{ form.doc_description }}
       </TD>
     </TR>
     <tr> 
@@ -86,7 +98,8 @@
         {{ form.doc_conname.label }}
       </TH>
       <TD colspan="2"> 
-        {{ form.doc_conname }} {{ form.doc_conname.errors }}
+        {{ form.doc_conname }}
+        {{ form.doc_conname.errors }}
       </TD>
     </TR>
     <TR> 
@@ -94,7 +107,8 @@
         {{ form.doc_conemail.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_conemail }}  {{ form.doc_conemail.errors }}
+        {{ form.doc_conemail }}
+        {{ form.doc_conemail.errors }}
       </TD>
     </TR>
     <TR>   
@@ -102,7 +116,8 @@
         <B>Phone:</B>
       </TD>
       <TD colspan="2">
-        {{ form.doc_conphone }} {{ form.doc_conphone.errors }}
+        {{ form.doc_conphone }}
+        {{ form.doc_conphone.errors }}
       </TD>
     </TR>
     <tr> 
@@ -110,7 +125,8 @@
         {{ form.doc_conaddress1.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conaddress1 }} {{ form.doc_conaddress1.errors }}
+        {{ form.doc_conaddress1 }}
+        {{ form.doc_conaddress1.errors }}
       </td>
     </tr>
     <tr> 
@@ -118,7 +134,8 @@
         {{ form.doc_conaddress2.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conaddress2 }} {{ form.doc_conaddress2.errors }}
+        {{ form.doc_conaddress2 }}
+        {{ form.doc_conaddress2.errors }}
       </td>
     </tr>
     <TR> 
@@ -126,7 +143,8 @@
         {{ form.doc_concity.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_concity }} {{ form.doc_concity.errors }}
+        {{ form.doc_concity }}
+        {{ form.doc_concity.errors }}
       </td>
     </TR>
     <TR> 
@@ -134,7 +152,8 @@
         {{ form.doc_constate.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_constate }} {{ form.doc_constate.errors }}
+        {{ form.doc_constate }}
+        {{ form.doc_constate.errors }}
       </td>
     </tr>
     <tr> 
@@ -142,7 +161,8 @@
         {{ form.doc_conzip.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conzip }} {{ form.doc_conzip.errors }}
+        {{ form.doc_conzip }}
+        {{ form.doc_conzip.errors }}
       </td>
     </tr>
     <tr> 
@@ -154,8 +174,18 @@
       <TH width="25%" align="left" valign="top"> 
         {{ form.doc_location.label }}
       </TH>
-      <TD colspan="2"> 
-        {{ form.doc_location }} {{ form.doc_location.errors }}
+      <TD colspan="2">
+        {{ form.doc_location.errors }}
+        {{ form.doc_location }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top"> 
+        {{ form.geom.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.geom.errors }}
+        {{ form.geom }}
       </TD>
     </TR>
     <TR>
@@ -163,7 +193,8 @@
         {{ form.doc_latitude.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_latitude }} {{ form.doc_latitude.errors }}
+        {{ form.doc_latitude }}
+        {{ form.doc_latitude.errors }}
       </TD>
     </TR>
     <TR>
@@ -171,7 +202,8 @@
         {{ form.doc_longitude.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_longitude }} {{ form.doc_longitude.errors }}
+        {{ form.doc_longitude }}
+        {{ form.doc_longitude.errors }}
       </TD>
     </TR>
     <TR>
@@ -179,7 +211,8 @@
         <b>County:</b>
       </TD>
       <td colspan="2"> 
-        {{ form.doc_county }} {{ form.doc_county.errors }}
+        {{ form.doc_county }}
+        {{ form.doc_county.errors }}
       </td>
     </TR>
     <TR>
@@ -187,7 +220,8 @@
         <b>City:</b>
       </TD>
       <TD colspan="2"> 
-        {{ form.doc_city }} {{ form.doc_city.errors }}
+        {{ form.doc_city }}
+        {{ form.doc_city.errors }}
       </TD>
     </TR>
     <tr> 
@@ -195,32 +229,32 @@
     </tr>
     <tr>
       <td colspan="3"> 
-        <B>{{ form.doc_parcelno.label }}</B> {{ form.doc_parcelno }} {{ form.doc_parcelno.errors }}
+        <B>{{ form.doc_parcelno.label }}</B>{{ form.doc_parcelno.errors }}{{ form.doc_parcelno }}
       </td>
     </tr>
     <tr>
       <td colspan="3"> 
-        <B>{{ form.doc_xstreets.label }}</B> {{ form.doc_xstreets }} {{ form.doc_xstreets.errors }}
+        <B>{{ form.doc_xstreets.label }}</B>{{ form.doc_xstreets.errors }}{{ form.doc_xstreets }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_township.label }}</B> {{ form.doc_township }} {{ form.doc_township.errors }}
+        <B>{{ form.doc_township.label }}</B>{{ form.doc_township }}{{ form.doc_township.errors }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_range.label }}</B> {{ form.doc_range }} {{ form.doc_range.errors }}
+        <B>{{ form.doc_range.label }}</B>{{ form.doc_range }}{{ form.doc_range.errors }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_section.label }}</B> {{ form.doc_section }} {{ form.doc_section.errors }}
+        <B>{{ form.doc_section.label }}</B>{{ form.doc_section }}{{ form.doc_section.errors }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_base.label }}</B> {{ form.doc_base }} {{ form.doc_base.errors }}
+        <B>{{ form.doc_base.label }}</B>{{ form.doc_base }}{{ form.doc_base.errors }}
       </td>
     </tr>
     <tr> 
@@ -231,27 +265,27 @@
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_highways.label }}</B> {{ form.doc_highways }} {{ form.doc_highways.errors }}
+        <B>{{ form.doc_highways.label }}</B>{{ form.doc_highways.errors }}{{ form.doc_highways }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_railways.label }}</B> {{ form.doc_railways }}{{ form.doc_railways.errors }}
+        <B>{{ form.doc_railways.label }}</B>{{ form.doc_railways.errors }}{{ form.doc_railways }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_airports.label }}</B> {{ form.doc_airports }} {{ form.doc_airports.errors }}
+        <B>{{ form.doc_airports.label }}</B>{{ form.doc_airports.errors }}{{ form.doc_airports }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_schools.label }}</B> {{ form.doc_schools }} {{ form.doc_schools.errors }}
+        <B>{{ form.doc_schools.label }}</B>{{ form.doc_schools.errors }}{{ form.doc_schools }}
       </td>
     </tr>
     <tr> 
       <td colspan="3"> 
-        <B>{{ form.doc_waterways.label }}</B> {{ form.doc_waterways }} {{ form.doc_waterways.errors }}
+        <B>{{ form.doc_waterways.label }}</B>{{ form.doc_waterways.errors }}{{ form.doc_waterways }}
       </td>
     </tr>
     <TR> 
@@ -260,8 +294,9 @@
       </TD>
     </TR>
     <TR> 
-      <TD colspan="3"> 
-        {{ form.doc_landuse }} {{ form.doc_landuse.errors }}
+      <TD colspan="3">
+        {{ form.doc_landuse.errors }}
+        {{ form.doc_landuse }}
       </TD>
     </TR>
     <tr> 
@@ -272,54 +307,18 @@
     <TR> 
       <TD colspan="3"> 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
-          <tr>
-            <td>
-              <table>
-                {% for pk, choice in form.actions.field.widget.choices %}
-                  {% if forloop.counter < 12 %}
-                    {% if choice.strip != 'Other Action' %}
-                      <tr>
-                        <td>
-                          <label for="id_actions_{{ forloop.counter0 }}">
-                            <input {% for lat in lats %}{% if lat.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
-                          </label>
-                        </td>
-                      </tr>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </table>
-            </td>
-            <td>
-              <table>
-                {% for pk, choice in form.actions.field.widget.choices %}
-                  {% if forloop.counter > 11 %}
-                    {% if choice.strip != 'Other Action' %}
-                      <tr>
-                        <td>
-                          <label for="id_actions_{{ forloop.counter0 }}">
-                            <input {% for lat in lats %}{% if lat.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
-                          </label>
-                        </td>
-                      </tr>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </table>
-            </td>
-          </tr>            
-          {% for pk, choice in form.actions.field.widget.choices %}
-            {% if choice.strip = 'Other Action' %}
-              <tr>
-                <td>
-                  <label for="id_actions_{{ forloop.counter0 }}">
-                    <input {% for lat in lats %}{% if lat.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_actions_{{ forloop.counter0 }}" value="{{ pk }}" name="actions" />&nbsp;{{ choice }}
-                  </label>
-                  {{ form.dkey_comment_actions }} {{ form.dkey_comment_actions.errors }}
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}     
+          <TR>
+            <TD class="modlist">
+              {{ form.actions }}
+              {{ form.dkey_comment_actions }}
+              {{ form.dkey_comment_actions.errors }}
+              <script>
+                $(document).ready(function() {
+                  $("label[for='id_actions_9']").parent().parent().append($("label[for='id_actions_9']"));
+                });
+              </script>
+            </TD>
+          </TR>
         </table>
       </TD>
     </TR>
@@ -333,9 +332,9 @@
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk == 6001 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="dev6001" value="1">
+              {{ form.dev6001 }}
             </td>
-            <td width="15%" class="subtitle">Residential:</td>
+            <td width="15%" class="subtitle">{{ form.dev6001.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev6001_val1.label }}</i> 
               {{ form.dev6001_val1 }}
             </td>
@@ -346,9 +345,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk == 6002 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="dev6002" value="1">
+              {{ form.dev6002 }}
             </td>
-            <td width="15%" class="subtitle">Office:</td>
+            <td width="15%" class="subtitle">{{ form.dev6002.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev6002_val1.label }}</i> 
               {{ form.dev6002_val1 }}
             </td>
@@ -361,9 +360,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk == 6003 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="dev6003" value="1">
+              {{ form.dev6003 }}
             </td>
-            <td width="15%" class="subtitle">Commercial:</td>
+            <td width="15%" class="subtitle">{{ form.dev6003.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev6003_val1.label }}</i> 
               {{ form.dev6003_val1 }}
             <td width="25%" class="content"><i>{{ form.dev6003_val2.label }}</i> 
@@ -375,9 +374,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk == 6004 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="dev6004" value="1">
+              {{ form.dev6004 }}
             </td>
-            <td width="15%" class="subtitle">Industrial:</td>
+            <td width="15%" class="subtitle">{{ form.dev6004.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev6004_val1.label }}</i> 
               {{ form.dev6004_val1 }}
             </td>
@@ -390,9 +389,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk == 7001 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="dev7001" value="1">
+              {{ form.dev7001 }}
             </td>
-            <td width="15%" class="subtitle">Educational</td>
+            <td width="15%" class="subtitle">{{ form.dev7001.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev7001_val1.label }}</i> 
               {{ form.dev7001_val1 }}
             </td>
@@ -401,9 +400,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk == 8001 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="dev8001" value="1">
+              {{ form.dev8001 }}
             </td>
-            <td width="15%" class="subtitle">Recreational</td>
+            <td width="15%" class="subtitle">{{ form.dev8001.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev8001_val1.label }}</i> 
               {{ form.dev8001_val1 }}
             </td>
@@ -412,7 +411,7 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk > 4000 and dev.dkey_keyw_fk.keyw_pk < 5000 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="devtrans" value="1">
+              {{ form.devtrans }}
             </td>
             <td>
               {{ form.devtrans_id }}
@@ -423,7 +422,7 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk > 3000 and dev.dkey_keyw_fk.keyw_pk < 4000 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="devpower" value="1">
+              {{ form.devpower }}
             </td>
             <td width="15%" class="subtitle">
               {{ form.devpower_id }}
@@ -435,10 +434,10 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk > 5000 and dev.dkey_keyw_fk.keyw_pk < 6000 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="devwaste" value="1">
+              {{ form.devwaste }}
             </td>
             <td>
-              {{ form.devwaste_id}}
+              {{ form.devwaste_id }}
             </td>
             <td colspan="3">
               <i>{{ form.devwaste_comment.label }}</i> {{ form.devwaste_comment }}
@@ -446,9 +445,9 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk == 9001 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="dev9001" value="1">
+              {{ form.dev9001 }}
             </td>
-            <td width="15%" class="subtitle">Water Facilities:</td>
+            <td width="15%" class="subtitle">{{ form.dev9001.label }}</td>
             <td width="25%" class="content"><i>{{ form.dev9001_val1.label }}</i> 
               {{ form.dev9001_val1 }}
             </td>
@@ -458,20 +457,21 @@
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk == 10001 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="dev10001" value="1">
+              {{ form.dev10001 }}
             </td>
-            <td width="15%" class="subtitle">Mining:</td>
+            <td width="15%" class="subtitle">{{ form.dev10001.label }}</td>
             <td colspan="3"><i>{{ form.dev10001_val1.label }}</i> 
               {{ form.dev10001_val1 }}
             </td>
           </tr>
           <tr> 
             <td width="5%"> 
-              <input {% for dev in devs %}{% if dev.dkey_keyw_fk.keyw_pk == 11001 %}checked="checked"{% endif %}{% endfor %} type="checkbox" name="dev11001" value="1">
+              {{ form.dev11001 }}
             </td>
             <td width="15%" class="subtitle">{{ form.dkey_comment_dev.label }}:</td>
             <td colspan="3"> 
               {{ form.dkey_comment_dev }}
+              {{ form.dkey_comment_dev.errors }}
             </td>
           </tr>
         </table>
@@ -486,53 +486,17 @@
       <TD colspan="3"> 
         <table width="100%" border="0" cellspacing="1" cellpadding="1">
           <TR>
-            <TD>
-              <TABLE>
-                {% for pk, choice in form.issues.field.widget.choices %}
-                  {% if forloop.counter < 19 %}
-                    {% if choice.strip != 'Other Issues' %}
-                      <tr>
-                        <td>
-                          <label for="id_issues_{{ forloop.counter0 }}">
-                            <input {% for iss in isss %}{% if iss.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_issues_{{ forloop.counter0 }}" value="{{ pk }}" name="issues" />&nbsp;{{ choice }}
-                          </label>
-                        </td>
-                      </tr>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </TABLE>
+            <TD class="modlist">
+              {{ form.issues }}
+              {{ form.dkey_comment_issues }}
+              {{ form.dkey_comment_issues.errors }}
+              <script>
+                $(document).ready(function() {
+                  $("label[for='id_issues_19']").parent().parent().append($("label[for='id_issues_19']"));
+                });
+              </script>
             </TD>
-            <TD>
-              <TABLE>
-                {% for pk, choice in form.issues.field.widget.choices %}
-                  {% if forloop.counter > 18 %}
-                    {% if choice.strip != 'Other Issues' %}
-                      <tr>
-                        <td>
-                          <label for="id_issues_{{ forloop.counter0 }}">
-                            <input {% for iss in isss %}{% if iss.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_issues_{{ forloop.counter0 }}" value="{{ pk }}" name="issues" />&nbsp;{{ choice }}
-                          </label>
-                        </td>
-                      </tr>
-                    {% endif %}
-                  {% endif %}
-                {% endfor %}
-              </TABLE>
-            </TD>
-          </TR>     
-          {% for pk, choice in form.issues.field.widget.choices %}
-            {% if choice.strip = 'Other Issues' %}
-              <tr>
-                <td>
-                  <label for="id_issues_{{ forloop.counter0 }}">
-                    <input {% for iss in isss %}{% if iss.dkey_keyw_fk.keyw_pk == pk %}checked="checked"{% endif %}{% endfor %} type="checkbox" id="id_issues_{{ forloop.counter0 }}" value="{{ pk }}" name="issues" />&nbsp;{{ choice }}
-                  </label>
-                  {{ form.dkey_comment_issues }} {{ form.dkey_comment_issues.errors }}
-                </td>
-              </tr>
-            {% endif %}
-          {% endfor %}     
+          </TR>
         </table>
       </TD>
     </TR>
@@ -548,12 +512,52 @@
     </tr>
     <tr> 
       <td colspan="3">
+        {{ form.ragencies.errors }}
         {{ form.ragencies }}
       </td>
     </tr>
+    <tr> 
+      <td colspan="3">
+        <h5>Attachments:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3">
+        <TABLE BORDER="1" WIDTH="100%">
+          <TR>
+            <TH BGCOLOR="#000000">
+              <FONT COLOR="#FFFFFF">
+                List of Files Attached to Document
+              </FONT>
+            </TH>
+          </TR>
+          {% if attachments %}
+            {% for a in attachments %}
+              <TR>
+                <TD>
+                  <a href="{{ a.datt_file.url }}">{{ a.datt_file.name }}</a>
+                </TD>
+              </TR>
+            {% endfor %}
+          {% else %}
+            <TR>
+              <TD align="center">
+                NO FILES ATTACHED
+              </TD>
+            </TR>      
+          {% endif %}
+        </TABLE>
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        &nbsp;
+      </TD>
+    </TR>
     <TR>
       <TD colspan="3">
         <B>{{ form.doc_clerknotes.label }}</B>
+        {{ form.doc_clerknotes.errors }}
         {{ form.doc_clerknotes }}
       </TD>
     </TR>

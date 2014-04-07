@@ -5,6 +5,7 @@
 {% block listing %}
 
   {% if docs %}
+  <H2>CEQANet Database Search Results - Document Listing - {{ mode|title }}</H2>
  	<TABLE border="1">
     <TR>
       <TD colspan="6">
@@ -206,10 +207,18 @@
         {% endif %}
     	  </TD>
       	<TD align="center">
-          {{ doc.doc_prj_fk.prj_title }}
+          {% if doc.doc_title %}
+            {{ doc.doc_title }}
+          {% else %}
+            {{ doc.doc_prj_fk.prj_title }}
+          {% endif %}
     	  </TD>
       	<TD align="center">
-    	    {{ doc.doc_prj_fk.prj_description }}
+          {% if doc.doc_description %}
+            {{ doc.doc_description }}
+          {% else %}
+    	      {{ doc.doc_prj_fk.prj_description }}
+          {% endif %}
     	  </TD>
         <TD align="center">
           {{ doc.doc_prj_fk.prj_leadagency }}

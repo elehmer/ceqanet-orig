@@ -37,7 +37,7 @@
     {% endif %}
     <TR>
       <TH align="center" width="10%">
-        SCHNO
+        Clearinghouse Number
       </TH>
       <TH align="center" width="10%">
         Lead Agency
@@ -64,11 +64,11 @@
           {{ latest.doc_prj_fk.prj_leadagency }}
         </TD>
         <TD align="center">
-          {% if latest.doc_doctype = 'NOE' or latest.doc_docname.strip = 'Notice of Exemption' %}
-            <a href="{% url 'docedit_noc' %}?doc_pk={{ latest.doc_pk }}"><i>{{ latest.doc_prj_fk.prj_title }}</i></a>
-          {% elif latest.doc_doctype = 'NOD' or latest.doc_docname.strip = 'Notice of Determination' %}
+          {% if latest.doc_doct_fk.keyw_pk = 109 %}
+            <a href="{% url 'docedit_noe' %}?doc_pk={{ latest.doc_pk }}"><i>{{ latest.doc_prj_fk.prj_title }}</i></a>
+          {% elif latest.doc_doct_fk.keyw_pk = 108 %}
             <a href="{% url 'docedit_nod' %}?doc_pk={{ latest.doc_pk }}"><i>{{ latest.doc_prj_fk.prj_title }}</i></a>
-          {% elif latest.doc_doctype = 'NOP' or latest.doc_docname.strip = 'Notice of Preperation' %}
+          {% elif latest.doc_doct_fk.keyw_pk = 102 %}
             <a href="{% url 'docedit_nop' %}?doc_pk={{ latest.doc_pk }}"><i>{{ latest.doc_prj_fk.prj_title }}</i></a>
           {% else %}
             <a href="{% url 'docedit_noc' %}?doc_pk={{ latest.doc_pk }}"><i>{{ latest.doc_prj_fk.prj_title }}</i></a>

@@ -57,29 +57,6 @@
         <h3>Document Information:</h3>
       </TH>
     </TR>
-    <TR>
-      <TH width="25%" align="left" valign="top">
-        {{ form.doc_title.label }}
-      </TH>
-      <TD colspan="2">
-        {{ form.doc_title.errors }}
-        {{ form.doc_title }}
-      </TD>
-    </TR>
-    <TR>
-      <TH width="25%" align="left" valign="top">
-        {{ form.doc_description.label }}
-      </TH>
-      <TD colspan="2">
-        {{ form.doc_description.errors }}
-        {{ form.doc_description }}
-      </TD>
-    </TR>
-    <tr> 
-      <td colspan="3">
-        &nbsp;
-      </td>
-    </tr>
     <TR> 
       <TH align="left" colspan="3">
         Lead Agency Contact Information:
@@ -174,7 +151,7 @@
       <TH width="25%" align="left" valign="top"> 
         {{ form.doc_location.label }}
       </TH>
-      <TD colspan="2"> 
+      <TD colspan="2">
         {{ form.doc_location.errors }}
         {{ form.doc_location }}
       </TD>
@@ -297,64 +274,6 @@
       <TD colspan="3">
         {{ form.doc_landuse.errors }}
         {{ form.doc_landuse }}
-      </TD>
-    </TR>
-    <tr> 
-      <td colspan="3">
-        <h5>Document Type:</h5>
-      </td>
-    </tr>
-    <TR> 
-      <TD colspan="3">
-        {{ form.doctypeid.errors }}
-        <table width="100%" border="0" cellspacing="1" cellpadding="1">
-          <TR> 
-            <TH width="33%">CEQA:</TH>
-            <TH width="33%">NEPA:</TH>
-            <TH width="33%">Joint Document:</TH>
-          </TR>
-          <TR>
-            <TD>
-              <table>
-              {% for dt in form.doctypeid %}
-                {% if forloop.counter < 16 %}
-                <tr>
-                  <td>
-                    {{ dt }}
-                  </td>
-                </tr>
-                {% endif %}
-              {% endfor %}
-              </table>
-            </TD>
-            <TD>
-              <table>
-              {% for dt in form.doctypeid %}
-                {% if forloop.counter > 15 and forloop.counter < 24 %}
-                <tr>
-                  <td>
-                    {{ dt }}
-                  </td>
-                </tr>
-                {% endif %}
-              {% endfor %}
-              </table>
-            </TD>
-            <TD>
-              <table>
-              {% for dt in form.doctypeid %}
-                {% if forloop.counter = 24 %}
-                <tr>
-                  <td>
-                    {{ dt }}
-                  </td>
-                </tr>
-                {% endif %}
-              {% endfor %}
-              </table>
-            </TD>
-          </TR>
-        </table>
       </TD>
     </TR>
     <tr> 
@@ -574,6 +493,11 @@
         {{ form.ragencies }}
       </td>
     </tr>
+    <tr> 
+      <td colspan="3">
+        <h5>Attachments:</h5>
+      </td>
+    </tr>
     <TR> 
       <TD colspan="3">
         <TABLE BORDER="1" WIDTH="100%">
@@ -603,10 +527,8 @@
       </TD>
     </TR>
     <TR>
-      <TD colspan="3">
-        <B>{{ form.doc_clerknotes.label }}</B>
-        {{ form.doc_clerknotes.errors }}
-        {{ form.doc_clerknotes }}
+      <TD>
+        &nbsp;
       </TD>
     </TR>
     <TR> 

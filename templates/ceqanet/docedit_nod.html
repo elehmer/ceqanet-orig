@@ -3,17 +3,27 @@
 {% load staticfiles %}
 
 {% block extrajs %}
+
   <script>
     $(function() {
         $( "#id_doc_nod" ).datepicker({dateFormat: "yy-mm-dd"});
     });
   </script>
+  <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+  <script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+  <script type="text/javascript" src="{% static 'olwidget/js/olwidget.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'olwidget/css/olwidget.css' %}">
+
 {% endblock extrajs %}
 
 {% block content %}
 
 {{ form.media }}
-<FORM name="editdoc" method="post" action="">
+<FORM name="editdoc" class="adddocform" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
@@ -26,7 +36,8 @@
         {{ form.prj_title.label }}
       </TH>
       <TD colspan="2">
-        {{ form.prj_title }} {{ form.prj_title.errors }}
+        {{ form.prj_title.errors }}
+        {{ form.prj_title }}
       </TD>
     </TR>
     <TR>
@@ -34,7 +45,8 @@
         {{ form.prj_description.label }}
       </TH>
       <TD colspan="2">
-        {{ form.prj_description }} {{ form.prj_description.errors }}
+        {{ form.prj_description.errors }}
+        {{ form.prj_description }}
       </TD>
     </TR>
     <TR> 
@@ -47,7 +59,8 @@
         {{ form.doc_title.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_title }} {{ form.doc_title.errors }}
+        {{ form.doc_title.errors }}
+        {{ form.doc_title }}
       </TD>
     </TR>
     <TR>
@@ -55,7 +68,8 @@
         {{ form.doc_description.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_description }} {{ form.doc_description.errors }}
+        {{ form.doc_description.errors }}
+        {{ form.doc_description }}
       </TD>
     </TR>
     <tr> 
@@ -81,7 +95,8 @@
         {{ form.doc_conname.label }}
       </TH>
       <TD colspan="2"> 
-        {{ form.doc_conname }} {{ form.doc_conname.errors }}
+        {{ form.doc_conname }}
+        {{ form.doc_conname.errors }}
       </TD>
     </TR>
     <TR> 
@@ -89,7 +104,8 @@
         {{ form.doc_conemail.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_conemail }}  {{ form.doc_conemail.errors }}
+        {{ form.doc_conemail }}
+        {{ form.doc_conemail.errors }}
       </TD>
     </TR>
     <TR>   
@@ -97,7 +113,8 @@
         <B>Phone:</B>
       </TD>
       <TD colspan="2">
-        {{ form.doc_conphone }} {{ form.doc_conphone.errors }}
+        {{ form.doc_conphone }}
+        {{ form.doc_conphone.errors }}
       </TD>
     </TR>
     <tr> 
@@ -105,7 +122,8 @@
         {{ form.doc_conaddress1.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conaddress1 }} {{ form.doc_conaddress1.errors }}
+        {{ form.doc_conaddress1 }}
+        {{ form.doc_conaddress1.errors }}
       </td>
     </tr>
     <tr> 
@@ -113,7 +131,8 @@
         {{ form.doc_conaddress2.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conaddress2 }} {{ form.doc_conaddress2.errors }}
+        {{ form.doc_conaddress2 }}
+        {{ form.doc_conaddress2.errors }}
       </td>
     </tr>
     <TR> 
@@ -121,7 +140,8 @@
         {{ form.doc_concity.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_concity }} {{ form.doc_concity.errors }}
+        {{ form.doc_concity }}
+        {{ form.doc_concity.errors }}
       </td>
     </TR>
     <TR> 
@@ -129,7 +149,8 @@
         {{ form.doc_constate.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_constate }} {{ form.doc_constate.errors }}
+        {{ form.doc_constate }}
+        {{ form.doc_constate.errors }}
       </td>
     </tr>
     <tr> 
@@ -137,7 +158,8 @@
         {{ form.doc_conzip.label }}
       </TH>
       <td colspan="2"> 
-        {{ form.doc_conzip }} {{ form.doc_conzip.errors }}
+        {{ form.doc_conzip }}
+        {{ form.doc_conzip.errors }}
       </td>
     </tr>
     <tr> 
@@ -149,8 +171,18 @@
       <TH width="25%" align="left" valign="top"> 
         {{ form.doc_location.label }}
       </TH>
-      <TD colspan="2"> 
-        {{ form.doc_location }} {{ form.doc_location.errors }}
+      <TD colspan="2">
+        {{ form.doc_location.errors }}
+        {{ form.doc_location }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top"> 
+        {{ form.geom.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.geom.errors }}
+        {{ form.geom }}
       </TD>
     </TR>
     <TR>
@@ -158,7 +190,8 @@
         {{ form.doc_latitude.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_latitude }} {{ form.doc_latitude.errors }}
+        {{ form.doc_latitude }}
+        {{ form.doc_latitude.errors }}
       </TD>
     </TR>
     <TR>
@@ -166,7 +199,8 @@
         {{ form.doc_longitude.label }}
       </TH>
       <TD colspan="2">
-        {{ form.doc_longitude }} {{ form.doc_longitude.errors }}
+        {{ form.doc_longitude }}
+        {{ form.doc_longitude.errors }}
       </TD>
     </TR>
     <TR>
@@ -174,7 +208,8 @@
         <b>County:</b>
       </TD>
       <td colspan="2"> 
-        {{ form.doc_county }} {{ form.doc_county.errors }}
+        {{ form.doc_county }}
+        {{ form.doc_county.errors }}
       </td>
     </TR>
     <TR>
@@ -182,7 +217,8 @@
         <b>City:</b>
       </TD>
       <TD colspan="2"> 
-        {{ form.doc_city }} {{ form.doc_city.errors }}
+        {{ form.doc_city }}
+        {{ form.doc_city.errors }}
       </TD>
     </TR>
     <tr> 
@@ -192,6 +228,7 @@
     </tr>
     <tr> 
       <td colspan="3">
+        {{ form.leadorresp.errors }}
         {% for lorr in form.leadorresp %}
           {% if forloop.counter = 1 %}
             This is to advise that the 
@@ -205,12 +242,14 @@
     </tr>
     <tr> 
       <td colspan="3">
+        {{ form.doc_nodagency.errors }}
         {{ form.doc_nodagency }}
       </td>
     </tr>
     <tr> 
       <td colspan="3">
         has approved the project described above on 
+        {{ form.doc_nod.errors }}
         {{ form.doc_nod }}
         and has made the following determinations regarding the project described 
         above.
@@ -218,6 +257,7 @@
     </tr>
     <tr> 
       <td colspan="3">
+        {{ form.det1.errors }}
         {% for d1 in form.det1 %}
           {% if forloop.counter = 1 %}
             1. The project 
@@ -235,6 +275,7 @@
     {% if forloop.counter = 1 %}
     <tr> 
       <td colspan="3">
+        {{ form.det2.errors }}
         2. 
         {{ d2 }}
         An Environmental Impact Report was prepared for this project pursuant to 
@@ -255,6 +296,7 @@
     {% endfor %}
     <tr> 
       <td colspan="3">
+        {{ form.det3.errors }}
         {% for d3 in form.det3 %}
           {% if forloop.counter = 1 %}
             3. Mitigation measures 
@@ -270,6 +312,7 @@
     </tr>
     <tr> 
       <td colspan="3">
+        {{ form.det4.errors }}
         {% for d4 in form.det4 %}
           {% if forloop.counter = 1 %}
             4. A Statement of Overriding Considerations 
@@ -285,6 +328,7 @@
     </tr>
     <tr> 
       <td colspan="3">
+        {{ form.det5.errors }}
         {% for d5 in form.det5 %}
           {% if forloop.counter = 1 %}
             5. Findings 
@@ -304,13 +348,18 @@
       </td>
     </tr>
     <tr> 
-      <td colspan="3">
-        <b>Final EIR Available at:</b> {{ form.doc_eiravailableat }}
+      <td>
+        <b>Final EIR Available at:</b> 
       </td>
+      <TD colspan="2">
+        {{ form.doc_eiravailableat.errors }}
+        {{ form.doc_eiravailableat }}
+      </TD>
     </tr>
     <TR>
       <TD colspan="3">
         <B>{{ form.doc_clerknotes.label }}</B>
+        {{ form.doc_clerknotes.errors }}
         {{ form.doc_clerknotes }}
       </TD>
     </TR>

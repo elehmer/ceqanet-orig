@@ -65,10 +65,31 @@
         <div id="rdodate_div">
           {{ date }} {{ form.date_from.label }} {{ form.date_from }} {{ form.date_to.label }} {{ form.date_to }}
         </div>
+        <input type="button" id="days30" value="Previous 30 Days">
+        <input type="button" id="days60" value="Previous 60 Days">
+        <input type="button" id="days90" value="Previous 90 Days">
+        <input type="button" id="days180" value="Previous 180 Days">
+        <input type="button" id="days360" value="Previous 360 Days">
       {% endif %}
       </TD>
     </TR>
     {% endfor %}
+    <script>
+      $(document).ready(function() {
+        function setdatepickers(days) {
+          var today = new Date();
+          var past = new Date();
+          past.setDate(today.getDate()-days);
+          $("#id_date_from").datepicker().datepicker('setDate',past);
+          $("#id_date_to").datepicker().datepicker('setDate',today);
+        };
+        $("#days30").click(function() {setdatepickers(30);});
+        $("#days60").click(function() {setdatepickers(60);});
+        $("#days90").click(function() {setdatepickers(90);});
+        $("#days180").click(function() {setdatepickers(180);});
+        $("#days360").click(function() {setdatepickers(360);});
+      });
+    </script>
     <tr>
       <TH colspan="3" align="left">
         {{ form.rdoplace.label }}

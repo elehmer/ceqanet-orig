@@ -16,8 +16,6 @@
 
 {% block content %}
 
-<FORM id="attachments" name="attachments" method="post" action="" enctype="multipart/form-data">
-  {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
       <TH colspan="3" align="left">
@@ -49,21 +47,24 @@
             </TD>
           </TR>
           <TR>
+            <TD colspan="2">
+              &nbsp;
+            </TD>
+          </TR>
+          <TR>
             <TD align="left">
-              {% if doc.doc_doctype = 'NOE' or doc.doc_docname.strip = 'Notice of Exemption' %}
-                 <a href="{% url 'draftedit_noe' %}?doc_pk={{ doc.doc_pk }}">Edit Draft</a>
-              {% elif doc.doc_doctype = 'NOD' or doc.doc_docname.strip = 'Notice of Determination' %}
-                 <a href="{% url 'draftedit_nod' %}?doc_pk={{ doc.doc_pk }}">Edit Draft</a>
-              {% elif doc.doc_doctype = 'NOP' or doc.doc_docname.strip = 'Notice of Preperation' %}
-                 <a href="{% url 'draftedit_nop' %}?doc_pk={{ doc.doc_pk }}">Edit Draft</a>
+              {% if doc.doc_doct_fk.keyw_pk = 102 %}
+                <button onclick="window.location = '{% url 'draftedit_nop' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>
               {% else %}
-                 <a href="{% url 'draftedit_noc' %}?doc_pk={{ doc.doc_pk }}">Edit Draft</a>
+                <button onclick="window.location = '{% url 'draftedit_noc' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>
               {% endif %}
             </TD>
           </TR>
         </TABLE>
       </TD>
     </TR>
+<FORM id="attachments" name="attachments" method="post" action="" enctype="multipart/form-data">
+  {% csrf_token %}
     <TR> 
       <TH colspan="3" align="left">
         <h5>Attachment Inteface</h5>
@@ -84,11 +85,6 @@
         <input id="attach" type="submit" value="Attach File...">
       </TD>
     </TR>
-    <script>
-      $("#attach").click(function() {
-        alert($("#id_datt_file").val());
-      });
-    </script>
     <TR>
       <TD colspan="3">
         &nbsp;

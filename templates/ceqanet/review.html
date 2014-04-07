@@ -42,14 +42,23 @@
       <TH align="center" width="10%">
         Project Title
       </TH>
-      <TH align="center" width="40%">
+      <TH align="center" width="41%">
         Project Description
       </TH>
-      <TH align="center" width="10%">
+      <TH align="center" width="7%">
         Document Type
       </TH>
-      <TH align="center" width="10%">
+      <TH align="center" width="8%">
         Date Received
+      </TH>
+      <TH align="center" width="8%">
+        Start of Review
+      </TH>
+      <TH align="center" width="8%">
+        End of Review
+      </TH>
+      <TH align="center" width="8%">
+        Looked at last by
       </TH>
     </TR> 
     {% for review in reviews %}
@@ -88,6 +97,19 @@
         </TD>
         <TD align="center">
           {{ review.doc_received }}
+        </TD>
+        <TD align="center">
+          {{ review.doc_dept }}
+        </TD>
+        <TD align="center">
+          {{ review.doc_clear }}
+        </TD>
+        <TD align="center">
+          {% if review.doc_lastlooked_userid.pk = -1 %}
+            No One
+          {% else %}
+            {{ review.doc_lastlooked_userid.username }}
+          {% endif %}
         </TD>
       </TR>
     {% endfor %}

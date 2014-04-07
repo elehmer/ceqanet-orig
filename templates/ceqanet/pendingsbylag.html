@@ -37,9 +37,12 @@
     </TR>
     {% endif %}
  	  <TR>
- 	  	<TH align="center" width="60%">
+ 	  	<TH align="center" width="10%">
         Project Title
  	  	</TH>
+      <TH align="center" width="50%">
+        Project Description
+      </TH>
  	  	<TH align="center" width="20%">
  	  	  Document Type
  	  	</TH>
@@ -50,16 +53,19 @@
     {% for pending in pendingsbylag %}
       <TR>
       	<TD align="center">
-          {% if pending.doc_doctype = 'NOE' or pending.doc_docname.strip = 'Notice of Exemption' %}
-            <a href="{% url 'docdesp_noe' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
-          {% elif pending.doc_doctype = 'NOD' or pending.doc_docname.strip = 'Notice of Determination' %}
-            <a href="{% url 'docdesp_nod' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
-          {% elif pending.doc_doctype = 'NOP' or pending.doc_docname.strip = 'Notice of Preperation' %}
-            <a href="{% url 'docdesp_nop' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
-          {% else %}
-            <a href="{% url 'docdesp_noc' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
-          {% endif %}
+        {% if pending.doc_doct_fk.keyw_pk = 109 %}
+          <a href="{% url 'docdesp_noe' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
+        {% elif pending.doc_doct_fk.keyw_pk = 108 %}
+          <a href="{% url 'docdesp_nod' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
+        {% elif pending.doc_doct_fk.keyw_pk = 102 %}
+          <a href="{% url 'docdesp_nop' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
+        {% else %}
+          <a href="{% url 'docdesp_noc' pending.doc_pk %}">{{ pending.doc_prj_fk.prj_title }}</a>
+        {% endif %}
     	  </TD>
+        <TD align="center">
+          {{ pending.doc_prj_fk.prj_description }}
+        </TD>
       	<TD align="center">
           {{ pending.doc_doctype }}
     	  </TD>
