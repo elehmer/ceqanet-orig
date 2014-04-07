@@ -206,8 +206,8 @@ class nopform(basedocumentform):
     dkey_comment_dev = forms.CharField(label="Other",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'8'}))
     issues = forms.ModelMultipleChoiceField(required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname'),widget=forms.CheckboxSelectMultiple(attrs={'class':'iss'}))
     dkey_comment_issues = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
-    #ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=FilteredSelectMultiple("Reviewing Agencies",True,attrs={'rows':'10'}))
+    #ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
+    ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=FilteredSelectMultiple("Reviewing Agencies",True,attrs={'rows':'10'}))
 
     def clean(self):
         cleaned_data = super(nopform, self).clean()
