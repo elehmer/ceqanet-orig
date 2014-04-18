@@ -8,7 +8,7 @@ var geographic = new OpenLayers.Projection("EPSG:4326");
 var world = new OpenLayers.Bounds(-180, -89, 180, 89).transform(
     geographic, mercator
 );
-var center = new OpenLayers.LonLat(-121.90515908415186, 37.424431833728114).transform(
+var center = new OpenLayers.LonLat(-121.40515908415186, 37.424431833728114).transform(
     geographic, mercator
 );
 
@@ -121,19 +121,35 @@ map = new OpenLayers.Map('map',{
     
     docurl="/api/doc/location/"+doc+"/";
     //document.getElementById("attributes").innerHTML = msg3;
-    feature = '{"crs": null, "type": "FeatureCollection","features": [{"geometry":{"type": "Point","coordinates": [-121.847, 37.5763]},"type": "Feature","id": 2420, "properties": {} }  ]}';
+    //feature = '{"crs": null, "type": "FeatureCollection","features": [{"geometry":{"type": "Point","coordinates": [-121.847, 37.5763]},"type": "Feature","id": 2420, "properties": {} }  ]}';
+
+    //feature = '{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[-121.3881,38.7494]}]}'
     
-    ceqadoc = new OpenLayers.Layer.Vector("Document", {
+    var geojson_format = new OpenLayers.Format.GeoJSON();
+    ceqadoc = new OpenLayers.Layer.Vector("GeoJSON", {
 		 projection: map.displayProjection,
+         strategies: [new OpenLayers.Strategy.Fixed()],
+         protocol: new OpenLayers.Protocol.HTTP({
+            url: docurl,
+         format: new OpenLayers.Format.GeoJSON()
+         })
+    });
+
+
+
+    
+//    ceqadoc = new OpenLayers.Layer.Vector("Document", {
+//		 projection: map.displayProjection,
          //strategies: [new OpenLayers.Strategy.Fixed()],
          //protocol: new OpenLayers.Protocol.HTTP({
             //url: docurl,
-         format: new OpenLayers.Format.GeoJSON()
+//         format: new OpenLayers.Format.GeoJSON()
          //})
-     });
+//     });
+
     
-    ceqadoc.addFeatures(feature);
-    
+    //ceqadoc.addFeatures(geojson_format.read(feature));
+  
     var getData = function(coords,msg,id) {
         var result = msg
         $.getJSON("/api/doc/short/"+id,function(data) {
@@ -190,5 +206,5 @@ map = new OpenLayers.Map('map',{
 
 map.addLayers([tonerlite,toner,terrain,ceqadoc]);
 map.setCenter(center);
-map.zoomTo(6);
+map.zoomTo(5);
 }
