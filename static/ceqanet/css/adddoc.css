@@ -11,6 +11,20 @@
     display: inline;
 }
 
+.modlist2 label {
+    display: table-cell;
+    width: 325px;
+    padding-right: 25px;
+    margin-left: 0px;
+    margin-top: 4px;
+    margin-bottom: 4px;
+    vertical-align: top;
+}
+
+.modlist2 li {
+    display: inline;
+}
+
 .adddocform .errorlist {
     font-weight: bold;
     color: red;

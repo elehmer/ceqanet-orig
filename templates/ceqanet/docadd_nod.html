@@ -198,6 +198,26 @@
         {{ form.geom }}
       </TD>
     </TR>
+    <script>
+      var averagelongitude;
+      var averagelatitude;
+
+      changeTextarea();
+
+      function changeTextarea() {
+        var layers = olwidget_id_geom.getLayersByName("Geom");
+        var layer = layers[0];
+        if ($("#id_geom_geom").val() != "") {
+          var dataextent = layer.getDataExtent();
+          var centerlonlat = dataextent.getCenterLonLat().transform(mercator,geographic);
+          averagelongitude = centerlonlat.lon;
+          averagelatitude = centerlonlat.lat;
+          $("#id_doc_longitude").val(averagelongitude);
+          $("#id_doc_latitude").val(averagelatitude);
+        }
+        setTimeout("changeTextarea()",500);
+      }
+    </script>
     <TR>
       <TH width="25%" align="left" valign="top">
         {{ form.doc_latitude.label }}
@@ -264,7 +284,6 @@
         if ($("#lorr_0").prop('checked')) {
           $("#nodagency").prop('disabled', true);          
         }
-
         $("#lorr_0").click(function() {
           $("#nodagency").prop('disabled', true);
           $("#nodagency").val('{{ laglist.lag_pk }}');
@@ -385,9 +404,28 @@
         {{ form.doc_eiravailableat }}
       </TD>
     </tr>
+    <tr> 
+      <td colspan="3">
+        {{ form.doc_nodfeespaid.errors }}
+        {% for fees in form.doc_nodfeespaid %}
+          {% if forloop.counter = 1 %}
+            Have CEQA Fees been paid for? 
+            {{ fees }}
+          {% endif %} 
+          {% if forloop.counter = 2 %}
+            {{ fees }}
+          {% endif %}
+        {% endfor %}:
+      </td>
+    </tr>
+    <TR>
+      <TD colspan="3">
+        &nbsp;
+      </TD>
+    </TR>
     <TR> 
       <TD align="left" colspan="3"> 
-        <input id="next" type="submit" value="Submit to CEQANet >>">
+        <input id="next" type="submit" value="Next >>">
       </TD>
     </TR>
     <script>

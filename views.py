@@ -32,7 +32,7 @@ from django.core import serializers
 from ceqanet.functions import generate_schno,generate_biaschno,delete_clearinghouse_document,email_rejection,email_submission,email_inreview,email_upgraderejection,email_upgradeacceptance,email_commentacceptance,email_acceptance,email_requestforupgrade,email_assigned
 
 # Global switch for sending emails
-sendemail = True
+sendemail = False
 
 def index(request):
     t = loader.get_template("ceqanet/index.html")
@@ -727,7 +727,7 @@ class docadd_nod(FormView):
     form_class = nodform
 
     def get_success_url(self):
-        success_url = "%s" % reverse_lazy('accept')
+        success_url = "%s?doc_pk=%s" % (reverse_lazy('attachments'),self.doc_pk)
         return success_url
 
     def get_initial(self):
@@ -837,6 +837,12 @@ class docadd_nod(FormView):
                 doc_detfindings = False
                 doc_detnotfindings = True
 
+        if data['doc_nodfeespaid']:
+            if data['doc_nodfeespaid'] == 'yes':
+                doc_nodfeespaid = True
+            elif data['doc_nodfeespaid'] == 'no':
+                doc_nodfeespaid = False
+
         if self.request.POST.get('prj_pk') == 'None':
             prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_status=doct.keyw_shortname,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
             prj.save()
@@ -846,7 +852,7 @@ class docadd_nod(FormView):
             prj.prj_datelast = today
             prj.save()
 
-        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=doc_title,doc_description=doc_description,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_draft=0,doc_pending=1,doc_received=doc_received,doc_nodbylead=doc_nodbylead,doc_nodbyresp=doc_nodbyresp,doc_nodagency=data['doc_nodagency'].lag_name,doc_nod=data['doc_nod'],doc_detsigeffect=doc_detsigeffect,doc_detnotsigeffect=doc_detnotsigeffect,doc_deteir=doc_deteir,doc_detnegdec=doc_detnegdec,doc_detmitigation=doc_detmitigation,doc_detnotmitigation=doc_detnotmitigation,doc_detconsider=doc_detconsider,doc_detnotconsider=doc_detnotconsider,doc_detfindings=doc_detfindings,doc_detnotfindings=doc_detnotfindings,doc_eiravailableat=data['doc_eiravailableat'],doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1))
+        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=doc_title,doc_description=doc_description,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_draft=1,doc_pending=0,doc_received=doc_received,doc_added=today,doc_nodbylead=doc_nodbylead,doc_nodbyresp=doc_nodbyresp,doc_nodagency=data['doc_nodagency'].lag_name,doc_nod=data['doc_nod'],doc_detsigeffect=doc_detsigeffect,doc_detnotsigeffect=doc_detnotsigeffect,doc_deteir=doc_deteir,doc_detnegdec=doc_detnegdec,doc_detmitigation=doc_detmitigation,doc_detnotmitigation=doc_detnotmitigation,doc_detconsider=doc_detconsider,doc_detnotconsider=doc_detnotconsider,doc_detfindings=doc_detfindings,doc_detnotfindings=doc_detnotfindings,doc_eiravailableat=data['doc_eiravailableat'],doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1),doc_nodfeespaid=doc_nodfeespaid)
         adddoc.save()
 
         geowrds_cnty = docgeowords(dgeo_geow_fk=data['doc_county'],dgeo_doc_fk=adddoc,dgeo_rank=1)
@@ -875,7 +881,7 @@ class docadd_noe(FormView):
     form_class = noeform
 
     def get_success_url(self):
-        success_url = "%s" % reverse_lazy('accept')
+        success_url = "%s?doc_pk=%s" % (reverse_lazy('attachments'),self.doc_pk)
         return success_url
 
     def get_initial(self):
@@ -964,7 +970,7 @@ class docadd_noe(FormView):
             prj.prj_datelast = today
             prj.save()
 
-        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=doc_title,doc_description=doc_description,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_draft=0,doc_pending=1,doc_received=doc_received,doc_approve_noe=data['doc_approve_noe'],doc_carryout_noe=data['doc_carryout_noe'],doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber,doc_exreasons=data['doc_exreasons'],doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1))
+        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=doc_title,doc_description=doc_description,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=data['doc_city'].geow_shortname,doc_county=data['doc_county'].geow_shortname,doc_draft=1,doc_pending=0,doc_received=doc_received,doc_added=today,doc_approve_noe=data['doc_approve_noe'],doc_carryout_noe=data['doc_carryout_noe'],doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber,doc_exreasons=data['doc_exreasons'],doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1))
         adddoc.save()
 
         geowrds_cnty = docgeowords(dgeo_geow_fk=data['doc_county'],dgeo_doc_fk=adddoc,dgeo_rank=1)
@@ -2260,6 +2266,20 @@ class draftedit_noc(docedit_noc):
         success_url = reverse_lazy('draftsbylag')
         return success_url
 
+class draftedit_nod(docedit_nod):    
+    template_name="ceqanet/draftedit_nod.html"
+
+    def get_success_url(self):
+        success_url = reverse_lazy('draftsbylag')
+        return success_url
+
+class draftedit_noe(docedit_noe):    
+    template_name="ceqanet/draftedit_noe.html"
+
+    def get_success_url(self):
+        success_url = reverse_lazy('draftsbylag')
+        return success_url
+
 class draftedit_nop(docedit_nop):    
     template_name="ceqanet/draftedit_nop.html"
 
@@ -2865,6 +2885,11 @@ class pendingdetail_nod(FormView):
         elif docinfo.doc_detnotfindings:
             initial['det5'] = 'False'
         initial['doc_eiravailableat'] = docinfo.doc_eiravailableat
+        if docinfo.doc_nodfeespaid:
+            initial['doc_nodfeespaid'] = 'yes'
+        else:
+            initial['doc_nodfeespaid'] = 'no'
+
 
         return initial
 
@@ -2877,11 +2902,10 @@ class pendingdetail_nod(FormView):
 
     def form_valid(self,form):
         data = form.cleaned_data
+        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
+        prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
 
-        if self.request.POST.get("mode") == 'accept':
-            doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
-            prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
-            
+        if self.request.POST.get("mode") == 'accept':            
             doc.doc_title = data['doc_title']
             doc.doc_description = data['doc_description']
             doc.doc_conname = data['doc_conname']
@@ -2947,6 +2971,7 @@ class pendingdetail_nod(FormView):
                     doc.doc_detfindings = False
                     doc.doc_detnotfindings = True
             doc.doc_eiravailableat = data['doc_eiravailableat']
+            doc.doc_nodfeespaid = data['doc_nodfeespaid']
 
             if prj.prj_schno:
                 doc.doc_schno = prj.prj_schno
@@ -2997,8 +3022,10 @@ class pendingdetail_nod(FormView):
 
         elif self.request.POST.get('mode') == 'reject':
             if sendemail:
-                email_rejection(self)
-            delete_clearinghouse_document(self)
+                email_demotiontodraft(self,doc)
+            doc.doc_draft = True
+            doc.doc_pending = False
+            doc.save()
             
         return super(pendingdetail_nod,self).form_valid(form)
 
@@ -3077,11 +3104,10 @@ class pendingdetail_noe(FormView):
 
     def form_valid(self,form):
         data = form.cleaned_data
+        doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
+        prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
 
         if self.request.POST.get("mode") == 'accept':
-            doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
-            prj = projects.objects.get(pk=doc.doc_prj_fk.prj_pk)
-               
             doc_exministerial = False
             doc_exdeclared = False
             doc_exemergency = False
@@ -3182,8 +3208,10 @@ class pendingdetail_noe(FormView):
 
         elif self.request.POST.get('mode') == 'reject':
             if sendemail:
-                email_rejection(self)
-            delete_clearinghouse_document(self)
+                email_demotiontodraft(self,doc)
+            doc.doc_draft = True
+            doc.doc_pending = False
+            doc.save()
 
         return super(pendingdetail_noe,self).form_valid(form)
 

@@ -178,6 +178,7 @@ class documents(models.Model):
     doc_lastlooked_userid = models.ForeignKey(User,db_column="doc_lastlooked_userid",related_name="+")
     doc_approve_noe = models.CharField(null=True,blank=True,max_length=64)
     doc_carryout_noe = models.CharField(null=True,blank=True,max_length=64)
+    doc_nodfeespaid = models.BooleanField(blank=True)
 
     class Meta:
         #ordering = ['name']

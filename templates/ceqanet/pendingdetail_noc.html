@@ -39,7 +39,7 @@
 {% block content %}
 <FORM name="pendingdetailform" class="adddocform" method="post" action="">
   {% csrf_token %}
-  <h1>Assign or Reject Pending Document:</h1>
+  <h1>Assign or Reject Pending Document [NOC]:</h1>
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
       <TH align="left" colspan="3">
@@ -572,13 +572,19 @@
     </tr>
     <tr> 
       <td colspan="3">
-        <B>Reviewing Agencies (Double Click on Agency to move back and forth):</B>
+        <B>Reviewing Agencies:</B>
       </td>
     </tr>
     <tr> 
       <td colspan="3">
-        {{ form.ragencies.errors }}
-        {{ form.ragencies }}
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <TR>
+            <TD class="modlist2">
+              {{ form.ragencies.errors }}
+              {{ form.ragencies }}
+            </TD>
+          </TR>
+        </TABLE>
       </td>
     </tr>
     <tr> 

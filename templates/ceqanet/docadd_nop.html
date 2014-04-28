@@ -200,6 +200,26 @@
         {{ form.geom }}
       </TD>
     </TR>
+    <script>
+      var averagelongitude;
+      var averagelatitude;
+
+      changeTextarea();
+
+      function changeTextarea() {
+        var layers = olwidget_id_geom.getLayersByName("Geom");
+        var layer = layers[0];
+        if ($("#id_geom_geom").val() != "") {
+          var dataextent = layer.getDataExtent();
+          var centerlonlat = dataextent.getCenterLonLat().transform(mercator,geographic);
+          averagelongitude = centerlonlat.lon;
+          averagelatitude = centerlonlat.lat;
+          $("#id_doc_longitude").val(averagelongitude);
+          $("#id_doc_latitude").val(averagelatitude);
+        }
+        setTimeout("changeTextarea()",500);
+      }
+    </script>
     <TR>
       <TH width="25%" align="left" valign="top">
         {{ form.doc_latitude.label }}
@@ -567,13 +587,19 @@
     </tr>
     <tr> 
       <td colspan="3">
-        <B>Reviewing Agencies (Double Click on Agency to move back and forth):</B>
+        <B>Reviewing Agencies:</B>
       </td>
     </tr>
     <tr> 
       <td colspan="3">
-        {{ form.ragencies.errors }}
-        {{ form.ragencies }}
+        <table width="100%" border="0" cellspacing="1" cellpadding="1">
+          <TR>
+            <TD class="modlist2">
+              {{ form.ragencies.errors }}
+              {{ form.ragencies }}
+            </TD>
+          </TR>
+        </TABLE>
       </td>
     </tr>
     <TR>

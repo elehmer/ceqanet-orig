@@ -8,8 +8,13 @@
 
   <script type="text/javascript">
     function acceptdoc() {
-      document.pendingdetailform.mode.value = 'accept';
-      document.pendingdetailform.submit();
+      if (document.getElementById('fees_0').checked) {
+        document.pendingdetailform.mode.value = 'accept';
+        document.pendingdetailform.submit();
+      }
+      else if (document.getElementById('fees_1').checked) {
+        alert('CEQA Fees Must be Paid Before Accepting');
+      }
     }
     function rejectdoc() {
       document.pendingdetailform.mode.value = 'reject';
@@ -35,7 +40,7 @@
 {% block content %}
 <FORM name="pendingdetailform" class="adddocform" method="post" action="">
   {% csrf_token %}
-  <h1>Assign or Reject Pending Document:</h1>
+  <h1>Assign or Reject Pending Document [NOD]:</h1>
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
       <TH align="left" colspan="3">
@@ -361,6 +366,20 @@
         {{ form.doc_eiravailableat.errors }}
         {{ form.doc_eiravailableat }}
       </TD>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        {{ form.doc_nodfeespaid.errors }}
+        {% for fees in form.doc_nodfeespaid %}
+          {% if forloop.counter = 1 %}
+            Have CEQA Fees been paid for? 
+            {{ fees }}
+          {% endif %} 
+          {% if forloop.counter = 2 %}
+            {{ fees }}
+          {% endif %}
+        {% endfor %}:
+      </td>
     </tr>
     <tr>
       <td colspan="3">

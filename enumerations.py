@@ -129,3 +129,8 @@ PLANNERREGION_CHOICES = (
     (2,'2 (North)'),
     (4,'4 (Federal)')
 )
+
+NODFEESPAID_CHOICES = (
+    ('yes','Yes'),
+    ('no','No')
+)

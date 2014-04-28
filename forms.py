@@ -7,7 +7,7 @@ from datetime import datetime, date, timedelta
 from django.contrib.auth.models import Group
 from ceqanet.models import projects,documents,geowords,reviewingagencies,leadagencies,keywords,doctypes,docattachments,Locations,holidays
 from localflavor.us.forms import USPhoneNumberField,USStateField,USZipCodeField
-from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES,RDOLAT_CHOICES,RDODEVTYPE_CHOICES,RDOISSUE_CHOICES,RDOTITLE_CHOICES,RDODESCRIPTION_CHOICES,UPGRADE_CHOICES,COMMENT_CHOICES
+from enumerations import DOCUMENT_TYPES,PROJECT_EXISTS,EXEMPT_STATUS_CHOICES,PLANNERREGION_CHOICES,COLATION_CHOICES,PRJ_SORT_FIELDS,DOC_SORT_FIELDS,RDODATE_CHOICES,RDOPLACE_CHOICES,RDOLAG_CHOICES,RDORAG_CHOICES,RDODOCTYPE_CHOICES,DETERMINATION_CHOICES,NODAGENCY_CHOICES,RDOLAT_CHOICES,RDODEVTYPE_CHOICES,RDOISSUE_CHOICES,RDOTITLE_CHOICES,RDODESCRIPTION_CHOICES,UPGRADE_CHOICES,COMMENT_CHOICES,NODFEESPAID_CHOICES
 from django.contrib.admin.widgets import FilteredSelectMultiple
 
 class MapForm(forms.Form):
@@ -99,6 +99,7 @@ class nodform(basedocumentform):
     det4 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det4'}))
     det5 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det5'}))
     doc_eiravailableat = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
+    doc_nodfeespaid = forms.ChoiceField(required=True,choices=NODFEESPAID_CHOICES,widget=forms.RadioSelect(attrs={'id':'fees','class':'fees'}))
 
 class editnodform(nodform):
     def __init__(self, *args, **kwargs):
@@ -107,6 +108,7 @@ class editnodform(nodform):
         self.fields['doc_conemail'].required = False
         self.fields['doc_city'].required = False    
         self.fields['doc_county'].required = False    
+        self.fields['doc_nodfeespaid'].required = False    
     doc_latitude = forms.CharField(label="Document Latitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_longitude = forms.CharField(label="Document Longitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_conphone = forms.CharField(required=True,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))
@@ -206,8 +208,8 @@ class nopform(basedocumentform):
     dkey_comment_dev = forms.CharField(label="Other",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'8'}))
     issues = forms.ModelMultipleChoiceField(required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname'),widget=forms.CheckboxSelectMultiple(attrs={'class':'iss'}))
     dkey_comment_issues = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
-    #ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.SelectMultiple(attrs={'size':'10'}))
-    ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=FilteredSelectMultiple("Reviewing Agencies",True,attrs={'rows':'10'}))
+    #ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=FilteredSelectMultiple("Reviewing Agencies",True,attrs={'rows':'10'}))
+    ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.CheckboxSelectMultiple(attrs={'class':'agencies'}))
 
     def clean(self):
         cleaned_data = super(nopform, self).clean()
@@ -299,8 +301,8 @@ class manageuserform(forms.Form):
     usr_grp = forms.ModelChoiceField(label="Assign Group:",required=False,queryset=Group.objects.filter(pk__gt=1).filter(pk__lt=5),empty_label=None,widget=forms.Select(attrs={'size':5}))
 
 class pendingdetailnocform(nocform):
-    doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
-    doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
+    doc_dept = forms.DateField(label="Start of Review:",required=True,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
+    doc_clear = forms.DateField(label="End of Review:",required=True,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
@@ -311,23 +313,27 @@ class pendingdetailnocform(nocform):
         msg_date_weekend = u"Date is on weekend."
         msg_date_holiday = u"Date is on holiday."
 
-        if cleaned_data.get('doc_dept').weekday() in [5,6]:
-            self._errors['doc_dept'] = self.error_class([msg_date_weekend])
-            del cleaned_data['doc_dept']
+        if cleaned_data.get('doc_dept') != None:
+            if cleaned_data.get('doc_dept').weekday() in [5,6]:
+                self._errors['doc_dept'] = self.error_class([msg_date_weekend])
+                del cleaned_data['doc_dept']
 
-        if cleaned_data.get('doc_clear').weekday() in [5,6]:
-            self._errors['doc_clear'] = self.error_class([msg_date_weekend])
-            del cleaned_data['doc_clear']
+        if cleaned_data.get('doc_clear') != None:
+            if cleaned_data.get('doc_clear').weekday() in [5,6]:
+                self._errors['doc_clear'] = self.error_class([msg_date_weekend])
+                del cleaned_data['doc_clear']
 
         allhdays = holidays.objects.all()
 
         for hday in allhdays:
-            if cleaned_data.get('doc_dept') == hday.hday_date:
-                self._errors['doc_dept'] = self.error_class([msg_date_holiday])
-                del cleaned_data['doc_dept']        
-            if cleaned_data.get('doc_clear') == hday.hday_date:
-                self._errors['doc_clear'] = self.error_class([msg_date_holiday])
-                del cleaned_data['doc_clear']        
+            if cleaned_data.get('doc_dept') != None:
+                if cleaned_data.get('doc_dept') == hday.hday_date:
+                    self._errors['doc_dept'] = self.error_class([msg_date_holiday])
+                    del cleaned_data['doc_dept']        
+            if cleaned_data.get('doc_clear') != None:
+                if cleaned_data.get('doc_clear') == hday.hday_date:
+                    self._errors['doc_clear'] = self.error_class([msg_date_holiday])
+                    del cleaned_data['doc_clear']        
 
         return cleaned_data
 
@@ -340,8 +346,8 @@ class pendingdetailnoeform(noeform):
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
 
 class pendingdetailnopform(nopform):
-    doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'])
-    doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'])
+    doc_dept = forms.DateField(label="Start of Review:",required=True,input_formats=['%Y-%m-%d'])
+    doc_clear = forms.DateField(label="End of Review:",required=True,input_formats=['%Y-%m-%d'])
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
@@ -352,23 +358,27 @@ class pendingdetailnopform(nopform):
         msg_date_weekend = u"Date is on weekend."
         msg_date_holiday = u"Date is on holiday."
 
-        if cleaned_data.get('doc_dept').weekday() in [5,6]:
-            self._errors['doc_dept'] = self.error_class([msg_date_weekend])
-            del cleaned_data['doc_dept']
+        if cleaned_data.get('doc_dept') != None:
+            if cleaned_data.get('doc_dept').weekday() in [5,6]:
+                self._errors['doc_dept'] = self.error_class([msg_date_weekend])
+                del cleaned_data['doc_dept']
 
-        if cleaned_data.get('doc_clear').weekday() in [5,6]:
-            self._errors['doc_clear'] = self.error_class([msg_date_weekend])
-            del cleaned_data['doc_clear']
+        if cleaned_data.get('doc_clear') != None:
+            if cleaned_data.get('doc_clear').weekday() in [5,6]:
+                self._errors['doc_clear'] = self.error_class([msg_date_weekend])
+                del cleaned_data['doc_clear']
 
         allhdays = holidays.objects.all()
 
         for hday in allhdays:
-            if cleaned_data.get('doc_dept') == hday.hday_date:
-                self._errors['doc_dept'] = self.error_class([msg_date_holiday])
-                del cleaned_data['doc_dept']        
-            if cleaned_data.get('doc_clear') == hday.hday_date:
-                self._errors['doc_clear'] = self.error_class([msg_date_holiday])
-                del cleaned_data['doc_clear']        
+            if cleaned_data.get('doc_dept') != None:
+                if cleaned_data.get('doc_dept') == hday.hday_date:
+                    self._errors['doc_dept'] = self.error_class([msg_date_holiday])
+                    del cleaned_data['doc_dept']        
+            if cleaned_data.get('doc_clear') != None:
+                if cleaned_data.get('doc_clear') == hday.hday_date:
+                    self._errors['doc_clear'] = self.error_class([msg_date_holiday])
+                    del cleaned_data['doc_clear']        
 
         return cleaned_data
 

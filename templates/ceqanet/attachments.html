@@ -53,7 +53,11 @@
           </TR>
           <TR>
             <TD align="left">
-              {% if doc.doc_doct_fk.keyw_pk = 102 %}
+              {% if doc.doc_doct_fk.keyw_pk = 109 %}
+                <button onclick="window.location = '{% url 'draftedit_noe' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>
+              {% elif doc.doc_doct_fk.keyw_pk = 108 %}
+                <button onclick="window.location = '{% url 'draftedit_nod' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>
+              {% elif doc.doc_doct_fk.keyw_pk = 102 %}
                 <button onclick="window.location = '{% url 'draftedit_nop' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>
               {% else %}
                 <button onclick="window.location = '{% url 'draftedit_noc' %}?doc_pk={{ doc.doc_pk }}'">Edit Draft</button>

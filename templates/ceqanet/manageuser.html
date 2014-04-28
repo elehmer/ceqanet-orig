@@ -28,7 +28,7 @@
         <table>
           <tr>
             <td>
-              <select name="usr_grp" size="5">
+              <select id="usr_grp" name="usr_grp" size="5">
                 {% for pk,choice in form.usr_grp.field.widget.choices %}
                   {% if usr.groups.all.0.pk = pk %}
                     <option selected value="{{pk}}">{{choice}}</option>
@@ -93,8 +93,13 @@
   <script>
     $(document).ready(function() {
         $("#assign").click(function() {
-          $("#mode").val("assign");
-          $("#manageuserform").submit();
+          if ($('#usr_grp').val()) {
+            $("#mode").val("assign");
+            $("#manageuserform").submit();
+          }
+          else {
+            alert("Select a group to assign first.");
+          };
         });
         $("#delete").click(function() {
           $("#mode").val("delete");
