@@ -1,0 +1,134 @@
+{% extends "ceqanet/listpage.html" %}
+
+{% block title %}OPR Data Clearinghouse In Review Document Listing{% endblock title %}
+
+{% block listing %}
+
+  <h4>Latest Documents in Review for this Lead Agency:</h4>
+
+  {% if object_list %}
+ 	<TABLE border="1">
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+ 	  <TR>
+      <TH align="center" width="10%">
+        Clearinghouse Number
+      </TH>
+ 	  	<TH align="center" width="10%">
+        Project Title
+ 	  	</TH>
+      <TH align="center" width="40%">
+        Project Description
+      </TH>
+ 	  	<TH align="center" width="8%">
+ 	  	  Document Type
+ 	  	</TH>
+ 	  	<TH align="center" width="8%">
+ 	  	  Date Received
+ 	  	</TH>
+      <TH align="center" width="8%">
+        Start of Review
+      </TH>
+      <TH align="center" width="8%">
+        End of Review
+      </TH>
+ 	  </TR> 
+    {% for review in reviewsbylag %}
+      <TR>
+        <TD align="center">
+          {{ review.doc_schno }}
+        </TD>
+      	<TD align="center">
+        {% if review.doc_doct_fk.keyw_pk = 109 %}
+          <a href="{% url 'docdesp_noe' review.doc_pk %}">{{ review.doc_prj_fk.prj_title }}</a>
+        {% elif review.doc_doct_fk.keyw_pk = 108 %}
+          <a href="{% url 'docdesp_nod' review.doc_pk %}">{{ review.doc_prj_fk.prj_title }}</a>
+        {% elif review.doc_doct_fk.keyw_pk = 102 %}
+          <a href="{% url 'docdesp_nop' review.doc_pk %}">{{ review.doc_prj_fk.prj_title }}</a>
+        {% else %}
+          <a href="{% url 'docdesp_noc' review.doc_pk %}">{{ review.doc_prj_fk.prj_title }}</a>
+        {% endif %}
+    	  </TD>
+        <TD align="center">
+          {{ review.doc_prj_fk.prj_description }}
+        </TD>
+      	<TD align="center">
+          {{ review.doc_doctype }}
+    	  </TD>
+      	<TD align="center">
+          {{ review.doc_received }}
+    	  </TD>
+        <TD align="center">
+          {{ review.doc_dept }}
+        </TD>
+        <TD align="center">
+          {{ review.doc_clear }}
+        </TD>
+      </TR>
+  	{% endfor %}
+    {% if is_paginated %}
+    <TR>
+      <TD COLSPAN="6" ALIGN="middle">
+          <B>
+            {% if page_obj.number = 1 %}
+              [First]&nbsp;&nbsp;
+            {% else %}
+              <A HREF="?page=1&{{ restofqs }}">[First]</A>&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page={{ page_obj.next_page_number }}&{{ restofqs }}">[Next]</A>&nbsp;&nbsp;
+            {% else %}
+              [Next]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_previous %}
+              <A HREF="?page={{ page_obj.previous_page_number }}&{{ restofqs }}">[Previous]</A>&nbsp;&nbsp;
+            {% else %}
+              [Previous]&nbsp;&nbsp;
+            {% endif %}
+            {% if page_obj.has_next %}
+              <A HREF="?page=last&{{ restofqs }}">[Last]</A>
+            {% else %}
+              [Last]
+            {% endif %}
+          </B>
+      </TD>
+    </TR>
+    {% endif %}
+    </TABLE>
+  {% else %}
+  <TABLE>
+    <TR>
+      <TD ALIGN="middle">
+        No Documents currently in Review for this Lead Agency.
+      </TD>
+    </TR>
+  </TABLE>
+  {% endif %}
+
+{% endblock listing %}

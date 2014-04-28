@@ -1,0 +1,265 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block extrajs %}
+
+  <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+  <script type="text/javascript" src="{% static 'ceqanet/js/map.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+  <script type="text/javascript" src="{% static 'olwidget/js/olwidget.js' %}"></script>
+  <link rel="stylesheet" href="{% static 'olwidget/css/olwidget.css' %}">
+
+{% endblock extrajs %}
+
+{% block content %}
+
+{{ form.media }}
+<FORM name="editdoc" class="adddocform" method="post" action="">
+  {% csrf_token %}
+  <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
+    <TR> 
+      <TH align="left" colspan="3">
+        <h3>Project Information:</h3>
+      </TH>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.prj_title.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.prj_title.errors }}
+        {{ form.prj_title }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.prj_description.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.prj_description.errors }}
+        {{ form.prj_description }}
+      </TD>
+    </TR>
+    <TR> 
+      <TH align="left" colspan="3">
+        <h3>Document Information:</h3>
+      </TH>
+    </TR>
+    <TR> 
+      <TH align="left" colspan="3">
+        Lead Agency Contact Information:
+      </TH>
+    </TR>
+    <tr>
+      <TH width="25%" align="left" valign="top">
+        Agency Name:
+      </TH>
+      <td colspan="2"> 
+        {{ doc.doc_conagency }}
+      </td>
+    </tr>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conname.label }}
+      </TH>
+      <TD colspan="2"> 
+        {{ form.doc_conname }}
+        {{ form.doc_conname.errors }}
+      </TD>
+    </TR>
+    <TR> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conemail.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_conemail }}
+        {{ form.doc_conemail.errors }}
+      </TD>
+    </TR>
+    <TR>   
+      <TD width="25%" valign="top">
+        <B>Phone:</B>
+      </TD>
+      <TD colspan="2">
+        {{ form.doc_conphone }}
+        {{ form.doc_conphone.errors }}
+      </TD>
+    </TR>
+    <tr> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conaddress1.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_conaddress1 }}
+        {{ form.doc_conaddress1.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conaddress2.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_conaddress2 }}
+        {{ form.doc_conaddress2.errors }}
+      </td>
+    </tr>
+    <TR> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_concity.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_concity }}
+        {{ form.doc_concity.errors }}
+      </td>
+    </TR>
+    <TR> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_constate.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_constate }}
+        {{ form.doc_constate.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_conzip.label }}
+      </TH>
+      <td colspan="2"> 
+        {{ form.doc_conzip }}
+        {{ form.doc_conzip.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3" height="20">
+        <h5>Location Information:</h5>
+      </td>
+    </tr>
+    <TR>
+      <TH width="25%" align="left" valign="top"> 
+        {{ form.doc_location.label }}
+      </TH>
+      <TD colspan="2"> 
+        {{ form.doc_location.errors }}
+        {{ form.doc_location }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top"> 
+        {{ form.geom.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.geom.errors }}
+        {{ form.geom }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_latitude.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_latitude }}
+        {{ form.doc_latitude.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_longitude.label }}
+      </TH>
+      <TD colspan="2">
+        {{ form.doc_longitude }}
+        {{ form.doc_longitude.errors }}
+      </TD>
+    </TR>
+    <TR>
+      <TD width="25%" valign="top">
+        <b>County:</b>
+      </TD>
+      <td colspan="2"> 
+        {{ form.doc_county }}
+        {{ form.doc_county.errors }}
+      </td>
+    </TR>
+    <TR>
+      <TD width="25%" valign="top">
+        <b>City:</b>
+      </TD>
+      <TD colspan="2"> 
+        {{ form.doc_city }}
+        {{ form.doc_city.errors }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD width="25%" valign="top">
+        <B>Agency Approving Project:</b>
+      </td>
+      <td colspan="2"> 
+        {{ form.doc_approve_noe }}
+        {{ form.doc_approve_noe.errors }}
+      </td>
+    </tr>
+    <TR> 
+      <TD width="25%" valign="top">
+        <B>Person or Agency Carrying Out Project:</b>
+      </td>
+      <td colspan="2"> 
+        {{ form.doc_carryout_noe }}
+        {{ form.doc_carryout_noe.errors }}
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        <B>Exempt Status <font color="#000066">(check one)</font>:</B>
+      </td>
+    </tr>
+    {% for radio in form.rdoexemptstatus %}
+    <tr> 
+      <TD width="25%" valign="top">
+        {{ radio.tag }}
+      </td>
+      {% if forloop.counter = 4 %}
+      <td>
+        {{ radio.choice_label }}
+      </td>
+      <td>
+        {{ form.strsectionnumber.errors }}
+        {{ form.strsectionnumber }}
+      </td>
+      {% elif forloop.counter = 5 %}
+      <td>
+        {{ radio.choice_label }}
+      </td>
+      <td>
+        {{ form.strcodenumber.errors }}
+        {{ form.strcodenumber }}
+      </td>
+      {% else %}
+      <td colspan="2">
+        {{ radio.choice_label }}
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+    <TR> 
+      <TH width="25%" align="left" valign="top">
+        {{ form.doc_exreasons.label }}
+      </TH>
+      <td colspan="2">
+        {{ form.doc_exreasons.errors }}
+        {{ form.doc_exreasons }}
+      </td>
+    </tr>
+    <TR> 
+      <TD align="left" colspan="3"> 
+        <input type="submit" value="Update">
+      </TD>
+    </TR>
+  </TABLE>
+  <input type="hidden" name="doc_pk" value="{{ doc.doc_pk }}">
+</FORM>
+
+{% endblock content %}

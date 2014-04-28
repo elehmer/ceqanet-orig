@@ -1,0 +1,69 @@
+{% extends "ceqanet/base.html" %}
+
+{% load staticfiles %}
+
+{% block extrajs %}
+
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+
+{% endblock extrajs %}
+
+
+{% block content %}
+
+{{ form.media }}
+<form class='adddocform' action="" method="post">
+<h3>Add a New Holiday to the Database</h3>
+{% csrf_token %}
+<div id="{{ form.formID }}">
+  <table border="0">
+    {{ form.as_table }}
+    <tr>
+      <td colspan="2">
+		&nbsp;
+	  </td>
+	</tr>
+    <tr>
+      <td colspan="2">
+		<input type="submit" value="Add Holiday Agency" />
+	  </td>
+	</tr>
+  </table>
+</div>
+    <script>
+      $(document).ready(function() {
+        /* create an array of days which need to be disabled */
+        var disabledDays = {{ holidays|safe }}
+
+        /* utility functions */
+        function nationalDays(date) {
+          var y = date.getFullYear();
+          var m = ("0" + (date.getMonth() + 1)).slice(-2)
+          var d = ("0" + date.getDate()).slice(-2)
+
+          for (i = 0; i < disabledDays.length; i++) {
+            if($.inArray(y + '-' + m + '-' + d,disabledDays) != -1 || new Date() > date) {
+              return [false];
+            }
+          }
+          return [true];
+        }
+        function noWeekendsOrHolidays(date) {
+          var noWeekend = jQuery.datepicker.noWeekends(date);
+          return noWeekend[0] ? nationalDays(date) : noWeekend;
+        }
+
+        /* create datepicker */
+        jQuery('#id_hday_date').datepicker({
+          dateFormat: 'yy-mm-dd',
+          constrainInput: true,
+          beforeShowDay: noWeekendsOrHolidays
+        });
+      });
+    </script>
+
+<div class="submit-row">
+</div>
+</form>
+
+{% endblock %}
