@@ -31,6 +31,8 @@ from django.utils import simplejson
 from django.core import serializers
 from ceqanet.functions import generate_schno,generate_biaschno,delete_clearinghouse_document,email_rejection,email_submission,email_inreview,email_upgraderejection,email_upgradeacceptance,email_commentacceptance,email_acceptance,email_requestforupgrade,email_assigned
 
+import django.contrib.gis
+
 # Global switch for sending emails
 sendemail = False
 
@@ -4579,16 +4581,21 @@ def locations_geojson(request,limit):
     return HttpResponse(string)
 
 def doc_json(request,doc_id):
+    ''' returns document metadata based on PK '''
     data = serializers.serialize('json', documents.objects.filter(pk=doc_id), fields=('doc_pk','doc_schno','doc_prj_fk','doc_docname','doc_received'),use_natural_keys=True)
     #data = serializers.serialize('json', documents.objects.filter(pk=doc_id))
     return HttpResponse(data)
 
 def doc_location(request,doc_id):
-    locations_qs = Locations.objects.filter(document=doc_id)
-    djf = Django.Django(geodjango="geom")
-    geoj = GeoJSON.GeoJSON()
-    string = geoj.encode(djf.decode(locations_qs))
-    return HttpResponse(string)
+    ''' returns the document location information from the API '''
+    locations_qs = Locations.objects.filter(document=doc_id).centroid().geojson()
+    #djf = Django.Django(geodjango="geom")
+    #geoj = GeoJSON.GeoJSON()
+    #string = geoj.encode(djf.decode(locations_qs))
+    string1 = locations_qs[0].geojson
+    #string = locations_qs[0].centroid
+    #string1 = OGRGeometry(string).json
+    return HttpResponse(string1)
 
 
 def map(request):

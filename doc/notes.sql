@@ -1,3 +1,5 @@
+--To replace the location table information, run the next two queries:
+
 --update the locations table
 INSERT INTO ceqanet_locations (doc_pk,geom)
 SELECT doc_pk,ST_Force_Collection(ST_SetSRID(ST_Point(CAST(coord[1] AS numeric),CAST(coord[2] AS numeric)),4326)) as geom
@@ -6,6 +8,23 @@ FROM
 FROM ceqanet_latlongs
 ) as a
 
+--Generates the points for the big map 4/8/2014
+CREATE OR REPLACE VIEW doc_location_points AS
+SELECT b.id, b.doc_pk, b.geom::geometry(Point,4326) AS geom, b.geomtype
+FROM
+(SELECT * from
+(SELECT ceqanet_locations.id, ceqanet_locations.doc_pk, (st_dump(ceqanet_locations.geom)).geom AS geom, 
+ST_GeometryType(geom), ST_GeometryType((st_dump(ceqanet_locations.geom)).geom) as geomtype
+FROM ceqanet_locations) as a
+where geomtype = 'ST_Point') as b
+
+
+
+
+
+
+
+--Alex's notes from earlier
 
 --Extract the coordinates
 SELECT doc_pk,coord[1],coord[2] 
@@ -78,6 +97,8 @@ FROM (
 	SELECT id,doc_pk,((ST_dump(geom)).geom) as geom FROM ceqanet_locations
 ) as a
 WHERE ST_GeometryType(geom) ='ST_Point';
+
+
 
 --Tilemill
 --host=localhost port=5483 user=django password=PegnafGiatsyeGha dbname=ceqanet
