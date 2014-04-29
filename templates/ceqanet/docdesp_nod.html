@@ -333,6 +333,31 @@
         </td>
       </tr>
       <tr> 
+        <td> 
+          <b>Document Attachments</b> 
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            {% if attachments %}
+              {% for a in attachments %}
+                <li>
+                  <a href="{{ a.datt_file.url }}">{{ a.datt_file.name }}</a>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li>NO ATTACHMENTS</li>
+            {% endif %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
         <td>
           <b>Date Received:</b> {{ doc.doc_received }} 
         </td>

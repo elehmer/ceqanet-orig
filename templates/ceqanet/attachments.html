@@ -86,7 +86,7 @@
     </TR>
     <TR> 
       <TD colspan="3" align="left"> 
-        <input id="attach" type="submit" value="Attach File...">
+        <input id="attach" type="button" value="Attach File...">
       </TD>
     </TR>
     <TR>
@@ -132,13 +132,13 @@
     </TR>
     <TR> 
       <TD align="left"> 
-        <input id="submitch" type="submit" value="Submit to CEQANet >>">
+        <input id="submitch" type="button" value="Submit to CEQANet >>">
       </TD>
       <TD align="right"> 
-        <input id="delete" type="submit" value="Delete Draft">
+        <input id="delete" type="button" value="Delete Draft">
       </TD>
       <TD align="right"> 
-        <input id="draft" type="submit" value="Save Draft">
+        <input id="draft" type="button" value="Save Draft">
       </TD>
     </TR>
   </TABLE>
@@ -147,8 +147,10 @@
   <input type="hidden" name="doc_pk" value="{{ doc_pk }}">
   <script>
     $('#attach').click(function() {
-      $('#mode').val('attach');
-      $('#attachments').submit();
+      if ($('#id_datt_file').val()) {
+        $('#mode').val('attach');
+        $('#attachments').submit();
+      }
     });
     $('#submitch').click(function() {
       $('#mode').val('submitch');

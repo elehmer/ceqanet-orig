@@ -1274,6 +1274,7 @@ class docdesp_nod(DetailView):
         doc_pk = self.kwargs['pk']
         context['doc_pk'] = doc_pk
         context['latlongs'] = latlongs.objects.filter(doc_pk=self.kwargs['pk'])
+        context['attachments'] = docattachments.objects.filter(datt_doc_fk=doc_pk)
         return context
 
 class docdesp_noe(DetailView):
@@ -1286,6 +1287,7 @@ class docdesp_noe(DetailView):
         doc_pk = self.kwargs['pk']
         context['doc_pk'] = doc_pk
         context['latlongs'] = latlongs.objects.filter(doc_pk=self.kwargs['pk'])
+        context['attachments'] = docattachments.objects.filter(datt_doc_fk=doc_pk)
         return context
 
 class docdesp_nop(DetailView):
@@ -1302,6 +1304,8 @@ class docdesp_nop(DetailView):
         context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
         context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        context['comments'] = doccomments.objects.filter(dcom_doc_fk=doc_pk)
+        context['attachments'] = docattachments.objects.filter(datt_doc_fk=doc_pk)
         return context
 
 class docedit_noc(FormView):
@@ -1692,6 +1696,7 @@ class docedit_nod(FormView):
     def get_context_data(self, **kwargs):
         context = super(docedit_nod, self).get_context_data(**kwargs)
         context['doc'] = documents.objects.get(doc_pk=self.request.GET.get('doc_pk'))
+        context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
 
         return context
 
@@ -1865,6 +1870,7 @@ class docedit_noe(FormView):
     def get_context_data(self, **kwargs):
         context = super(docedit_noe, self).get_context_data(**kwargs)
         context['doc'] = documents.objects.get(doc_pk=self.request.GET.get('doc_pk'))
+        context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
 
         return context
 
@@ -2897,6 +2903,7 @@ class pendingdetail_nod(FormView):
         context = super(pendingdetail_nod, self).get_context_data(**kwargs)
 
         context['docinfo'] = documents.objects.get(pk=self.request.GET.get('doc_pk'))
+        context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
 
         return context
 
@@ -3099,6 +3106,7 @@ class pendingdetail_noe(FormView):
         context = super(pendingdetail_noe, self).get_context_data(**kwargs)
 
         context['docinfo'] = documents.objects.get(pk=self.request.GET.get('doc_pk'))
+        context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
 
         return context
 
