@@ -714,7 +714,7 @@ class docadd_noc(FormView):
             idockeyw.save()
 
         for ra in data['ragencies']:
-            docrev = docreviews(drag_doc_fk=adddoc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
+            docrev = docreviews(drag_doc_fk=adddoc,drag_rag_fk=ra,drag_rank=0,drag_copies=1,drag_numcomments=0)
             docrev.save()
 
         prj.prj_doc_fk=adddoc
@@ -1148,7 +1148,7 @@ class docadd_nop(FormView):
             idockeyw.save()
 
         for ra in data['ragencies']:
-            docrev = docreviews(drag_doc_fk=adddoc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
+            docrev = docreviews(drag_doc_fk=adddoc,drag_rag_fk=ra,drag_rank=0,drag_copies=1,drag_numcomments=0)
             docrev.save()
 
         prj.prj_doc_fk=adddoc
@@ -4344,7 +4344,10 @@ class commentadd(FormView):
 
         docreview = docreviews.objects.get(drag_doc_fk__doc_pk=self.request.GET.get('doc_pk'),drag_rag_fk__rag_pk=self.request.user.get_profile().set_rag_fk.rag_pk)
 
-        docreview.drag_numcomments = docreview.drag_numcomments + 1
+        if docreview.drag_numcomments:
+            docreview.drag_numcomments = docreview.drag_numcomments + 1
+        else:
+            docreview.drag_numcomments = 1
         docreview.save()
 
         if data['commenttype'] == 'text':
