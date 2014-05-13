@@ -499,7 +499,13 @@ class findproject(FormView):
         context = super(findproject, self).get_context_data(**kwargs)
 
         prj_schno = self.request.GET.get('prj_schno')
-        context['schnos'] = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).filter(prj_lag_fk__lag_pk=self.request.user.get_profile().set_lag_fk.lag_pk).order_by('-prj_schno')
+        usr = User.objects.get(pk=self.request.user.pk)
+
+        for g in usr.groups.all():
+            if g.name == "planners" or g.name == "clearinghouse":
+                context['schnos'] = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).order_by('-prj_schno')
+            if g.name == "leads":
+                context['schnos'] = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).filter(prj_lag_fk__lag_pk=self.request.user.get_profile().set_lag_fk.lag_pk).order_by('-prj_schno')
         context['doctype'] = self.request.GET.get('doctype')
 
         return context
