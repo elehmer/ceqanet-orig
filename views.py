@@ -3891,15 +3891,6 @@ class reviewdetail_noc(FormView):
                     adockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=a,dkey_rank=0)
                 adockeyw.save()
             
-            dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010).delete()
-
-            for a in data['actions']:
-                if a.keyw_pk == 1018:
-                    adockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=a,dkey_comment=data['dkey_comment_actions'],dkey_rank=0)
-                else:
-                    adockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=a,dkey_rank=0)
-                adockeyw.save()
-
             devtypes = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010).filter(keyw_pk__gte=6001).filter(keyw_pk__lte=11001)
             for d in devtypes:
                 if self.request.POST.get('dev'+str(d.keyw_pk)):
@@ -3918,12 +3909,16 @@ class reviewdetail_noc(FormView):
                 ddockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=data['devwaste_id'],dkey_comment=data['devwaste_comment'],dkey_value1=None,dkey_value2=None,dkey_value3=None,dkey_rank=0)
                 ddockeyw.save()
 
+            dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002).delete()
+
             for i in data['issues']:
                 if i.keyw_pk == 2034:
                     idockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=i,dkey_comment=data['dkey_comment_issues'],dkey_rank=0)
                 else:
                     idockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=i,dkey_rank=0)
                 idockeyw.save()
+
+            docreviews.objects.filter(drag_doc_fk=doc.pk).delete()
 
             for ra in data['ragencies']:
                 docrev = docreviews(drag_doc_fk=doc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
@@ -4237,6 +4232,8 @@ class reviewdetail_nop(FormView):
                     adockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=a,dkey_rank=0)
                 adockeyw.save()
 
+            dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010).delete()
+
             devtypes = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010).filter(keyw_pk__gte=6001).filter(keyw_pk__lte=11001)
             for d in devtypes:
                 if self.request.POST.get('dev'+str(d.keyw_pk)):
@@ -4255,12 +4252,16 @@ class reviewdetail_nop(FormView):
                 ddockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=data['devwaste_id'],dkey_comment=data['devwaste_comment'],dkey_value1=None,dkey_value2=None,dkey_value3=None,dkey_rank=0)
                 ddockeyw.save()
 
+            dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002).delete()
+
             for i in data['issues']:
                 if i.keyw_pk == 2034:
                     idockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=i,dkey_comment=data['dkey_comment_issues'],dkey_rank=0)
                 else:
                     idockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=i,dkey_rank=0)
                 idockeyw.save()
+
+            docreviews.objects.filter(drag_doc_fk=doc.pk).delete()
 
             for ra in data['ragencies']:
                 docrev = docreviews(drag_doc_fk=doc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
