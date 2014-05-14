@@ -33,9 +33,6 @@ from ceqanet.functions import generate_schno,generate_biaschno,delete_clearingho
 
 import django.contrib.gis
 
-# Global switch for sending emails
-sendemail = False
-
 def index(request):
     t = loader.get_template("ceqanet/index.html")
     c = RequestContext(request,{})
@@ -561,7 +558,7 @@ class attachments(FormView):
             doc.doc_pending = True
             doc.save()
         
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_submission(self,doc)
 
         return super(attachments,self).form_valid(form)
@@ -879,7 +876,7 @@ class docadd_nod(FormView):
 
         self.doc_pk = adddoc.pk
 
-        if sendemail:
+        if settings.SENDEMAIL:
             email_submission(self,adddoc)
 
         return super(docadd_nod,self).form_valid(form)
@@ -997,7 +994,7 @@ class docadd_noe(FormView):
 
         self.doc_pk = adddoc.pk
 
-        if sendemail:
+        if settings.SENDEMAIL:
             email_submission(self,adddoc)
 
         return super(docadd_noe,self).form_valid(form)
@@ -2809,11 +2806,11 @@ class pendingdetail_noc(FormView):
                 docrev = docreviews(drag_doc_fk=doc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
                 docrev.save()
 
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_assigned(self,doc)
 
         if self.request.POST.get('mode') == 'reject':
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_demotiontodraft(self,doc)
             doc.doc_draft = True
             doc.doc_pending = False
@@ -3032,11 +3029,11 @@ class pendingdetail_nod(FormView):
                 geowrds_city = docgeowords(dgeo_geow_fk=data['doc_city'],dgeo_doc_fk=doc,dgeo_rank=1)
                 geowrds_city.save()
 
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_acceptance(self)
 
         elif self.request.POST.get('mode') == 'reject':
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_demotiontodraft(self,doc)
             doc.doc_draft = True
             doc.doc_pending = False
@@ -3219,11 +3216,11 @@ class pendingdetail_noe(FormView):
                 geowrds_city = docgeowords(dgeo_geow_fk=data['doc_city'],dgeo_doc_fk=doc,dgeo_rank=1)
                 geowrds_city.save()
 
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_acceptance(self)
 
         elif self.request.POST.get('mode') == 'reject':
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_demotiontodraft(self,doc)
             doc.doc_draft = True
             doc.doc_pending = False
@@ -3558,11 +3555,11 @@ class pendingdetail_nop(FormView):
                 docrev = docreviews(drag_doc_fk=doc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
                 docrev.save()
 
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_assigned(self,doc)
 
         if self.request.POST.get('mode') == 'reject':
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_demotiontodraft(self,doc)
             doc.doc_draft = True
             doc.doc_pending = False
@@ -3932,11 +3929,11 @@ class reviewdetail_noc(FormView):
                 docrev = docreviews(drag_doc_fk=doc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
                 docrev.save()
 
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_inreview(self,doc)
 
         elif self.request.POST.get('mode') == 'reject':
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_rejection(self)
             delete_clearinghouse_document(self)
 
@@ -4269,11 +4266,11 @@ class reviewdetail_nop(FormView):
                 docrev = docreviews(drag_doc_fk=doc,drag_rag_fk=ra,drag_rank=0,drag_copies=1)
                 docrev.save()
 
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_inreview(self)
 
         elif self.request.POST.get('mode') == 'reject':
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_rejection(self)
             delete_clearinghouse_document(self)
 
@@ -4365,7 +4362,7 @@ class commentadd(FormView):
                 doccomment = doccomments(dcom_drag_fk=docreview,dcom_doc_fk=docreview.drag_doc_fk,dcom_commentdate=today,dcom_filecomment=self.request.FILES['dcom_filecomment'],dcom_reviewer_userid=self.request.user)
                 doccomment.save()
 
-        if sendemail:
+        if settings.SENDEMAIL:
             email_commentacceptance(self)
 
         return super(commentadd,self).form_valid(form)
@@ -4452,7 +4449,7 @@ class requestupgrd(FormView):
         rqst = requestupgrade(user_id=self.request.user,rqst_pending=True,rqst_type=data['rqst_type'],rqst_lag_fk=data['rqst_lag_fk'],rqst_rag_fk=data['rqst_rag_fk'],rqst_reason=data['rqst_reason'])
         rqst.save()
 
-        if sendemail:
+        if settings.SENDEMAIL:
             email_requestforupgrade()
 
         return super(requestupgrd,self).form_valid(form)
@@ -4507,10 +4504,10 @@ class manageupgrade(FormView):
             usr.save()
             usrprof.save()
 
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_upgradeacceptance
         else:
-            if sendemail:
+            if settings.SENDEMAIL:
                 email_upgraderejection(self)
 
         rqstupgrd.delete()
