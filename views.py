@@ -1449,6 +1449,11 @@ class docedit_noc(FormView):
         if raginfo.exists():
             initial['ragencies'] = raginfo
 
+        initial['doc_dept'] = docinfo.doc_dept
+        initial['doc_clear'] = docinfo.doc_clear
+
+        initial['doc_clerknotes'] = docinfo.doc_clerknotes
+
         return initial
 
     def get_context_data(self, **kwargs):
@@ -1458,6 +1463,15 @@ class docedit_noc(FormView):
         context['devs'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
         context['isss'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
+        holidayslist = holidays.objects.filter(hday_date__gte=datetime.now())
+        hlist = "["
+        for h in holidayslist:
+            hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
+
+        hlist = hlist[:-1]
+        hlist += "];"
+        context['holidays'] = hlist
+
         return context
 
     def form_valid(self,form):
@@ -1552,6 +1566,9 @@ class docedit_noc(FormView):
         doc.doc_doct_fk = data['doctypeid']
         doc.doc_doctype = data['doctypeid'].keyw_shortname
         doc.doc_docname = data['doctypeid'].keyw_longname
+        doc.doc_dept = data['doc_dept']
+        doc.doc_clear = data['doc_clear']
+        doc.doc_clerknotes = data['doc_clerknotes']
         doc.save()
         prj.prj_title = data['prj_title']
         prj.prj_description = data['prj_description']
@@ -2100,6 +2117,11 @@ class docedit_nop(FormView):
         if raginfo.exists():
             initial['ragencies'] = raginfo
 
+        initial['doc_dept'] = docinfo.doc_dept
+        initial['doc_clear'] = docinfo.doc_clear
+
+        initial['doc_clerknotes'] = docinfo.doc_clerknotes
+
         return initial
 
     def get_context_data(self, **kwargs):
@@ -2109,6 +2131,14 @@ class docedit_nop(FormView):
         context['devs'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
         context['isss'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
+        holidayslist = holidays.objects.filter(hday_date__gte=datetime.now())
+        hlist = "["
+        for h in holidayslist:
+            hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
+
+        hlist = hlist[:-1]
+        hlist += "];"
+        context['holidays'] = hlist
 
         return context
 
@@ -2201,6 +2231,9 @@ class docedit_nop(FormView):
         doc.doc_waterways = doc_waterways
         doc.doc_landuse = doc_landuse
         doc.doc_schools = doc_schools
+        doc.doc_dept = data['doc_dept']
+        doc.doc_clear = data['doc_clear']
+        doc.doc_clerknotes = data['doc_clerknotes']
         doc.save()
         prj.prj_title = data['prj_title']
         prj.prj_description = data['prj_description']
@@ -3731,6 +3764,9 @@ class reviewdetail_noc(FormView):
         if raginfo.exists():
             initial['ragencies'] = raginfo
 
+        initial['doc_dept'] = docinfo.doc_dept
+        initial['doc_clear'] = docinfo.doc_clear
+
         initial['doc_clerknotes'] = docinfo.doc_clerknotes
 
         return initial
@@ -3742,6 +3778,14 @@ class reviewdetail_noc(FormView):
         context['devs'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
         context['isss'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
+        holidayslist = holidays.objects.filter(hday_date__gte=datetime.now())
+        hlist = "["
+        for h in holidayslist:
+            hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
+
+        hlist = hlist[:-1]
+        hlist += "];"
+        context['holidays'] = hlist
 
         return context
 
@@ -3847,6 +3891,8 @@ class reviewdetail_noc(FormView):
             doc.doc_review = True
             doc.doc_plannerreview = False
             doc.doc_visible = True
+            doc.doc_dept = data['doc_dept']
+            doc.doc_clear = data['doc_clear']
             doc.doc_clerknotes = data['doc_clerknotes']
             doc.doc_assigned_userid = self.request.user
             doc.save()
@@ -4072,6 +4118,9 @@ class reviewdetail_nop(FormView):
         if raginfo.exists():
             initial['ragencies'] = raginfo
 
+        initial['doc_dept'] = docinfo.doc_dept
+        initial['doc_clear'] = docinfo.doc_clear
+
         initial['doc_clerknotes'] = docinfo.doc_clerknotes
 
         return initial
@@ -4083,6 +4132,14 @@ class reviewdetail_nop(FormView):
         context['devs'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
         context['isss'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
+        holidayslist = holidays.objects.filter(hday_date__gte=datetime.now())
+        hlist = "["
+        for h in holidayslist:
+            hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
+
+        hlist = hlist[:-1]
+        hlist += "];"
+        context['holidays'] = hlist
 
         return context
 
@@ -4188,6 +4245,8 @@ class reviewdetail_nop(FormView):
             doc.doc_review = True
             doc.doc_plannerreview = False
             doc.doc_visible = True
+            doc.doc_dept = data['doc_dept']
+            doc.doc_clear = data['doc_clear']
             doc.doc_clerknotes = data['doc_clerknotes']
             doc.doc_assigned_userid = self.request.user
             doc.save()

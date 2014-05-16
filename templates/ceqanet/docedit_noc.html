@@ -608,6 +608,100 @@
         </TABLE>
       </TD>
     </TR>
+    <tr> 
+      <td colspan="3">
+        <h5>Set Review Period:</h5>
+      </td>
+    </tr>
+    <tr> 
+      <td colspan="3">
+        <table>
+          <tr>
+            <td>
+              <b>Start of Review:</b>
+            </td>
+            <td>
+              <b>End of Review:</b>
+            </td>
+            <td valign="middle" align="middle">
+              <input type="button" id="days20" value="20 Day Period">
+              <input type="button" id="days30" value="30 Day Period"><BR>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{ form.doc_dept }}
+            </td>
+            <td>
+              {{ form.doc_clear }}
+            </td>
+            <td valign="middle" align="middle">
+              <input type="button" id="days45" value="45 Day Period">
+              <input type="button" id="days60" value="60 Day Period">
+            </td>
+          </tr>
+          <tr>
+            <td>
+              {{ form.doc_dept.errors }}
+            </td>
+            <td>
+              {{ form.doc_clear.errors }}
+            </td>
+            <td>
+            </td>
+          </tr>
+        </table>
+      </td>
+    </tr>
+    <script>
+      $(document).ready(function() {
+        /* create an array of days which need to be disabled */
+        var disabledDays = {{ holidays|safe }}
+
+        /* utility functions */
+        function nationalDays(date) {
+          var y = date.getFullYear();
+          var m = ("0" + (date.getMonth() + 1)).slice(-2)
+          var d = ("0" + date.getDate()).slice(-2)
+
+          for (i = 0; i < disabledDays.length; i++) {
+            if($.inArray(y + '-' + m + '-' + d,disabledDays) != -1 || new Date() > date) {
+              return [false];
+            }
+          }
+          return [true];
+        }
+        function noWeekendsOrHolidays(date) {
+          var noWeekend = jQuery.datepicker.noWeekends(date);
+          return noWeekend[0] ? nationalDays(date) : noWeekend;
+        }
+
+        /* create datepicker */
+        jQuery('#id_doc_dept').datepicker({
+          dateFormat: 'yy-mm-dd',
+          constrainInput: true,
+          beforeShowDay: noWeekendsOrHolidays
+        });
+
+        jQuery('#id_doc_clear').datepicker({
+          dateFormat: 'yy-mm-dd',
+          constrainInput: true,
+          beforeShowDay: noWeekendsOrHolidays
+        });
+
+        function setdatepickers(days) {
+          var today = new Date();
+          var future = new Date();
+          future.setDate(today.getDate()+days);
+          $("#id_doc_dept").datepicker().datepicker('setDate',today);
+          $("#id_doc_clear").datepicker().datepicker('setDate',future);
+        };
+        $("#days20").click(function() {setdatepickers(20);});
+        $("#days30").click(function() {setdatepickers(30);});
+        $("#days45").click(function() {setdatepickers(45);});
+        $("#days60").click(function() {setdatepickers(60);});
+      });
+    </script>
     <TR>
       <TD colspan="3">
         <B>{{ form.doc_clerknotes.label }}</B>

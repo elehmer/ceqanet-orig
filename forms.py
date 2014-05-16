@@ -208,6 +208,8 @@ class nopform(basedocumentform):
     dkey_comment_dev = forms.CharField(label="Other",required=False,max_length=64,widget=forms.TextInput(attrs={'size':'8'}))
     issues = forms.ModelMultipleChoiceField(required=False,queryset=keywords.objects.filter(keyw_keyl_fk__keyl_pk=1002).order_by('keyw_longname'),widget=forms.CheckboxSelectMultiple(attrs={'class':'iss'}))
     dkey_comment_issues = forms.CharField(required=False,max_length=64,widget=forms.TextInput(attrs={'size':'64'}))
+    doc_dept = forms.DateField(label="Start of Review:",required=False,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
+    doc_clear = forms.DateField(label="End of Review:",required=False,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
     #ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=FilteredSelectMultiple("Reviewing Agencies",True,attrs={'rows':'10'}))
     ragencies = forms.ModelMultipleChoiceField(label="Reviewing Agencies:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_title'),widget=forms.CheckboxSelectMultiple(attrs={'class':'agencies'}))
 
@@ -301,8 +303,10 @@ class manageuserform(forms.Form):
     usr_grp = forms.ModelChoiceField(label="Assign Group:",required=False,queryset=Group.objects.filter(pk__gt=1).filter(pk__lt=5),empty_label=None,widget=forms.Select(attrs={'size':5}))
 
 class pendingdetailnocform(nocform):
-    doc_dept = forms.DateField(label="Start of Review:",required=True,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
-    doc_clear = forms.DateField(label="End of Review:",required=True,input_formats=['%Y-%m-%d'],widget=forms.TextInput(attrs={'class':'date-pick'}))
+    def __init__(self, *args, **kwargs):
+        super(pendingdetailnocform, self).__init__(*args, **kwargs)
+        self.fields['doc_dept'].required = True
+        self.fields['doc_clear'].required = True
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
@@ -346,8 +350,10 @@ class pendingdetailnoeform(noeform):
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
 
 class pendingdetailnopform(nopform):
-    doc_dept = forms.DateField(label="Start of Review:",required=True,input_formats=['%Y-%m-%d'])
-    doc_clear = forms.DateField(label="End of Review:",required=True,input_formats=['%Y-%m-%d'])
+    def __init__(self, *args, **kwargs):
+        super(pendingdetailnopform, self).__init__(*args, **kwargs)
+        self.fields['doc_dept'].required = True
+        self.fields['doc_clear'].required = True
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
