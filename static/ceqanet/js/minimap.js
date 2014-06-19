@@ -126,7 +126,7 @@ map = new OpenLayers.Map('map',{
     //feature = '{"type":"GeometryCollection","geometries":[{"type":"Point","coordinates":[-121.3881,38.7494]}]}'
     
     var geojson_format = new OpenLayers.Format.GeoJSON();
-    ceqadoc = new OpenLayers.Layer.Vector("GeoJSON", {
+    ceqadoc = new OpenLayers.Layer.Vector("CEQA documents", {
 		 projection: map.displayProjection,
          strategies: [new OpenLayers.Strategy.Fixed()],
          protocol: new OpenLayers.Protocol.HTTP({

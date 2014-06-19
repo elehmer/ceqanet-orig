@@ -4,7 +4,7 @@ from django.contrib.auth.models import User,Group
 from django.core.mail import send_mail
 from datetime import datetime
 
-opr_email_address = "opr@ceqanet.ca.gov"
+opr_email_address = "opr@ceqa.ice.ucdavis.edu"
 
 def generate_schno(region):
     ch = clearinghouse.objects.get(pk=1)

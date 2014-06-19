@@ -333,6 +333,44 @@
         {{ form.doc_eiravailableat }}
       </TD>
     </tr>
+    <tr> 
+      <td colspan="3">
+        <h5>Attachments:</h5>
+      </td>
+    </tr>
+    <TR> 
+      <TD colspan="3">
+        <TABLE BORDER="1" WIDTH="100%">
+          <TR>
+            <TH BGCOLOR="#000000">
+              <FONT COLOR="#FFFFFF">
+                List of Files Attached to Document
+              </FONT>
+            </TH>
+          </TR>
+          {% if attachments %}
+            {% for a in attachments %}
+              <TR>
+                <TD>
+                  <a href="{{ a.datt_file.url }}" target="_blank">{{ a.datt_file.name }}</a>
+                </TD>
+              </TR>
+            {% endfor %}
+          {% else %}
+            <TR>
+              <TD align="center">
+                NO FILES ATTACHED
+              </TD>
+            </TR>      
+          {% endif %}
+        </TABLE>
+      </TD>
+    </TR>
+    <TR>
+      <TD>
+        &nbsp;
+      </TD>
+    </TR>
     <TR> 
       <TD align="left" colspan="3"> 
         <input type="submit" value="Update">

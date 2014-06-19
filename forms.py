@@ -310,6 +310,7 @@ class pendingdetailnocform(nocform):
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+    doc_bia = forms.BooleanField(label="BIA - Bureau of Land Trust (YYYY-XXX)",required=False)
 
     def clean(self):
         cleaned_data = super(pendingdetailnocform, self).clean()
@@ -357,6 +358,7 @@ class pendingdetailnopform(nopform):
     doc_plannerregion = forms.ChoiceField(label="Assign Region:",required=True,choices=PLANNERREGION_CHOICES)
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
+    doc_bia = forms.BooleanField(label="BIA - Bureau of Land Trust (YYYY-XXX)",required=False)
 
     def clean(self):
         cleaned_data = super(pendingdetailnopform, self).clean()
@@ -391,12 +393,10 @@ class pendingdetailnopform(nopform):
 class reviewdetailnocform(nocform):
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    bia = forms.BooleanField(label="BIA - Bureau of Land Trust (YYYY-XXX)",required=False)
 
 class reviewdetailnopform(nopform):
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
     rejectreason = forms.CharField(label="Rejection Reason:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-    bia = forms.BooleanField(label="BIA - Bureau of Land Trust (YYYY-XXX)",required=False)
 
 class commentaddform(forms.Form):
     commenttype = forms.ChoiceField(required=True,choices=COMMENT_CHOICES,initial='text',widget=forms.RadioSelect(attrs={'id':'commenttype','class':'commenttype'}))

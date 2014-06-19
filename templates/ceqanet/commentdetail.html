@@ -2,10 +2,25 @@
 
 {% block title %}OPR Data Clearinghouse Document Listing{% endblock title %}
 
-{% block listing %}
-
 {% load staticfiles %}
 
+{% block onload %} 
+onload="init()"
+{% endblock onload %}
+
+{% block extrajs %}
+<meta name="apple-mobile-web-app-capable" content="yes">
+<script src="//cdnjs.cloudflare.com/ajax/libs/openlayers/2.12/OpenLayers.js"></script>
+<script type="text/javascript" src="{% static 'ceqanet/js/minimap.js' %}"></script>
+<link rel="stylesheet" href="{% static 'ceqanet/css/minimap.css' %}">
+<script type="text/javascript">
+//take the doc id get the geojson and add it to the map centering on the data
+var doc={{detail}};
+</script>
+{% endblock extrajs %}
+
+{% block listing %}
+  <div id="tophtml">
     <h1>Comment on Document:</h1>
     <table width="767" border="0" cellpadding="3">
       <tr> 
@@ -69,7 +84,7 @@
             <tr>
               <th align="left">
                 Primary Contact:
-              </td>
+              </th>
             </tr>
             <tr>
               <td align="left">
@@ -114,6 +129,18 @@
           <b>Project Location</b>
         </td>
       </tr>
+    </table>
+    </div>
+    <div id="map">
+    </div>
+    <div id="sources">
+    Background Map Sources: 
+    <a href="http://maps.stamen.com/">Stamen Designs</a> and 
+    <a href="http://www.openstreetmap.org">©OpenStreetMap contributors.</a>
+    </div>
+    <div id="attributes"></div>
+    <div id="bottomhtml">
+    <table width="767" border="0" cellpadding="3">
       <tr> 
         <td>
           <table border="0">
@@ -335,6 +362,31 @@
       </tr>
       <tr> 
         <td> 
+          <b>Document Attachments</b> 
+        </td>
+      </tr>
+      <tr> 
+        <td>
+          <ul>
+            {% if attachments %}
+              {% for a in attachments %}
+                <li>
+                  <a href="{{ a.datt_file.url }}" target="_blank">{{ a.datt_file.name }}</a>
+                </li>
+              {% endfor %}
+            {% else %}
+              <li>NO ATTACHMENTS</li>
+            {% endif %}
+          </ul>
+        </td>
+      </tr>
+      <tr> 
+        <td> 
+          <hr width="100%">
+        </td>
+      </tr>
+      <tr> 
+        <td> 
           <b>Date Received:</b> {{ detail.doc_received }}&nbsp; 
           <b>Start of Review:</b>
           {% if detail.doc_dept != None %} 
@@ -380,5 +432,6 @@
         </TD>
       </TR>
     </table>
+  </div>
 
 {% endblock listing %}

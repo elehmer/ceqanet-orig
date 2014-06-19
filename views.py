@@ -427,6 +427,19 @@ class pendingsbylag(ListView):
         queryset = PendingsByLAGQuery(self.request)
         return queryset
 
+    def get_context_data(self, **kwargs):
+        context = super(pendingsbylag, self).get_context_data(**kwargs)
+
+        qsminuspage = self.request.GET.copy()
+        
+        if "page" in qsminuspage:
+            qsminuspage.pop('page')
+
+        context['restofqs'] = qsminuspage.urlencode()
+        context['la'] = self.request.user.get_profile().set_lag_fk.lag_name
+
+        return context
+
 def PendingsByLAGQuery(request):
     queryset = documents.objects.filter(projects__prj_lag_fk__lag_pk=request.user.get_profile().set_lag_fk.lag_pk).filter(doc_pending=True).order_by('-doc_received','-doc_pk')
     return queryset
@@ -449,6 +462,7 @@ class reviewsbylag(ListView):
             qsminuspage.pop('page')
 
         context['restofqs'] = qsminuspage.urlencode()
+        context['la'] = self.request.user.get_profile().set_lag_fk.lag_name
 
         return context
 
@@ -2762,6 +2776,7 @@ class pendingdetail_noc(FormView):
             doc.doc_dept = data['doc_dept']
             doc.doc_clear = data['doc_clear']
             doc.doc_clerknotes = data['doc_clerknotes']
+            doc.doc_bia = data['doc_bia']
             doc.save()
 
             prj.prj_title = data['prj_title']
@@ -3512,6 +3527,7 @@ class pendingdetail_nop(FormView):
             doc.doc_dept = data['doc_dept']
             doc.doc_clear = data['doc_clear']
             doc.doc_clerknotes = data['doc_clerknotes']
+            doc.doc_bia = data['doc_bia']
             doc.save()
             prj.prj_title = data['prj_title']
             prj.prj_description = data['prj_description']
@@ -3886,7 +3902,10 @@ class reviewdetail_noc(FormView):
             if prj.prj_schno:
                 doc.doc_schno = prj.prj_schno
             else:
-                doc.doc_schno = generate_schno(doc.doc_plannerregion)
+                if doc.doc_bia:
+                    doc.doc_schno = generate_biaschno()
+                else:
+                    doc.doc_schno = generate_schno(doc.doc_plannerregion)
 
             doc.doc_review = True
             doc.doc_plannerreview = False
@@ -3936,6 +3955,8 @@ class reviewdetail_noc(FormView):
                 else:
                     adockeyw = dockeywords(dkey_doc_fk=doc,dkey_keyw_fk=a,dkey_rank=0)
                 adockeyw.save()
+
+            dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010).delete()
             
             devtypes = keywords.objects.filter(keyw_keyl_fk__keyl_pk=1010).filter(keyw_pk__gte=6001).filter(keyw_pk__lte=11001)
             for d in devtypes:
@@ -4237,7 +4258,7 @@ class reviewdetail_nop(FormView):
             if prj.prj_schno:
                 doc.doc_schno = prj.prj_schno
             else:
-                if data['bia']:
+                if doc.doc_bia:
                     doc.doc_schno = generate_biaschno()
                 else:
                     doc.doc_schno = generate_schno(doc.doc_plannerregion)
@@ -4327,7 +4348,7 @@ class reviewdetail_nop(FormView):
                 docrev.save()
 
             if settings.SENDEMAIL:
-                email_inreview(self)
+                email_inreview(self,doc)
 
         elif self.request.POST.get('mode') == 'reject':
             if settings.SENDEMAIL:
@@ -4380,6 +4401,7 @@ class commentdetail(ListView):
         context['actions'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001)
         context['issues'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc_pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['reviews'] = docreviews.objects.filter(drag_doc_fk__doc_pk=doc_pk)
+        context['attachments'] = docattachments.objects.filter(datt_doc_fk=doc_pk)
         return context
 
 def CommentDetailListQuery(request):

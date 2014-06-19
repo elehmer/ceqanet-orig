@@ -606,7 +606,7 @@
             {% for a in attachments %}
               <TR>
                 <TD>
-                  <a href="{{ a.datt_file.url }}">{{ a.datt_file.name }}</a>
+                  <a href="{{ a.datt_file.url }}" target="_blank">{{ a.datt_file.name }}</a>
                 </TD>
               </TR>
             {% endfor %}
@@ -735,6 +735,19 @@
         <B>{{ form.doc_clerknotes.label }}</B>
         {{ form.doc_clerknotes.errors }}
         {{ form.doc_clerknotes }}
+      </TD>
+    </TR>
+    <tr>
+      <td colspan="3">
+        <hr width="100%">
+      </td>
+    </tr>
+    <TR>
+      <TD colspan="3">
+        <B>Clearinghouse Variant Number Assignment:</B><BR>
+        {{ form.doc_bia }}
+        {{ form.doc_bia.label }}
+        {{ form.doc_bia.errors }}
       </TD>
     </TR>
     <tr>

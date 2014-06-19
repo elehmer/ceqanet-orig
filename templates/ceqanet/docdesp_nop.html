@@ -352,7 +352,7 @@
             {% if attachments %}
               {% for a in attachments %}
                 <li>
-                  <a href="{{ a.datt_file.url }}">{{ a.datt_file.name }}</a>
+                  <a href="{{ a.datt_file.url }}" target="_blank">{{ a.datt_file.name }}</a>
                 </li>
               {% endfor %}
             {% else %}

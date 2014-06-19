@@ -648,7 +648,7 @@
             {% for a in attachments %}
               <TR>
                 <TD>
-                  <a href="{{ a.datt_file.url }}">{{ a.datt_file.name }}</a>
+                  <a href="{{ a.datt_file.url }}" target="_blank">{{ a.datt_file.name }}</a>
                 </TD>
               </TR>
             {% endfor %}
@@ -674,19 +674,18 @@
         {{ form.doc_clerknotes }}
       </TD>
     </TR>
-    <tr>
-      <td colspan="3">
+    {% if docinfo.doc_bia %}
+    <tr> 
+      <td colspan="3"> 
         <hr width="100%">
       </td>
     </tr>
     <TR>
       <TD colspan="3">
-        <B>Clearinghouse Variant Number Assignment:</B><BR>
-        {{ form.bia }}
-        {{ form.bia.label }}
-        {{ form.bia.errors }}
+        <B>BIA - Bureau of Land Trust Clearinghouse Variant Number Assignment in Effect.</B><BR>
       </TD>
     </TR>
+    {% endif %}
     <tr>
       <td colspan="3">
         <hr width="100%">
