@@ -132,12 +132,18 @@
           <table border="0">
             <tr>
               <td align="left">
-                County: {{ doc.doc_county }}
+                Counties:
+                {% for cnty in counties %}
+                  {{ cnty.geow_shortname }}&nbsp;
+                {% endfor %}
               </td>
-            </tr> 
+            </tr>
             <tr>
               <td align="left">
-                City: {{ doc.doc_city }}
+                Cities:
+                {% for cty in cities %}
+                  {{ cty.geow_shortname }}&nbsp;
+                {% endfor %}                
               </td>
             </tr> 
             <tr>
@@ -308,7 +314,11 @@
         <td>
           <ul>
             <li>
-              {{ doc.doc_clerknotes }}
+              {% if comments %}
+                {{ doc.doc_clerknotes }}
+              {% else %}
+                NONE
+              {% endif %}
             </li>
           </ul>
         </td>

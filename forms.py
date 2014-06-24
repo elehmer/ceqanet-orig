@@ -73,20 +73,20 @@ class basedocumentform(MapForm):
     doc_location = forms.CharField(label="Document Location:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
     doc_latitude = forms.FloatField(label="Document Latitude:",required=True,widget=forms.TextInput(attrs={'size':'30'}))
     doc_longitude = forms.FloatField(label="Document Longitude:",required=True,widget=forms.TextInput(attrs={'size':'30'}))
-    doc_county = forms.ModelChoiceField(label="County:",required=True,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select County]")
-    doc_city = forms.ModelChoiceField(label="City:",required=True,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),empty_label="[Select City]")
+    counties = forms.ModelMultipleChoiceField(label="Counties:",required=True,queryset=geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).order_by('geow_shortname'),widget=forms.SelectMultiple(attrs={'size':'8'}))
+    cities = forms.ModelMultipleChoiceField(label="Cities:",required=False,queryset=geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).order_by('geow_shortname'),widget=forms.SelectMultiple(attrs={'size':'8'}))
 
     def clean(self):
         cleaned_data = super(basedocumentform, self).clean()
 
-        msg_cityerror = u"City Not Within County Specified."
+        msg_cityerror = u"City Not Within County Specified: "
 
-        if cleaned_data.get('doc_city') != None:
-            if cleaned_data.get('doc_county') != None:
-                if cleaned_data.get('doc_city').geow_parent_fk.geow_pk != cleaned_data.get('doc_county').geow_pk:
-                    self._errors['doc_city'] = self.error_class([msg_cityerror])
-                    del cleaned_data['doc_city']
-
+        if cleaned_data.get('cities') != None:
+            if cleaned_data.get('counties') != None:
+                for cty in cleaned_data.get('cities'):
+                    if cty.geow_parent_fk not in cleaned_data.get('counties'):
+                        self._errors['cities'] = self.error_class([msg_cityerror + cty.geow_shortname])
+                        del cleaned_data['cities']
         return cleaned_data
 
 class nodform(basedocumentform):
@@ -106,8 +106,8 @@ class editnodform(nodform):
         super(editnodform, self).__init__(*args, **kwargs)
         self.fields['geom'].required = False
         self.fields['doc_conemail'].required = False
-        self.fields['doc_city'].required = False    
-        self.fields['doc_county'].required = False    
+        self.fields['cities'].required = False    
+        self.fields['counties'].required = False    
         self.fields['doc_nodfeespaid'].required = False    
     doc_latitude = forms.CharField(label="Document Latitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_longitude = forms.CharField(label="Document Longitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
@@ -149,8 +149,8 @@ class editnoeform(noeform):
         super(editnoeform, self).__init__(*args, **kwargs)
         self.fields['geom'].required = False
         self.fields['doc_conemail'].required = False
-        self.fields['doc_city'].required = False    
-        self.fields['doc_county'].required = False    
+        self.fields['cities'].required = False    
+        self.fields['counties'].required = False    
     doc_latitude = forms.CharField(label="Document Latitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_longitude = forms.CharField(label="Document Longitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
@@ -244,8 +244,8 @@ class editnopform(nopform):
         super(editnopform, self).__init__(*args, **kwargs)
         self.fields['geom'].required = False
         self.fields['doc_conemail'].required = False
-        self.fields['doc_city'].required = False    
-        self.fields['doc_county'].required = False    
+        self.fields['cities'].required = False    
+        self.fields['counties'].required = False    
     doc_latitude = forms.CharField(label="Document Latitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_longitude = forms.CharField(label="Document Longitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_clerknotes = forms.CharField(label="Additional Notes:",required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'4'}))
