@@ -204,23 +204,85 @@
       </TD>
     </TR>
     <TR>
-      <TD width="25%" valign="top">
-        <b>County:</b>
-      </TD>
-      <td colspan="2"> 
-        {{ form.counties }}
-        {{ form.counties.errors }}
-      </td>
+      <TH align="left" colspan="3">
+        Statewide Project?:
+      </TH>
     </TR>
+    {% for r in form.statewide %}
     <TR>
-      <TD width="25%" valign="top">
-        <b>City:</b>
-      </TD>
-      <TD colspan="2"> 
-        {{ form.cities }}
-        {{ form.cities.errors }}
+      <TD colspan="3">
+        {{ r }}
+        {% if forloop.counter = 1 %}
+        - Project encompasses entire State of California
+        {% endif %}
+        {% if forloop.counter = 2 %}
+        - Project contained within one or more counties and/or cities:
+        {% endif %}        
+        {% if forloop.counter = 2 %}
+        <TABLE border="0">
+          <TR>
+            <TD width="15%">
+              &nbsp;
+            </TD>
+            <TD align="left">
+              <b>County:</b>
+            </TD>
+            <td align="left"> 
+              {{ form.counties }}
+            </td>
+            <TD width="15%">
+              &nbsp;
+            </TD>
+            <TD align="left">
+              <b>City:</b>
+            </TD>
+            <TD align="left"> 
+              {{ form.cities }}
+            </TD>
+          </TR>
+          <TR>
+            <TD width="15%">
+              &nbsp;
+            </TD>
+            <TD align="left">
+              &nbsp;
+            </TD>
+            <td align="left"> 
+              {{ form.counties.errors }}
+            </td>
+            <TD width="15%">
+              &nbsp;
+            </TD>
+            <TD align="left">
+              &nbsp;
+            </TD>
+            <TD align="left"> 
+              {{ form.cities.errors }}
+            </TD>
+          </TR>
+        </TABLE>
+        {% endif %}
       </TD>
     </TR>
+    {% endfor %}
+    <script>
+      $(document).ready(function() {
+        {% if doc.doc_statewide %}
+          $("#id_counties").prop('disabled', true);
+          $("#id_cities").prop('disabled', true);
+        {% endif %}
+        $(".statewide").change(function() {
+          if ($(this).val() == 'yes') {
+            $("#id_counties").prop('disabled', true);
+            $("#id_cities").prop('disabled', true);
+          }
+          else {
+            $("#id_counties").prop('disabled', false);            
+            $("#id_cities").prop('disabled', false);            
+          }
+        });
+      });
+    </script>
     <tr> 
       <td colspan="3">
         <b>Determinations</b>

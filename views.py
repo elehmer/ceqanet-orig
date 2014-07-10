@@ -684,34 +684,42 @@ class docadd_noc(FormView):
             prj.prj_datelast = today
             prj.save()
 
+        doc_statewide = False
+
+        if data['statewide'] == 'yes':
+            doc_statewide = True
+
         doc_county = ""
 
-        for cnty in data['counties']:
-            doc_county += cnty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                doc_county += cnty.geow_shortname + ","
 
-        doc_county = doc_county[:-1]
-        if len(doc_county) > 64:
-            doc_county = doc_county[:64]
+            doc_county = doc_county[:-1]
+            if len(doc_county) > 64:
+                doc_county = doc_county[:64]
 
         doc_city = ""
 
-        for cty in data['cities']:
-            doc_city += cty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cty in data['cities']:
+                doc_city += cty.geow_shortname + ","
 
-        doc_city = doc_city[:-1]
-        if len(doc_city) > 64:
-            doc_city = doc_city[:64]
+            doc_city = doc_city[:-1]
+            if len(doc_city) > 64:
+                doc_city = doc_city[:64]
 
         adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty_fk,doc_doct_fk=data['doctypeid'],doc_doctype=data['doctypeid'].keyw_shortname,doc_docname=data['doctypeid'].keyw_longname,doc_title=data['doc_title'],doc_description=data['doc_description'],doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=doc_city,doc_county=doc_county,doc_draft=1,doc_pending=0,doc_received=doc_received,doc_added=today,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools,doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1))
         adddoc.save()
 
-        for cnty in data['counties']:
-            geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=adddoc,dgeo_rank=1)
-            geowrds_cnty.save()
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=adddoc,dgeo_rank=1)
+                geowrds_cnty.save()
 
-        for cty in data['cities']:
-            geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=adddoc,dgeo_rank=1)
-            geowrds_city.save()
+            for cty in data['cities']:
+                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=adddoc,dgeo_rank=1)
+                geowrds_city.save()
 
         geometry = Locations(document=adddoc,geom=data['geom'])
         geometry.save()
@@ -892,33 +900,41 @@ class docadd_nod(FormView):
             prj.prj_datelast = today
             prj.save()
 
+        doc_statewide = False
+
+        if data['statewide'] == 'yes':
+            doc_statewide = True
+
         doc_county = ""
 
-        for cnty in data['counties']:
-            doc_county += cnty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                doc_county += cnty.geow_shortname + ","
 
-        doc_county = doc_county[:-1]
-        if len(doc_county) > 64:
-            doc_county = doc_county[:64]
+            doc_county = doc_county[:-1]
+            if len(doc_county) > 64:
+                doc_county = doc_county[:64]
 
         doc_city = ""
 
-        for cty in data['cities']:
-            doc_city += cty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cty in data['cities']:
+                doc_city += cty.geow_shortname + ","
 
-        doc_city = doc_city[:-1]
-        if len(doc_city) > 64:
-            doc_city = doc_city[:64]
+            doc_city = doc_city[:-1]
+            if len(doc_city) > 64:
+                doc_city = doc_city[:64]
 
         adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty_fk,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=doc_title,doc_description=doc_description,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_county=doc_county,doc_city=doc_city,doc_draft=1,doc_pending=0,doc_received=doc_received,doc_added=today,doc_nodbylead=doc_nodbylead,doc_nodbyresp=doc_nodbyresp,doc_nodagency=data['doc_nodagency'].lag_name,doc_nod=data['doc_nod'],doc_detsigeffect=doc_detsigeffect,doc_detnotsigeffect=doc_detnotsigeffect,doc_deteir=doc_deteir,doc_detnegdec=doc_detnegdec,doc_detmitigation=doc_detmitigation,doc_detnotmitigation=doc_detnotmitigation,doc_detconsider=doc_detconsider,doc_detnotconsider=doc_detnotconsider,doc_detfindings=doc_detfindings,doc_detnotfindings=doc_detnotfindings,doc_eiravailableat=data['doc_eiravailableat'],doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1),doc_nodfeespaid=doc_nodfeespaid)
         adddoc.save()
 
-        for cnty in data['counties']:
-            geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=adddoc,dgeo_rank=1)
-            geowrds_cnty.save()
-        for cty in data['cities']:
-            geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=adddoc,dgeo_rank=1)
-            geowrds_city.save()
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=adddoc,dgeo_rank=1)
+                geowrds_cnty.save()
+            for cty in data['cities']:
+                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=adddoc,dgeo_rank=1)
+                geowrds_city.save()
 
         geometry = Locations(document=adddoc,geom=data['geom'])
         geometry.save()
@@ -1030,34 +1046,42 @@ class docadd_noe(FormView):
             prj.prj_datelast = today
             prj.save()
 
+        doc_statewide = False
+
+        if data['statewide'] == 'yes':
+            doc_statewide = True
+
         doc_county = ""
 
-        for cnty in data['counties']:
-            doc_county += cnty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                doc_county += cnty.geow_shortname + ","
 
-        doc_county = doc_county[:-1]
-        if len(doc_county) > 64:
-            doc_county = doc_county[:64]
+            doc_county = doc_county[:-1]
+            if len(doc_county) > 64:
+                doc_county = doc_county[:64]
 
         doc_city = ""
 
-        for cty in data['cities']:
-            doc_city += cty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cty in data['cities']:
+                doc_city += cty.geow_shortname + ","
 
-        doc_city = doc_city[:-1]
-        if len(doc_city) > 64:
-            doc_city = doc_city[:64]
+            doc_city = doc_city[:-1]
+            if len(doc_city) > 64:
+                doc_city = doc_city[:64]
 
         adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty_fk,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=doc_title,doc_description=doc_description,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=doc_city,doc_county=doc_county,doc_draft=1,doc_pending=0,doc_received=doc_received,doc_added=today,doc_approve_noe=data['doc_approve_noe'],doc_carryout_noe=data['doc_carryout_noe'],doc_exministerial=doc_exministerial,doc_exdeclared=doc_exdeclared,doc_exemergency=doc_exemergency,doc_excategorical=doc_excategorical,doc_exstatutory=doc_exstatutory,doc_exnumber=doc_exnumber,doc_exreasons=data['doc_exreasons'],doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1))
         adddoc.save()
 
-        for cnty in data['counties']:
-            geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=adddoc,dgeo_rank=1)
-            geowrds_cnty.save()
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=adddoc,dgeo_rank=1)
+                geowrds_cnty.save()
 
-        for cty in data['cities']:
-            geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=adddoc,dgeo_rank=1)
-            geowrds_city.save()
+            for cty in data['cities']:
+                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=adddoc,dgeo_rank=1)
+                geowrds_city.save()
 
         geometry = Locations(document=adddoc,geom=data['geom'])
         geometry.save()
@@ -1180,34 +1204,42 @@ class docadd_nop(FormView):
             prj.prj_datelast = today
             prj.save()
 
+        doc_statewide = False
+
+        if data['statewide'] == 'yes':
+            doc_statewide = True
+
         doc_county = ""
 
-        for cnty in data['counties']:
-            doc_county += cnty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                doc_county += cnty.geow_shortname + ","
 
-        doc_county = doc_county[:-1]
-        if len(doc_county) > 64:
-            doc_county = doc_county[:64]
+            doc_county = doc_county[:-1]
+            if len(doc_county) > 64:
+                doc_county = doc_county[:64]
 
         doc_city = ""
 
-        for cty in data['cities']:
-            doc_city += cty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cty in data['cities']:
+                doc_city += cty.geow_shortname + ","
 
-        doc_city = doc_city[:-1]
-        if len(doc_city) > 64:
-            doc_city = doc_city[:64]
+            doc_city = doc_city[:-1]
+            if len(doc_city) > 64:
+                doc_city = doc_city[:64]
 
-        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty_fk,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=data['doc_title'],doc_description=data['doc_description'],doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=doc_city,doc_county=doc_county,doc_draft=1,doc_pending=0,doc_received=doc_received,doc_added=today,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools,doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1))
+        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty_fk,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=data['doc_title'],doc_description=data['doc_description'],doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_city=doc_city,doc_county=doc_county,doc_statewide=doc_statewide,doc_draft=1,doc_pending=0,doc_received=doc_received,doc_added=today,doc_parcelno=doc_parcelno,doc_xstreets=doc_xstreets,doc_township=doc_township,doc_range=doc_range,doc_section=doc_section,doc_base=doc_base,doc_highways=doc_highways,doc_airports=doc_airports,doc_railways=doc_railways,doc_waterways=doc_waterways,doc_landuse=doc_landuse,doc_schools=doc_schools,doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1))
         adddoc.save()
 
-        for cnty in data['counties']:
-            geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=adddoc,dgeo_rank=1)
-            geowrds_cnty.save()
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=adddoc,dgeo_rank=1)
+                geowrds_cnty.save()
 
-        for cty in data['cities']:
-            geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=adddoc,dgeo_rank=1)
-            geowrds_city.save()
+            for cty in data['cities']:
+                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=adddoc,dgeo_rank=1)
+                geowrds_city.save()
 
         geometry = Locations(document=adddoc,geom=data['geom'])
         geometry.save()
@@ -1461,6 +1493,10 @@ class docedit_noc(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -1561,7 +1597,7 @@ class docedit_noc(FormView):
         context['devs'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
         context['isss'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
-        holidayslist = holidays.objects.filter(hday_date__gte=datetime.now())
+        holidayslist = holidays.objects.filter(hday_datdocedit_noce__gte=datetime.now())
         hlist = "["
         for h in holidayslist:
             hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
@@ -1641,23 +1677,34 @@ class docedit_noc(FormView):
         doc.doc_constate = data['doc_constate']
         doc.doc_conzip = data['doc_conzip']
         doc.doc_location = data['doc_location']
+
+        doc_statewide = False
+
+        if data['statewide'] == 'yes':
+            doc_statewide = True
+
+        doc.doc_statewide = doc_statewide
+
         doc_county = ""
 
-        for cnty in data['counties']:
-            doc_county += cnty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                doc_county += cnty.geow_shortname + ","
 
-        doc_county = doc_county[:-1]
-        if len(doc_county) > 64:
-            doc_county = doc_county[:64]
+            doc_county = doc_county[:-1]
+            if len(doc_county) > 64:
+                doc_county = doc_county[:64]
 
         doc_city = ""
 
-        for cty in data['cities']:
-            doc_city += cty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cty in data['cities']:
+                doc_city += cty.geow_shortname + ","
 
-        doc_city = doc_city[:-1]
-        if len(doc_city) > 64:
-            doc_city = doc_city[:64]
+            doc_city = doc_city[:-1]
+            if len(doc_city) > 64:
+                doc_city = doc_city[:64]
+
         doc.doc_county = doc_county
         doc.doc_city = doc_city
         doc.doc_parcelno = doc_parcelno
@@ -1700,13 +1747,14 @@ class docedit_noc(FormView):
 
         docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-        for cnty in data['counties']:
-            geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-            geowrds_cnty.save()
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                geowrds_cnty.save()
 
-        for cty in data['cities']:
-            geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-            geowrds_city.save()
+            for cty in data['cities']:
+                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                geowrds_city.save()
 
         dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001).delete()
 
@@ -1790,6 +1838,10 @@ class docedit_nod(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -1847,25 +1899,37 @@ class docedit_nod(FormView):
         doc.doc_constate = data['doc_constate']
         doc.doc_conzip = data['doc_conzip']
         doc.doc_location = data['doc_location']
+
+        doc_statewide = False
+
+        if data['statewide'] == 'yes':
+            doc_statewide = True
+
+        doc.doc_statewide = doc_statewide
+
         doc_county = ""
 
-        for cnty in data['counties']:
-            doc_county += cnty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                doc_county += cnty.geow_shortname + ","
 
-        doc_county = doc_county[:-1]
-        if len(doc_county) > 64:
-            doc_county = doc_county[:64]
+            doc_county = doc_county[:-1]
+            if len(doc_county) > 64:
+                doc_county = doc_county[:64]
 
         doc_city = ""
 
-        for cty in data['cities']:
-            doc_city += cty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cty in data['cities']:
+                doc_city += cty.geow_shortname + ","
 
-        doc_city = doc_city[:-1]
-        if len(doc_city) > 64:
-            doc_city = doc_city[:64]
+            doc_city = doc_city[:-1]
+            if len(doc_city) > 64:
+                doc_city = doc_city[:64]
+
         doc.doc_county = doc_county
         doc.doc_city = doc_city
+
         if data['leadorresp']:
             if data['leadorresp'] == 'lead':
                 doc.doc_nodbylead = True
@@ -1933,13 +1997,14 @@ class docedit_nod(FormView):
 
         docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-        for cnty in data['counties']:
-            geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-            geowrds_cnty.save()
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                geowrds_cnty.save()
 
-        for cty in data['cities']:
-            geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-            geowrds_city.save()
+            for cty in data['cities']:
+                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                geowrds_city.save()
 
         return super(docedit_nod,self).form_valid(form)
 
@@ -1979,6 +2044,10 @@ class docedit_noe(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -2046,23 +2115,34 @@ class docedit_noe(FormView):
         doc.doc_constate = data['doc_constate']
         doc.doc_conzip = data['doc_conzip']
         doc.doc_location = data['doc_location']
+
+        doc_statewide = False
+
+        if data['statewide'] == 'yes':
+            doc_statewide = True
+
+        doc.doc_statewide = doc_statewide
+
         doc_county = ""
 
-        for cnty in data['counties']:
-            doc_county += cnty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                doc_county += cnty.geow_shortname + ","
 
-        doc_county = doc_county[:-1]
-        if len(doc_county) > 64:
-            doc_county = doc_county[:64]
+            doc_county = doc_county[:-1]
+            if len(doc_county) > 64:
+                doc_county = doc_county[:64]
 
         doc_city = ""
 
-        for cty in data['cities']:
-            doc_city += cty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cty in data['cities']:
+                doc_city += cty.geow_shortname + ","
 
-        doc_city = doc_city[:-1]
-        if len(doc_city) > 64:
-            doc_city = doc_city[:64]
+            doc_city = doc_city[:-1]
+            if len(doc_city) > 64:
+                doc_city = doc_city[:64]
+
         doc.doc_county = doc_county
         doc.doc_city = doc_city
         doc.doc_approve_noe = data['doc_approve_noe']
@@ -2096,13 +2176,14 @@ class docedit_noe(FormView):
 
         docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-        for cnty in data['counties']:
-            geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-            geowrds_cnty.save()
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                geowrds_cnty.save()
 
-        for cty in data['cities']:
-            geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-            geowrds_city.save()
+            for cty in data['cities']:
+                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                geowrds_city.save()
 
         return super(docedit_noe,self).form_valid(form)
 
@@ -2149,6 +2230,10 @@ class docedit_nop(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -2328,23 +2413,34 @@ class docedit_nop(FormView):
         doc.doc_constate = data['doc_constate']
         doc.doc_conzip = data['doc_conzip']
         doc.doc_location = data['doc_location']
+
+        doc_statewide = False
+
+        if data['statewide'] == 'yes':
+            doc_statewide = True
+
+        doc.doc_statewide = doc_statewide
+
         doc_county = ""
 
-        for cnty in data['counties']:
-            doc_county += cnty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                doc_county += cnty.geow_shortname + ","
 
-        doc_county = doc_county[:-1]
-        if len(doc_county) > 64:
-            doc_county = doc_county[:64]
+            doc_county = doc_county[:-1]
+            if len(doc_county) > 64:
+                doc_county = doc_county[:64]
 
         doc_city = ""
 
-        for cty in data['cities']:
-            doc_city += cty.geow_shortname + ","
+        if data['statewide'] == 'no':
+            for cty in data['cities']:
+                doc_city += cty.geow_shortname + ","
 
-        doc_city = doc_city[:-1]
-        if len(doc_city) > 64:
-            doc_city = doc_city[:64]
+            doc_city = doc_city[:-1]
+            if len(doc_city) > 64:
+                doc_city = doc_city[:64]
+
         doc.doc_county = doc_county
         doc.doc_city = doc_city
         doc.doc_parcelno = doc_parcelno
@@ -2384,13 +2480,14 @@ class docedit_nop(FormView):
 
         docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-        for cnty in data['counties']:
-            geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-            geowrds_cnty.save()
+        if data['statewide'] == 'no':
+            for cnty in data['counties']:
+                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                geowrds_cnty.save()
 
-        for cty in data['cities']:
-            geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-            geowrds_city.save()
+            for cty in data['cities']:
+                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                geowrds_city.save()
 
         dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001).delete()
 
@@ -2684,6 +2781,10 @@ class pendingdetail_noc(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -2927,13 +3028,14 @@ class pendingdetail_noc(FormView):
 
             docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-            for cnty in data['counties']:
-                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_cnty.save()
+            if data['statewide'] == 'no':
+                for cnty in data['counties']:
+                    geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_cnty.save()
 
-            for cty in data['cities']:
-                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_city.save()
+                for cty in data['cities']:
+                    geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_city.save()
 
             dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001).delete()
 
@@ -3027,6 +3129,10 @@ class pendingdetail_nod(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -3199,13 +3305,14 @@ class pendingdetail_nod(FormView):
 
             docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-            for cnty in data['counties']:
-                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_cnty.save()
+            if data['statewide'] == 'no':
+                for cnty in data['counties']:
+                    geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_cnty.save()
 
-            for cty in data['cities']:
-                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_city.save()
+                for cty in data['cities']:
+                    geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_city.save()
 
             if settings.SENDEMAIL:
                 email_acceptance(self)
@@ -3255,6 +3362,10 @@ class pendingdetail_noe(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -3390,13 +3501,14 @@ class pendingdetail_noe(FormView):
 
             docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-            for cnty in data['counties']:
-                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_cnty.save()
+            if data['statewide'] == 'no':
+                for cnty in data['counties']:
+                    geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_cnty.save()
 
-            for cty in data['cities']:
-                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_city.save()
+                for cty in data['cities']:
+                    geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_city.save()
 
             if settings.SENDEMAIL:
                 email_acceptance(self)
@@ -3453,6 +3565,10 @@ class pendingdetail_nop(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -3628,23 +3744,34 @@ class pendingdetail_nop(FormView):
             doc.doc_constate = data['doc_constate']
             doc.doc_conzip = data['doc_conzip']
             doc.doc_location = data['doc_location']
+
+            doc_statewide = False
+
+            if data['statewide'] == 'yes':
+                doc_statewide = True
+
+            doc.doc_statewide = doc_statewide
+
             doc_county = ""
 
-            for cnty in data['counties']:
-                doc_county += cnty.geow_shortname + ","
+            if data['statewide'] == 'no':
+                for cnty in data['counties']:
+                    doc_county += cnty.geow_shortname + ","
 
-            doc_county = doc_county[:-1]
-            if len(doc_county) > 64:
-                doc_county = doc_county[:64]
+                doc_county = doc_county[:-1]
+                if len(doc_county) > 64:
+                    doc_county = doc_county[:64]
 
             doc_city = ""
 
-            for cty in data['cities']:
-                doc_city += cty.geow_shortname + ","
+            if data['statewide'] == 'no':
+                for cty in data['cities']:
+                    doc_city += cty.geow_shortname + ","
 
-            doc_city = doc_city[:-1]
-            if len(doc_city) > 64:
-                doc_city = doc_city[:64]
+                doc_city = doc_city[:-1]
+                if len(doc_city) > 64:
+                    doc_city = doc_city[:64]
+
             doc.doc_county = doc_county
             doc.doc_city = doc_city
             doc.doc_parcelno = doc_parcelno
@@ -3691,13 +3818,14 @@ class pendingdetail_nop(FormView):
 
             docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-            for cnty in data['counties']:
-                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_cnty.save()
+            if data['statewide'] == 'no':
+                for cnty in data['counties']:
+                    geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_cnty.save()
 
-            for cty in data['cities']:
-                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_city.save()
+                for cty in data['cities']:
+                    geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_city.save()
 
             dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001).delete()
 
@@ -3826,6 +3954,10 @@ class reviewdetail_noc(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -4007,23 +4139,34 @@ class reviewdetail_noc(FormView):
             doc.doc_constate = data['doc_constate']
             doc.doc_conzip = data['doc_conzip']
             doc.doc_location = data['doc_location']
+
+            doc_statewide = False
+
+            if data['statewide'] == 'yes':
+                doc_statewide = True
+
+            doc.doc_statewide = doc_statewide
+
             doc_county = ""
 
-            for cnty in data['counties']:
-                doc_county += cnty.geow_shortname + ","
+            if data['statewide'] == 'no':
+                for cnty in data['counties']:
+                    doc_county += cnty.geow_shortname + ","
 
-            doc_county = doc_county[:-1]
-            if len(doc_county) > 64:
-                doc_county = doc_county[:64]
+                doc_county = doc_county[:-1]
+                if len(doc_county) > 64:
+                    doc_county = doc_county[:64]
 
             doc_city = ""
 
-            for cty in data['cities']:
-                doc_city += cty.geow_shortname + ","
+            if data['statewide'] == 'no':
+                for cty in data['cities']:
+                    doc_city += cty.geow_shortname + ","
 
-            doc_city = doc_city[:-1]
-            if len(doc_city) > 64:
-                doc_city = doc_city[:64]
+                doc_city = doc_city[:-1]
+                if len(doc_city) > 64:
+                    doc_city = doc_city[:64]
+
             doc.doc_county = doc_county
             doc.doc_city = doc_city
             doc.doc_parcelno = doc_parcelno
@@ -4083,13 +4226,14 @@ class reviewdetail_noc(FormView):
 
             docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-            for cnty in data['counties']:
-                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_cnty.save()
+            if data['statewide'] == 'no':
+                for cnty in data['counties']:
+                    geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_cnty.save()
 
-            for cty in data['cities']:
-                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_city.save()
+                for cty in data['cities']:
+                    geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_city.save()
 
             dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001).delete()
 
@@ -4191,6 +4335,10 @@ class reviewdetail_nop(FormView):
             initial['doc_latitude'] = latlonginfo[0].doc_latitude
             initial['doc_longitude'] = latlonginfo[0].doc_longitude
 
+        if docinfo.doc_statewide:
+            initial['statewide'] = "yes"
+        else:
+            initial['statewide'] = "no"
         initial['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
         initial['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=self.request.GET.get('doc_pk'))
 
@@ -4371,23 +4519,34 @@ class reviewdetail_nop(FormView):
             doc.doc_constate = data['doc_constate']
             doc.doc_conzip = data['doc_conzip']
             doc.doc_location = data['doc_location']
+
+            doc_statewide = False
+
+            if data['statewide'] == 'yes':
+                doc_statewide = True
+
+            doc.doc_statewide = doc_statewide
+
             doc_county = ""
 
-            for cnty in data['counties']:
-                doc_county += cnty.geow_shortname + ","
+            if data['statewide'] == 'no':
+                for cnty in data['counties']:
+                    doc_county += cnty.geow_shortname + ","
 
-            doc_county = doc_county[:-1]
-            if len(doc_county) > 64:
-                doc_county = doc_county[:64]
+                doc_county = doc_county[:-1]
+                if len(doc_county) > 64:
+                    doc_county = doc_county[:64]
 
             doc_city = ""
 
-            for cty in data['cities']:
-                doc_city += cty.geow_shortname + ","
+            if data['statewide'] == 'no':
+                for cty in data['cities']:
+                    doc_city += cty.geow_shortname + ","
 
-            doc_city = doc_city[:-1]
-            if len(doc_city) > 64:
-                doc_city = doc_city[:64]
+                doc_city = doc_city[:-1]
+                if len(doc_city) > 64:
+                    doc_city = doc_city[:64]
+
             doc.doc_county = doc_county
             doc.doc_city = doc_city
             doc.doc_parcelno = doc_parcelno
@@ -4444,13 +4603,14 @@ class reviewdetail_nop(FormView):
 
             docgeowords.objects.filter(dgeo_doc_fk__doc_pk=doc.pk).delete()
 
-            for cnty in data['counties']:
-                geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_cnty.save()
+            if data['statewide'] == 'no':
+                for cnty in data['counties']:
+                    geowrds_cnty = docgeowords(dgeo_geow_fk=cnty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_cnty.save()
 
-            for cty in data['cities']:
-                geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
-                geowrds_city.save()
+                for cty in data['cities']:
+                    geowrds_city = docgeowords(dgeo_geow_fk=cty,dgeo_doc_fk=doc,dgeo_rank=1)
+                    geowrds_city.save()
 
             dockeywords.objects.filter(dkey_doc_fk__doc_pk=doc.pk).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1001).delete()
 

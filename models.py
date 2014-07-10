@@ -180,6 +180,7 @@ class documents(models.Model):
     doc_carryout_noe = models.CharField(null=True,blank=True,max_length=64)
     doc_nodfeespaid = models.BooleanField(blank=True)
     doc_bia = models.BooleanField(blank=True)
+    doc_statewide = models.BooleanField(blank=True)
 
     class Meta:
         #ordering = ['name']
