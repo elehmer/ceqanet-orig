@@ -114,6 +114,9 @@
 				</div>
 			</li>
             <li><a href="{% url 'map' %}" class="nav_level1_link">{% trans "Map" %}</a></li>
+			{% if not user.is_active %}
+            <li><a href="{% url 'registration_register' %}" class="nav_level1_link">{% trans "Account" %}</a></li>
+            {% endif %}
 
 			{% for g in user.groups.all %}
 			{% if g.name = "leads" or g.name = "planners" or g.name = "clearinghouse" %}
@@ -170,9 +173,7 @@
 			{% if g.name = "reviewers" or g.name = "planners" or g.name = "clearinghouse" %}
 			<li><a href="{% url 'comment' %}" class="nav_level1_link">{% trans "Comment" %}</a></li>
 			{% endif %}
-			{% if not user.is_active %}
-            <li><a href="{% url 'registration_register' %}" class="nav_level1_link">{% trans "Account" %}</a></li>
-            {% else %}
+			{% if user.is_active %}
 			<li><a href="{% url 'manageaccount' %}" class="nav_level1_link">{% trans "Account" %}</a>
 				<div class="nav_panel">
 					<ul>

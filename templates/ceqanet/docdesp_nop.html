@@ -2,6 +2,8 @@
 
 {% block title %}OPR Data Clearinghouse Document Listing{% endblock title %}
 
+{% load staticfiles %}
+
 {% block onload %} 
 onload="init()"
 {% endblock onload %}
@@ -451,5 +453,5 @@ var doc={{doc}};
       {% endfor %}
     </table>
   </div>
-  
+
 {% endblock listing %}
