@@ -98,8 +98,10 @@ class basedocumentform(MapForm):
         return cleaned_data
 
 class nodform(basedocumentform):
-    leadorresp = forms.ChoiceField(required=True,choices=NODAGENCY_CHOICES,widget=forms.RadioSelect(attrs={'id':'lorr','class':'lorr'}))
-    doc_nodagency = forms.ModelChoiceField(required=True,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]",widget=forms.Select(attrs={'id':'nodagency','class':'nodagency'}))
+    #leadorresp = forms.ChoiceField(required=True,choices=NODAGENCY_CHOICES,widget=forms.RadioSelect(attrs={'id':'lorr','class':'lorr'}))
+    #doc_nodagency = forms.ModelChoiceField(required=True,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]",widget=forms.Select(attrs={'id':'nodagency','class':'nodagency'}))
+    leadorresp = forms.CharField(required=True,max_length=10,widget=forms.HiddenInput())
+    doc_nodagency = forms.CharField(required=True,max_length=20,widget=forms.HiddenInput())
     doc_nod = forms.DateField(required=True,input_formats=['%Y-%m-%d'])
     det1 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det1'}))
     det2 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det2'}))
@@ -427,6 +429,26 @@ class usersettingsform(forms.Form):
 
 class chqueryform(forms.Form):
     prj_schno = forms.CharField(label="Clearinghouse Number:",max_length=12)
+    leadorresp = forms.ChoiceField(required=False,choices=NODAGENCY_CHOICES,initial='lead',widget=forms.RadioSelect(attrs={'id':'lorr','class':'lorr'}))
+    nodagency = forms.ModelChoiceField(required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]",widget=forms.Select(attrs={'id':'nodagency','class':'nodagency'}))
+    doctype = forms.CharField(required=True,max_length=10,widget=forms.HiddenInput())
+
+    # def clean(self):
+    #     cleaned_data = super(chqueryform, self).clean()
+
+    #     msg_leadorresp = u"You must choose Lead Agency or Responsible Agency radio buttons."
+    #     msg_nodagency = u"You must choose a Lead Agency from the list."
+
+    #     if cleaned_data.get('doctype') == '108':
+    #         if cleaned_data.get('leadorresp') == None:
+    #             self._errors['leadorresp'] = self.error_class([msg_leadorresp])
+    #             del cleaned_data['leadorresp']
+
+    #         if cleaned_data.get('nodagency') == None:
+    #             self._errors['nodagency'] = self.error_class([msg_nodagency])
+    #             del cleaned_data['nodagency']
+
+    #     return cleaned_data
 
 class findprojectform(forms.Form):
     pass

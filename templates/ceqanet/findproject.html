@@ -63,6 +63,8 @@
     {% endfor %}
     </TABLE>
   <INPUT type="hidden" name="doctype" value="{{ doctype }}">
+  <INPUT type="hidden" name="leadorresp" value="{{ leadorresp }}">
+  <INPUT type="hidden" name="nodagency" value="{{ nodagency }}">
   <script>
   $('.prj_pk').change(function() {
     $('#findproject').submit();

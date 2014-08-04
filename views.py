@@ -475,20 +475,34 @@ class chquery(FormView):
     form_class = chqueryform
 
     def get_success_url(self):
-        success_url = "%s?prj_schno=%s&doctype=%s" % (reverse_lazy('findproject'),self.prj_schno,self.doctype)
+        success_url = "%s?prj_schno=%s&doctype=%s&leadorresp=%s&nodagency=%s" % (reverse_lazy('findproject'),self.prj_schno,self.doctype,self.leadorresp,self.nodagency)
         return success_url
+
+    def get_initial(self):
+        initial = super(chquery, self).get_initial()
+
+        initial['doctype'] = self.request.GET.get("doctype")
+        initial['leadorresp'] = 'lead'
+
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super(chquery, self).get_context_data(**kwargs)
 
         context['doctype'] = self.request.GET.get('doctype')
+        context['laglist'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
 
         return context
 
     def form_valid(self,form):
         data = form.cleaned_data
         self.prj_schno = data['prj_schno']
-        self.doctype = self.request.POST.get('doctype')
+        self.doctype = data['doctype']
+        self.leadorresp = data['leadorresp']
+        if data['nodagency'] != None:
+            self.nodagency = data['nodagency'].lag_pk
+        else:
+            self.nodagency = None
         return super(chquery,self).form_valid(form)
 
 class findproject(FormView):
@@ -497,7 +511,7 @@ class findproject(FormView):
 
     def get_success_url(self):
         if self.doctype == '108':
-            success_url = "%s?doctype=%s&prj_pk=%s" % (reverse_lazy('docadd_nod'),self.doctype,self.prj_pk)
+            success_url = "%s?doctype=%s&prj_pk=%s&leadorresp=%s&nodagency=%s" % (reverse_lazy('docadd_nod'),self.doctype,self.prj_pk,self.leadorresp,self.nodagency)
         elif self.doctype == '109':
             success_url = "%s?doctype=%s&prj_pk=%s" % (reverse_lazy('docadd_noe'),self.doctype,self.prj_pk)
         elif self.doctype == '102':
@@ -516,14 +530,21 @@ class findproject(FormView):
             if g.name == "planners" or g.name == "clearinghouse":
                 context['schnos'] = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).order_by('-prj_schno')
             if g.name == "leads":
-                context['schnos'] = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).filter(prj_lag_fk__lag_pk=self.request.user.get_profile().set_lag_fk.lag_pk).order_by('-prj_schno')
+                if self.request.GET.get('leadorresp') == 'lead':
+                    context['schnos'] = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).filter(prj_lag_fk__lag_pk=self.request.user.get_profile().set_lag_fk.lag_pk).order_by('-prj_schno')
+                else:
+                    context['schnos'] = projects.objects.filter(prj_visible=True).filter(prj_schno__startswith=prj_schno).filter(prj_lag_fk__lag_pk=self.request.GET.get('nodagency')).order_by('-prj_schno')
         context['doctype'] = self.request.GET.get('doctype')
+        context['leadorresp'] = self.request.GET.get('leadorresp')
+        context['nodagency'] = self.request.GET.get('nodagency')
 
         return context
 
     def form_valid(self,form):
         self.prj_pk = self.request.POST.get('prj_pk')
         self.doctype = self.request.POST.get('doctype')
+        self.leadorresp = self.request.POST.get('leadorresp')
+        self.nodagency = self.request.POST.get('nodagency')
         return super(findproject,self).form_valid(form)
 
 class attachments(FormView):
@@ -796,6 +817,9 @@ class docadd_nod(FormView):
         initial['doc_concity'] = la_query.lag_city
         initial['doc_constate'] = la_query.lag_state
         initial['doc_conzip'] = la_query.lag_zip.strip
+
+        initial['leadorresp'] = self.request.GET.get("leadorresp")
+        initial['doc_nodagency'] = self.request.GET.get("nodagency")
         return initial
 
     def get_context_data(self, **kwargs):
@@ -804,6 +828,8 @@ class docadd_nod(FormView):
         prj_pk = self.request.GET.get("prj_pk")
         context['prj_pk'] = prj_pk
         context['doctype'] = self.request.GET.get("doctype")
+        context['leadorresp'] = self.request.GET.get("leadorresp")
+        context['nodagency'] = leadagencies.objects.get(pk=self.request.GET.get("nodagency"))
         if prj_pk != 'None':
             context['prjinfo'] = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
         context['laglist'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
@@ -848,6 +874,8 @@ class docadd_nod(FormView):
             elif data['leadorresp'] == 'resp':
                 doc_nodbylead = False
                 doc_nodbyresp = True
+
+        doc_nodagency = leadagencies.objects.get(pk=data["doc_nodagency"])
 
         if data['det1']:
             if data['det1'] == 'True':
@@ -925,7 +953,7 @@ class docadd_nod(FormView):
             if len(doc_city) > 64:
                 doc_city = doc_city[:64]
 
-        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty_fk,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=doc_title,doc_description=doc_description,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_county=doc_county,doc_city=doc_city,doc_draft=1,doc_pending=0,doc_received=doc_received,doc_added=today,doc_nodbylead=doc_nodbylead,doc_nodbyresp=doc_nodbyresp,doc_nodagency=data['doc_nodagency'].lag_name,doc_nod=data['doc_nod'],doc_detsigeffect=doc_detsigeffect,doc_detnotsigeffect=doc_detnotsigeffect,doc_deteir=doc_deteir,doc_detnegdec=doc_detnegdec,doc_detmitigation=doc_detmitigation,doc_detnotmitigation=doc_detnotmitigation,doc_detconsider=doc_detconsider,doc_detnotconsider=doc_detnotconsider,doc_detfindings=doc_detfindings,doc_detnotfindings=doc_detnotfindings,doc_eiravailableat=data['doc_eiravailableat'],doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1),doc_nodfeespaid=doc_nodfeespaid)
+        adddoc = documents(doc_prj_fk=prj,doc_cnty_fk=cnty_fk,doc_doct_fk=doct,doc_doctype=doct.keyw_shortname,doc_docname=doct.keyw_longname,doc_title=doc_title,doc_description=doc_description,doc_conname=data['doc_conname'],doc_conagency=lag.lag_name,doc_conemail=data['doc_conemail'],doc_conphone=data['doc_conphone'],doc_conaddress1=data['doc_conaddress1'],doc_conaddress2=doc_conaddress2,doc_concity=data['doc_concity'],doc_constate=data['doc_constate'],doc_conzip=data['doc_conzip'],doc_location=data['doc_location'],doc_county=doc_county,doc_city=doc_city,doc_draft=1,doc_pending=0,doc_received=doc_received,doc_added=today,doc_nodbylead=doc_nodbylead,doc_nodbyresp=doc_nodbyresp,doc_nodagency=doc_nodagency.lag_name,doc_nod=data['doc_nod'],doc_detsigeffect=doc_detsigeffect,doc_detnotsigeffect=doc_detnotsigeffect,doc_deteir=doc_deteir,doc_detnegdec=doc_detnegdec,doc_detmitigation=doc_detmitigation,doc_detnotmitigation=doc_detnotmitigation,doc_detconsider=doc_detconsider,doc_detnotconsider=doc_detnotconsider,doc_detfindings=doc_detfindings,doc_detnotfindings=doc_detnotfindings,doc_eiravailableat=data['doc_eiravailableat'],doc_added_userid=self.request.user,doc_assigned_userid=User.objects.get(pk=-1),doc_lastlooked_userid=User.objects.get(pk=-1),doc_nodfeespaid=doc_nodfeespaid)
         adddoc.save()
 
         if data['statewide'] == 'no':

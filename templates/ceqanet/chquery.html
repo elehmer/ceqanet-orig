@@ -2,18 +2,24 @@
 
 {% load staticfiles %}
 
+{% block extrajs %}
+
+  <link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+
+{% endblock extrajs %}
+
 {% block content %}
-<FORM name="chquery" method="post" action="">
+<FORM name="chquery" class="adddocform" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
       <TD align="left">
-        Find an Existing Project within CEQAnet
+        <h3>Find an Existing Project within CEQAnet</h3>
       </TD>
     </TR>
     <TR>
       <TD>
-        <B>{{ form.prj_schno.label }}</B> {{ form.prj_schno }}
+        <B>{{ form.prj_schno.label }}</B> {{ form.prj_schno }} {{ form.prj_schno.errors }}
       </TD>
     <TR>
     <TR>
@@ -21,12 +27,66 @@
         You may enter a partial SCH# to retreive a list of potential projects. (e.g. "201001" would return all projects in the month of January, 2010)
       </TD>
     </TR>
-    <TR> 
-      <TD> 
-        <input type="submit" value="Query">
+    <TR>
+      <TD>
+        &nbsp;
       </TD>
     </TR>
+    {% if doctype = '108' %}
+    <tr> 
+      <td>
+        {{ form.leadorresp.errors }}
+        {% for lorr in form.leadorresp %}
+          {% if forloop.counter = 1 %}
+            Are you filing this document as a:&nbsp;
+            {{ lorr }}
+          {% endif %} 
+          {% if forloop.counter = 2 %}
+            {{ lorr }}
+          {% endif %}
+        {% endfor %}:
+      </td>
+    </tr>    
+    <tr> 
+      <td>
+        Lead Agency that this document will be filed under:
+        {{ form.nodagency.errors }}
+        {{ form.nodagency }}
+      </td>
+    </tr>
+    <TR>
+      <TD>
+        &nbsp;
+      </TD>
+    </TR>
+    {% endif %}
+    <script>
+      $(document).ready(function() {
+        if ($("#lorr_0").prop('checked')) {
+          $("#nodagency").prop('disabled', true);          
+          $("#nodagency").val('{{ laglist.lag_pk }}');
+        }
+        $("#lorr_0").click(function() {
+          $("#nodagency").prop('disabled', true);
+          $("#nodagency").val('{{ laglist.lag_pk }}');
+        });
+        $("#lorr_1").click(function() {
+          $("#nodagency").prop('disabled', false);
+          $("#nodagency").val('');
+        });
+      });
+    </script>
+    <TR> 
+      <TD> 
+        <input id="next" type="submit" value="Query">
+      </TD>
+    </TR>
+    <script>
+      $("#next").click(function() {
+        $("#nodagency").prop('disabled', false);        
+      });
+    </script>
   </TABLE>
-  <INPUT type="hidden" name="doctype" value="{{ doctype }}">
+  {{ form.doctype }}
 </FORM>
 {% endblock content %}

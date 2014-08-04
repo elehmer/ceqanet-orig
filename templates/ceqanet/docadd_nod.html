@@ -317,42 +317,14 @@
     </tr>
     <tr> 
       <td colspan="3">
-        {{ form.leadorresp.errors }}
-        {% for lorr in form.leadorresp %}
-          {% if forloop.counter = 1 %}
-            This is to advise that the 
-            {{ lorr }}
-          {% endif %} 
-          {% if forloop.counter = 2 %}
-            {{ lorr }}
-          {% endif %}
-        {% endfor %}:
-      </td>
-    </tr>
-    <tr> 
-      <td colspan="2">
-        {{ form.doc_nodagency.errors }}
-        {{ form.doc_nodagency }}
-      </td>
-    </tr>
-    <script>
-      $(document).ready(function() {
-        if ($("#lorr_0").prop('checked')) {
-          $("#nodagency").prop('disabled', true);          
-        }
-        $("#lorr_0").click(function() {
-          $("#nodagency").prop('disabled', true);
-          $("#nodagency").val('{{ laglist.lag_pk }}');
-        });
-        $("#lorr_1").click(function() {
-          $("#nodagency").prop('disabled', false);
-          $("#nodagency").val('');
-        });
-      });
-    </script>
-    <tr> 
-      <td colspan="3">
-        has approved the project described above on 
+        This is to advise that the
+        {% if leadorresp = 'lead' %}
+          Lead
+        {% else %}
+          Responsible
+        {% endif %}
+         Agency - {{ nodagency.lag_name }}
+        has approved the project described above on the date:  
         {{ form.doc_nod.errors }}
         {{ form.doc_nod }}
         and has made the following determinations regarding the project described 
@@ -484,14 +456,11 @@
         <input id="next" type="submit" value="Next >>">
       </TD>
     </TR>
-    <script>
-      $("#next").click(function() {
-        $("#nodagency").prop('disabled', false);        
-      });
-    </script>
   </TABLE>
   <input type="hidden" name="prj_pk" value="{{ prj_pk }}">
   <input type="hidden" name="doctype" value="{{ doctype }}">
+  {{ form.leadorresp }}
+  {{ form.doc_nodagency }}
 </FORM>
 
 {% endblock content %}
