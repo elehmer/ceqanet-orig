@@ -1625,7 +1625,7 @@ class docedit_noc(FormView):
         context['devs'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1010)
         context['isss'] = dockeywords.objects.filter(dkey_doc_fk__doc_pk=self.request.GET.get('doc_pk')).filter(dkey_keyw_fk__keyw_keyl_fk__keyl_pk=1002)
         context['attachments'] = docattachments.objects.filter(datt_doc_fk=self.request.GET.get('doc_pk'))
-        holidayslist = holidays.objects.filter(hday_datdocedit_noce__gte=datetime.now())
+        holidayslist = holidays.objects.filter(hday_date__gte=datetime.now())
         hlist = "["
         for h in holidayslist:
             hlist += "\"" + h.hday_date.strftime('%Y-%m-%d') + "\"" + ","
