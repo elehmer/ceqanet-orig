@@ -173,6 +173,7 @@
 			{% if g.name = "reviewers" or g.name = "planners" or g.name = "clearinghouse" %}
 			<li><a href="{% url 'comment' %}" class="nav_level1_link">{% trans "Comment" %}</a></li>
 			{% endif %}
+			{% endfor %}
 			{% if user.is_active %}
 			<li><a href="{% url 'manageaccount' %}" class="nav_level1_link">{% trans "Account" %}</a>
 				<div class="nav_panel">
@@ -180,12 +181,14 @@
 						<li><a href="{% url 'manageaccount' %}" class="nav_p_heading">Manage Account</a> 
 						<div class="nav_p_description">Change account settings</div></li>
 					</ul>
-					{% if g.name = "planners" or g.name = "clearinghouse" %}
+					{% for g in user.groups.all %}
+		  			{% if g.name = "planners" or g.name = "clearinghouse" %}
 						<ul>
 							<li><a href="{% url 'usersettings' %}" class="nav_p_heading">Settings</a> 
 							<div class="nav_p_description">Manage user settings</div></li>
 						</ul>
 					{% endif %}
+					{% endfor %}
 					{% if user.groups.all.count = 0 %}
 						<ul>
 							<li><a href="{% url 'requestupgrd' %}" class="nav_p_heading">Request Account Upgrade</a> 
@@ -195,7 +198,6 @@
 				</div>
 			</li>
 			{% endif %}
-			{% endfor %}
 		</ul>
 	</nav>
 	

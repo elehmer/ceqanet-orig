@@ -98,10 +98,10 @@ class basedocumentform(MapForm):
         return cleaned_data
 
 class nodform(basedocumentform):
-    #leadorresp = forms.ChoiceField(required=True,choices=NODAGENCY_CHOICES,widget=forms.RadioSelect(attrs={'id':'lorr','class':'lorr'}))
-    #doc_nodagency = forms.ModelChoiceField(required=True,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]",widget=forms.Select(attrs={'id':'nodagency','class':'nodagency'}))
-    leadorresp = forms.CharField(required=True,max_length=10,widget=forms.HiddenInput())
-    doc_nodagency = forms.CharField(required=True,max_length=20,widget=forms.HiddenInput())
+    leadorresp = forms.ChoiceField(required=True,choices=NODAGENCY_CHOICES,widget=forms.RadioSelect(attrs={'id':'lorr','class':'lorr'}))
+    doc_nodagency = forms.ModelChoiceField(required=True,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]",widget=forms.Select(attrs={'id':'nodagency','class':'nodagency'}))
+    #leadorresp = forms.CharField(required=True,max_length=10,widget=forms.HiddenInput())
+    #doc_nodagency = forms.CharField(required=True,max_length=20,widget=forms.HiddenInput())
     doc_nod = forms.DateField(required=True,input_formats=['%Y-%m-%d'])
     det1 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det1'}))
     det2 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det2'}))
