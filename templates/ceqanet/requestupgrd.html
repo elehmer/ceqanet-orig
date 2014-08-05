@@ -2,11 +2,17 @@
 
 {% load staticfiles %}
 
+{% block extrajs %}
+
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+
+{% endblock extrajs %}
+
 {% block content %}
 
 {% if not isrequested %}
 
-<FORM name="requestupgrdform" method="post" action="">
+<FORM name="requestupgrdform" class="adddocform" method="post" action="">
   {% csrf_token %}
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
@@ -44,7 +50,7 @@
         &nbsp;
       </TD>
       <TD>
-        {{ form.rqst_lag_fk.label }} {{ form.rqst_lag_fk }}
+        {{ form.rqst_lag_fk.label }} {{ form.rqst_lag_fk }} {{ form.rqst_lag_fk.errors }}
       </TD>
     </TR>
       {% else %}
@@ -66,19 +72,19 @@
         &nbsp;
       </TD>
       <TD>
-        {{ form.rqst_rag_fk.label }} {{ form.rqst_rag_fk }}
+        {{ form.rqst_rag_fk.label }} {{ form.rqst_rag_fk }} {{ form.rqst_rag_fk.errors }}
       </TD>
     </TR>
       {% endif %}
    {% endfor %}
     <TR> 
       <TD colspan="2">
-        {{ form.rqst_reason.label }} {{ form.rqst_reason }}
+        {{ form.rqst_reason.label }} {{ form.rqst_reason }} {{ form.rqst_reason.errors }}
       </TD>
     </TR>
     <TR> 
       <TD colspan="2">
-        <input type="submit" value="Send Request">
+        <input id="next" type="submit" value="Send Request">
       </TD>
     </TR>
   </TABLE>
@@ -95,6 +101,10 @@
       $("#rqst_type_1").click(function() {
         $("#id_rqst_lag_fk").attr('disabled', true);
         $("#id_rqst_rag_fk").attr('disabled', false);
+      });
+      $("#next").click(function() {
+        $("#id_rqst_lag_fk").prop('disabled', false);        
+        $("#id_rqst_rag_fk").prop('disabled', false);        
       });
   });
 </script>

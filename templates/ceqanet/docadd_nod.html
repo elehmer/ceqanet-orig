@@ -337,16 +337,16 @@
     <script>
       $(document).ready(function() {
         if ($("#lorr_0").prop('checked')) {
-          $("#nodagency").prop('disabled', true);          
-          $("#nodagency").val('{{ laglist.lag_pk }}');
+          $("#id_doc_nodagency").prop('disabled', true);          
+          $("#id_doc_nodagency").val('{{ laglist.lag_pk }}');
         }
         $("#lorr_0").click(function() {
-          $("#nodagency").prop('disabled', true);
-          $("#nodagency").val('{{ laglist.lag_pk }}');
+          $("#id_doc_nodagency").prop('disabled', true);
+          $("#id_doc_nodagency").val('{{ laglist.lag_pk }}');
         });
         $("#lorr_1").click(function() {
-          $("#nodagency").prop('disabled', false);
-          $("#nodagency").val('');
+          $("#id_doc_nodagency").prop('disabled', false);
+          $("#id_doc_nodagency").val('');
         });
       });
     </script>
@@ -475,6 +475,11 @@
         <input id="next" type="submit" value="Next >>">
       </TD>
     </TR>
+    <script>
+      $("#next").click(function() {
+        $("#id_doc_nodagency").prop('disabled', false);        
+      });
+    </script>
   </TABLE>
   <input type="hidden" name="prj_pk" value="{{ prj_pk }}">
   <input type="hidden" name="doctype" value="{{ doctype }}">
