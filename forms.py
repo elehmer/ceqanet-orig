@@ -99,7 +99,9 @@ class basedocumentform(MapForm):
 
 class nodform(basedocumentform):
     leadorresp = forms.ChoiceField(required=True,choices=NODAGENCY_CHOICES,widget=forms.RadioSelect(attrs={'id':'lorr','class':'lorr'}))
-    doc_nodagency = forms.ModelChoiceField(required=True,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]")
+    doc_nodagency = forms.ModelChoiceField(required=True,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'),empty_label="[Select Agency]",widget=forms.Select(attrs={'id':'nodagency','class':'nodagency'}))
+    #leadorresp = forms.CharField(required=True,max_length=10,widget=forms.HiddenInput())
+    #doc_nodagency = forms.CharField(required=True,max_length=20,widget=forms.HiddenInput())
     doc_nod = forms.DateField(required=True,input_formats=['%Y-%m-%d'])
     det1 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det1'}))
     det2 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det2'}))
@@ -412,25 +414,10 @@ class manageaccountform(forms.Form):
     conphone = USPhoneNumberField(label="Phone Number:",required=False)
 
 class requestupgrdform(forms.Form):
-    rqst_type = forms.ChoiceField(label="Request Type:",required=True,choices=UPGRADE_CHOICES,widget=forms.RadioSelect(attrs={'id':'rqst_type'}))
+    rqst_type = forms.ChoiceField(label="Request Type:",required=True,choices=UPGRADE_CHOICES,initial='lead',widget=forms.RadioSelect(attrs={'id':'rqst_type'}))
     rqst_lag_fk = forms.ModelChoiceField(label="Lead Agency:",required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'))
     rqst_rag_fk = forms.ModelChoiceField(label="Reviewing Agency:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_name'))
     rqst_reason = forms.CharField(label="Reason for Request:",required=True,widget=forms.Textarea(attrs={'cols':'75','rows':'2'}))
-
-    def clean(self):
-        cleaned_data = super(requestupgrdform, self).clean()
-
-        msg_bad_agency_fk = u"You must select an Agency."
-
-        if cleaned_data.get('rqst_type') == 'lead' and cleaned_data.get('rqst_lag_fk') == None:
-            self._errors['rqst_lag_fk'] = self.error_class([msg_bad_agency_fk])
-            del cleaned_data['rqst_lag_fk']
-
-        if cleaned_data.get('rqst_type') == 'review' and cleaned_data.get('rqst_rag_fk') == None:
-            self._errors['rqst_rag_fk'] = self.error_class([msg_bad_agency_fk])
-            del cleaned_data['rqst_rag_fk']
-
-        return cleaned_data
 
 class manageupgradeform(forms.Form):
     allowupgrade = forms.ChoiceField(label="Allow Upgrade?:",required=True,choices=PROJECT_EXISTS,initial='no',widget=forms.RadioSelect(attrs={'id':'allowupgrade'}))
