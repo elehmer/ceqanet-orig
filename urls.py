@@ -13,6 +13,9 @@ from ceqanet.views import comment,commentdetail,commentadd,showcomment,commentac
 from ceqanet.views import locations_geojson, map, locationEdit
 #document api
 from ceqanet.views import doc_json,doc_location
+#from registration.backends.default.views import register
+#from ceqanet.forms import UserRegistrationForm
+#import regbackend
 
 urlpatterns = patterns('ceqanet.views',
     url(r'^$','index',name='index'),
@@ -83,6 +86,14 @@ urlpatterns = patterns('ceqanet.views',
 
 
 urlpatterns += patterns('',
-    url(r'^login/$','django.contrib.auth.views.login',{'template_name':'ceqanet/login.html'},name = 'login'),
-    url(r'^logout/$','django.contrib.auth.views.logout', {'next_page': '/'}, name = 'logout'),
+    #url(r'^accounts/register/$', register, {'backend': 'registration.backends.default.DefaultBackend','form_class': UserRegistrationForm}, name='registration_register'),    
+    url(r'^accounts/login/$','django.contrib.auth.views.login',{'template_name':'ceqanet/login.html'},name = 'login'),
+    #url(r'^accounts/login/$','django.contrib.auth.views.login',name = 'login'),
+    url(r'^accounts/logout/$','django.contrib.auth.views.logout', {'next_page': '/'}, name = 'logout'),
 )
+
+#urlpatterns = patterns('',
+#    ...
+#    (r'^accounts/', include('allauth.urls')),
+#    ...
+#)

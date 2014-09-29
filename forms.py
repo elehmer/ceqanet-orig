@@ -303,8 +303,14 @@ class addholidayform(forms.Form):
 
         return cleaned_data
 
+class manageusersform(forms.Form):
+    userfilter = forms.CharField(label="Filter User Names:",required=False,max_length=40,widget=forms.TextInput(attrs={'size':'40'}))
+    #sortfld = forms.ChoiceField(label="Sort Results By:",required=True,choices=DOC_SORT_FIELDS,initial='-doc_prj_fk__prj_schno')
+
 class manageuserform(forms.Form):
-    usr_grp = forms.ModelChoiceField(label="Assign Group:",required=False,queryset=Group.objects.filter(pk__gt=1).filter(pk__lt=5),empty_label=None,widget=forms.Select(attrs={'size':5}))
+    usr_grp = forms.ModelChoiceField(label="Assign Group:",required=False,queryset=Group.objects.filter(pk__gt=1).filter(pk__lt=5),empty_label="None",widget=forms.RadioSelect(attrs={'id':'usr_grp','class':'usr_grp'}))
+    set_lag_fk = forms.ModelChoiceField(label="Lead Agency:",required=False,queryset=leadagencies.objects.filter(inlookup=True).order_by('lag_name'))
+    set_rag_fk = forms.ModelChoiceField(label="Reviewing Agency:",required=False,queryset=reviewingagencies.objects.filter(inlookup=True).order_by('rag_name'))
 
 class pendingdetailnocform(nocform):
     def __init__(self, *args, **kwargs):

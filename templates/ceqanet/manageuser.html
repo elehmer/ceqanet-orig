@@ -24,23 +24,47 @@
       <TD>
         <B>User Name:</b> {{ usr.username }}
       </TD>
-      <TD rowspan="7">
+      <TD rowspan="8">
         <table>
           <tr>
-            <td>
-              <select id="usr_grp" name="usr_grp" size="5">
-                {% for pk,choice in form.usr_grp.field.widget.choices %}
-                  {% if usr.groups.all.0.pk = pk %}
-                    <option selected value="{{pk}}">{{choice}}</option>
-                  {% else %}
-                    <option value="{{pk}}">{{choice}}</option>
-                  {% endif %}
-                {% endfor %}
-              </select>
-            </td>
+            {% for u in form.usr_grp %}
+              <td>
+                {{ u }}
+              </td>
+            {% endfor %}
           </tr>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_lag_fk.label }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_lag_fk }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_lag_fk.errors }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_rag_fk.label }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_rag_fk }}
+            </TD>
+          </TR>
+          <TR>
+            <TD colspan="4">
+              {{ form.set_rag_fk.errors }}
+            </TD>
+          </TR>
           <tr>
-            <TD>
+            <TD colspan="4">
               <input id="assign" type="button" value="Assign Group">
             </TD>
           </tr>
@@ -60,6 +84,11 @@
     <TR> 
       <TD>
         <B>Email:</b> {{ usr.email }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD>
+        <B>Phone:</b> {{ usr.get_profile.conphone }}
       </TD>
     </TR>
     <TR> 
@@ -84,7 +113,11 @@
     </TR>
     <TR> 
       <TD colspan="2">
-        <input id="delete" type="button" value="Delete User">
+        {% if usr.is_active %}
+          <input id="deactivate" type="button" value="Deactivate Account">
+        {% else %}
+          <input id="activate" type="button" value="Activate Account">
+        {% endif %}
       </TD>
     </TR>
   </TABLE>
@@ -92,21 +125,57 @@
   <input type="hidden" name="user_id" value="{{ usr.pk }}">
   <script>
     $(document).ready(function() {
-        $("#assign").click(function() {
-          if ($('#usr_grp').val()) {
-            $("#mode").val("assign");
-            $("#manageuserform").submit();
-          }
-          else {
-            alert("Select a group to assign first.");
-          };
+        if ($("#usr_grp_0").is(":checked")) {
+          $("#id_set_lag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").attr('disabled', true);
+        }
+        if ($("#usr_grp_1").is(":checked")) {
+          $("#id_set_lag_fk").attr('disabled', false);
+          $("#id_set_rag_fk").attr('disabled', true);
+        }
+        if ($("#usr_grp_2").is(":checked")) {
+          $("#id_set_lag_fk").attr('disabled', false);
+          $("#id_set_rag_fk").attr('disabled', false);
+        }
+        if ($("#usr_grp_3").is(":checked")) {
+          $("#id_set_lag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").attr('disabled', false);
+        }
+        $("#usr_grp_0").click(function() {
+          $("#id_set_lag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").attr('disabled', true);
+          $("#id_set_lag_fk").val("");
+          $("#id_set_rag_fk").val("");
         });
-        $("#delete").click(function() {
-          $("#mode").val("delete");
+        $("#usr_grp_1").click(function() {
+          $("#id_set_lag_fk").attr('disabled', false);
+          $("#id_set_rag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").val("");
+        });
+        $("#usr_grp_2").click(function() {
+          $("#id_set_lag_fk").attr('disabled', false);
+          $("#id_set_rag_fk").attr('disabled', false);
+        });
+        $("#usr_grp_3").click(function() {
+          $("#id_set_lag_fk").attr('disabled', true);
+          $("#id_set_rag_fk").attr('disabled', false);
+          $("#id_set_lag_fk").val("");
+        });
+        $("#assign").click(function() {
+          $("#mode").val("assign");
+          $("#manageuserform").submit();
+        });
+        $("#deactivate").click(function() {
+          $("#mode").val("deactivate");
+          $("#manageuserform").submit();
+        });
+        $("#activate").click(function() {
+          $("#mode").val("activate");
           $("#manageuserform").submit();
         });
     });
   </script>
 </FORM>
+<button onclick="window.location = '/user/manageusers'">Back to Manage Users</button>
 
 {% endblock content %}

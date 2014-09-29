@@ -47,9 +47,9 @@
 			<a class="p_h_button p_h_contact" href="/Contact.html"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Contact Us" /></a>
 			<!--<a class="p_h_button p_h_search" onclick="toggle_search();"><img src="{% static "ceqanet/CA_template/images/template2013/clear.gif" %}" alt="Search" /></a>-->
 			{% if user.is_anonymous %}
-			<a class="p_h_button p_h_search" href="{% url 'auth_login' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Login" /></a>
+			<a class="p_h_button p_h_search" href="{% url 'login' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Login" /></a>
             {% else %}
-			<a class="p_h_button p_h_search" href="{% url 'auth_logout' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Logout" /></a>
+			<a class="p_h_button p_h_search" href="{% url 'logout' %}"><img src="{% static 'ceqanet/CA_template/images/template2013/clear.gif' %}" alt="Logout" /></a>
             {% endif %}
 		</div>
 		<div class="logo_and_banner">
@@ -59,9 +59,9 @@
 	</div>
 	<div class="head_loginout">
 			{% if user.is_anonymous %}
-				<a class="head_login" href="{% url 'auth_login' %}">{% trans "Log in" %}</a>
+				<a class="head_login" href="{% url 'login' %}">{% trans "Log in" %}</a>
 			{% else %}
-				<a class="head_logout" href="{% url 'auth_logout' %}">{% trans "Log out" %} [{{ user.username }}]</a>
+				<a class="head_logout" href="{% url 'logout' %}">{% trans "Log out" %} [{{ user.username }}]</a>
 			{% endif %}
 	</div>
 
@@ -115,7 +115,7 @@
 			</li>
             <li><a href="{% url 'map' %}" class="nav_level1_link">{% trans "Map" %}</a></li>
 			{% if not user.is_active %}
-            <li><a href="{% url 'registration_register' %}" class="nav_level1_link">{% trans "Account" %}</a></li>
+            <li><a href="{% url 'registration_register' %}" class="nav_level1_link">{% trans "Register" %}</a></li>
             {% endif %}
 
 			{% for g in user.groups.all %}

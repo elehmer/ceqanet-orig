@@ -9,8 +9,9 @@ from django.views.generic.list import ListView
 from django.views.generic.edit import FormView,CreateView,UpdateView
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.core.mail import send_mail
-
-from ceqanet.forms import basicsearchform,prjlistform,doclistform,advancedsearchform,submitform,usersettingsform,attachmentsform,chqueryform,findprojectform,manageaccountform,requestupgrdform,manageupgradeform,manageuserform
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+from ceqanet.forms import basicsearchform,prjlistform,doclistform,advancedsearchform,submitform,usersettingsform,attachmentsform,chqueryform,findprojectform,manageaccountform,requestupgrdform,manageupgradeform,manageusersform,manageuserform
 from ceqanet.forms import nocform,nodform,noeform,nopform
 from ceqanet.forms import editnocform,editnoeform,editnodform,editnopform
 from ceqanet.forms import pendingdetailnocform,pendingdetailnodform,pendingdetailnoeform,pendingdetailnopform
@@ -29,7 +30,7 @@ from vectorformats.Formats import Django, GeoJSON, KML
 #import simplejson
 from django.utils import simplejson
 from django.core import serializers
-from ceqanet.functions import generate_schno,generate_biaschno,delete_clearinghouse_document,email_rejection,email_submission,email_inreview,email_upgraderejection,email_upgradeacceptance,email_commentacceptance,email_acceptance,email_requestforupgrade,email_assigned
+from ceqanet.functions import generate_schno,generate_biaschno,delete_clearinghouse_document,email_rejection,email_submission,email_inreview,email_upgraderejection,email_upgradeacceptance,email_commentacceptance,email_acceptance,email_requestforupgrade,email_assigned,email_demotiontodraft
 
 import django.contrib.gis
 
@@ -394,6 +395,10 @@ class submit(FormView):
         context['laginfo'] = leadagencies.objects.get(pk=self.request.user.get_profile().set_lag_fk.lag_pk)
         return context
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(submit, self).dispatch(*args, **kwargs)
+
 class draftsbylag(ListView):
     template_name ="ceqanet/draftsbylag.html"
     context_object_name = "draftsbylag"
@@ -414,6 +419,10 @@ class draftsbylag(ListView):
         context['restofqs'] = qsminuspage.urlencode()
 
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(draftsbylag, self).dispatch(*args, **kwargs)
 
 def DraftsByLAGQuery(request):
     queryset = documents.objects.filter(projects__prj_lag_fk__lag_pk=request.user.get_profile().set_lag_fk.lag_pk).filter(doc_draft=True)
@@ -440,6 +449,10 @@ class pendingsbylag(ListView):
 
         return context
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(pendingsbylag, self).dispatch(*args, **kwargs)
+
 def PendingsByLAGQuery(request):
     queryset = documents.objects.filter(projects__prj_lag_fk__lag_pk=request.user.get_profile().set_lag_fk.lag_pk).filter(doc_pending=True).order_by('-doc_received','-doc_pk')
     return queryset
@@ -465,6 +478,10 @@ class reviewsbylag(ListView):
         context['la'] = self.request.user.get_profile().set_lag_fk.lag_name
 
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(reviewsbylag, self).dispatch(*args, **kwargs)
 
 def ReviewsByLAGQuery(request):
     queryset = documents.objects.filter(projects__prj_lag_fk__lag_pk=request.user.get_profile().set_lag_fk.lag_pk).filter(doc_review=True).order_by('-doc_received','-doc_pk')
@@ -504,6 +521,10 @@ class chquery(FormView):
         else:
             self.nodagency = None
         return super(chquery,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(chquery, self).dispatch(*args, **kwargs)
 
 class findproject(FormView):
     template_name="ceqanet/findproject.html"
@@ -546,6 +567,10 @@ class findproject(FormView):
         self.leadorresp = self.request.POST.get('leadorresp')
         self.nodagency = self.request.POST.get('nodagency')
         return super(findproject,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(findproject, self).dispatch(*args, **kwargs)
 
 class attachments(FormView):
     template_name="ceqanet/attachments.html"
@@ -597,6 +622,10 @@ class attachments(FormView):
                 email_submission(self,doc)
 
         return super(attachments,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(attachments, self).dispatch(*args, **kwargs)
 
 class docadd_noc(FormView):
     template_name="ceqanet/docadd_noc.html"
@@ -791,6 +820,10 @@ class docadd_noc(FormView):
 
         return super(docadd_noc,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(docadd_noc, self).dispatch(*args, **kwargs)
+
 class docadd_nod(FormView):
     template_name="ceqanet/docadd_nod.html"
     form_class = nodform
@@ -982,6 +1015,10 @@ class docadd_nod(FormView):
 
         return super(docadd_nod,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(docadd_nod, self).dispatch(*args, **kwargs)
+
 class docadd_noe(FormView):
     template_name="ceqanet/docadd_noe.html"
     form_class = noeform
@@ -1128,6 +1165,10 @@ class docadd_noe(FormView):
             email_submission(self,adddoc)
 
         return super(docadd_noe,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(docadd_noe, self).dispatch(*args, **kwargs)
 
 class docadd_nop(FormView):
     template_name="ceqanet/docadd_nop.html"
@@ -1319,6 +1360,10 @@ class docadd_nop(FormView):
         self.doc_pk = adddoc.pk
 
         return super(docadd_nop,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(docadd_nop, self).dispatch(*args, **kwargs)
 
 class projectlist(ListView):
     template_name="ceqanet/projectlist.html"
@@ -1832,6 +1877,10 @@ class docedit_noc(FormView):
 
         return super(docedit_noc,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(docedit_noc, self).dispatch(*args, **kwargs)
+
 class docedit_nod(FormView):
     form_class = editnodform
     template_name="ceqanet/docedit_nod.html"
@@ -2038,6 +2087,10 @@ class docedit_nod(FormView):
 
         return super(docedit_nod,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(docedit_nod, self).dispatch(*args, **kwargs)
+
 class docedit_noe(FormView):
     form_class = editnoeform
     template_name="ceqanet/docedit_noe.html"
@@ -2216,6 +2269,10 @@ class docedit_noe(FormView):
                 geowrds_city.save()
 
         return super(docedit_noe,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(docedit_noe, self).dispatch(*args, **kwargs)
 
 class docedit_nop(FormView):
     form_class = editnopform
@@ -2565,6 +2622,10 @@ class docedit_nop(FormView):
 
         return super(docedit_nop,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(docedit_nop, self).dispatch(*args, **kwargs)
+
 class draftedit_noc(docedit_noc):    
     template_name="ceqanet/draftedit_noc.html"
 
@@ -2611,6 +2672,10 @@ class addleadagency(FormView):
 
         return super(addleadagency,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(addleadagency, self).dispatch(*args, **kwargs)
+
 class addreviewingagency(FormView):
     form_class = addreviewingagencyform
     template_name="ceqanet/addreviewingagency.html"
@@ -2626,6 +2691,10 @@ class addreviewingagency(FormView):
         newreviewingagency.save()
 
         return super(addreviewingagency,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(addreviewingagency, self).dispatch(*args, **kwargs)
 
 class addholiday(FormView):
     form_class = addholidayform
@@ -2658,37 +2727,59 @@ class addholiday(FormView):
 
         return super(addholiday,self).form_valid(form)
 
-class manageusers(ListView):
-    template_name="ceqanet/manageusers.html"
-    context_object_name = "users"
-    paginate_by = 25
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(addholiday, self).dispatch(*args, **kwargs)
 
-    def get_queryset(self):
-        queryset = UserListQuery(self.request)
-        return queryset
+class manageusers(FormView):
+    template_name="ceqanet/manageusers.html"
+    form_class = manageusersform
+
+    def get_initial(self):
+        initial = super(manageusers, self).get_initial()
+
+        if self.request.GET.get('userfilter') != None:
+            initial['userfilter'] = self.request.GET.get('userfilter')
+        
+        return initial
 
     def get_context_data(self, **kwargs):
         context = super(manageusers, self).get_context_data(**kwargs)
 
-        qsminuspage = self.request.GET.copy()
-        
-        if "page" in qsminuspage:
-            qsminuspage.pop('page')
+        if self.request.GET.get('userfilter') != None:
+            usrflt = self.request.GET.get('userfilter')
+        else:
+            usrflt = ''
 
-        context['restofqs'] = qsminuspage.urlencode()
+        context['users'] = User.objects.filter(is_superuser=False).filter(pk__gt=0).filter(username__icontains=usrflt).order_by('pk')
 
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(manageusers, self).dispatch(*args, **kwargs)
 
 class manageuser(FormView):
     form_class = manageuserform
     template_name="ceqanet/manageuser.html"
 
     def get_success_url(self):
-        success_url = reverse_lazy('manageusers')
+        success_url = "%s?user_id=%s" % (reverse_lazy('manageuser'),self.request.POST.get('user_id'))
         return success_url
 
     def get_initial(self):
         initial = super(manageuser, self).get_initial()
+
+        usr = User.objects.get(pk=self.request.GET.get('user_id'))
+        grp = usr.groups.all()
+        if grp.exists():
+            initial['usr_grp'] = grp[0]
+        
+        if usr.get_profile().set_lag_fk != None:
+            initial['set_lag_fk'] = leadagencies.objects.get(pk=usr.get_profile().set_lag_fk.lag_pk)
+        
+        if usr.get_profile().set_rag_fk != None:
+            initial['set_rag_fk'] = reviewingagencies.objects.get(pk=usr.get_profile().set_rag_fk.rag_pk)
 
         return initial
 
@@ -2706,16 +2797,35 @@ class manageuser(FormView):
 
         if self.request.POST.get('mode') == "assign":
             usr.groups.clear()
-            usr.groups.add(data['usr_grp'])
-        elif self.request.POST.get('mode') == "delete":
+            if data['usr_grp'] != None:
+                usr.groups.add(data['usr_grp'])
+            usrprof = UserProfile.objects.get(user_id=self.request.POST.get('user_id'))
+            if data['usr_grp'] == None:
+                usrprof.set_lag_fk = None
+                usrprof.set_rag_fk = None
+            elif data['usr_grp'].name == 'leads':
+                usrprof.set_lag_fk = data['set_lag_fk']
+                usrprof.set_rag_fk = None
+            elif data['usr_grp'].name == 'reviewers':
+                usrprof.set_lag_fk = None
+                usrprof.set_rag_fk = data['set_rag_fk']
+            elif data['usr_grp'].name == 'planners':
+                usrprof.set_lag_fk = data['set_lag_fk']
+                usrprof.set_rag_fk = data['set_rag_fk']
+            usrprof.save()
+
+        elif self.request.POST.get('mode') == "deactivate":
             usr.is_active = False
+            usr.save()
+        elif self.request.POST.get('mode') == "activate":
+            usr.is_active = True
             usr.save()
 
         return super(manageuser,self).form_valid(form)
 
-def UserListQuery(request):
-    queryset = User.objects.filter(is_active=True).filter(is_superuser=False).filter(pk__gt=0).order_by('pk')
-    return queryset
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(manageuser, self).dispatch(*args, **kwargs)
 
 class pending(ListView):
     template_name="ceqanet/pending.html"
@@ -2737,6 +2847,10 @@ class pending(ListView):
         context['restofqs'] = qsminuspage.urlencode()
 
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(pending, self).dispatch(*args, **kwargs)
 
 def PendingListQuery(request):
     queryset = documents.objects.filter(doc_pending=True).order_by('-doc_received','-doc_pk')
@@ -3123,6 +3237,10 @@ class pendingdetail_noc(FormView):
 
         return super(pendingdetail_noc,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(pendingdetail_noc, self).dispatch(*args, **kwargs)
+
 class pendingdetail_nod(FormView):
     form_class = pendingdetailnodform
     template_name="ceqanet/pendingdetail_nod.html"
@@ -3356,6 +3474,10 @@ class pendingdetail_nod(FormView):
             
         return super(pendingdetail_nod,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(pendingdetail_nod, self).dispatch(*args, **kwargs)
+
 class pendingdetail_noe(FormView):
     form_class = pendingdetailnoeform
     template_name="ceqanet/pendingdetail_noe.html"
@@ -3551,6 +3673,10 @@ class pendingdetail_noe(FormView):
             doc.save()
 
         return super(pendingdetail_noe,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(pendingdetail_noe, self).dispatch(*args, **kwargs)
 
 class pendingdetail_nop(FormView):
     form_class = pendingdetailnopform
@@ -3913,6 +4039,10 @@ class pendingdetail_nop(FormView):
 
         return super(pendingdetail_nop,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(pendingdetail_nop, self).dispatch(*args, **kwargs)
+
 class review(ListView):
     template_name="ceqanet/review.html"
     context_object_name = "reviews"
@@ -3933,6 +4063,10 @@ class review(ListView):
         context['restofqs'] = qsminuspage.urlencode()
 
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(review, self).dispatch(*args, **kwargs)
 
 def ReviewListQuery(request):
     queryset = documents.objects.filter(doc_plannerreview=True).order_by('-doc_received','-doc_pk')
@@ -4319,6 +4453,10 @@ class reviewdetail_noc(FormView):
 
         return super(reviewdetail_noc,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(reviewdetail_noc, self).dispatch(*args, **kwargs)
+
 class reviewdetail_nop(FormView):
     form_class = reviewdetailnopform
     template_name="ceqanet/reviewdetail_nop.html"
@@ -4696,6 +4834,10 @@ class reviewdetail_nop(FormView):
 
         return super(reviewdetail_nop,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(reviewdetail_nop, self).dispatch(*args, **kwargs)
+
 class comment(ListView):
     template_name="ceqanet/comment.html"
     context_object_name = "comments"
@@ -4716,6 +4858,10 @@ class comment(ListView):
         context['restofqs'] = qsminuspage.urlencode()
 
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(comment, self).dispatch(*args, **kwargs)
 
 def CommentListQuery(request):
     set_rag_fk = request.user.get_profile().set_rag_fk.rag_pk
@@ -4744,6 +4890,10 @@ class commentdetail(ListView):
         context['counties'] = geowords.objects.filter(geow_geol_fk=1001).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=doc_pk)
         context['cities'] = geowords.objects.filter(geow_geol_fk=1002).filter(inlookup=True).filter(docgeowords__dgeo_doc_fk__doc_pk=doc_pk)
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(commentdetail, self).dispatch(*args, **kwargs)
 
 def CommentDetailListQuery(request):
     drag_pk = docreviews.objects.filter(drag_doc_fk=request.GET.get('doc_pk')).filter(drag_rag_fk=request.user.get_profile().set_rag_fk)
@@ -4789,6 +4939,10 @@ class commentadd(FormView):
             email_commentacceptance(self)
 
         return super(commentadd,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(commentadd, self).dispatch(*args, **kwargs)
 
 class showcomment(DetailView):
     model = doccomments
@@ -4846,6 +5000,10 @@ class manageaccount(FormView):
 
         return super(manageaccount,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(manageaccount, self).dispatch(*args, **kwargs)
+
 class requestupgrd(FormView):
     form_class = requestupgrdform
     template_name = "ceqanet/requestupgrd.html"
@@ -4877,6 +5035,10 @@ class requestupgrd(FormView):
 
         return super(requestupgrd,self).form_valid(form)
 
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(requestupgrd, self).dispatch(*args, **kwargs)
+
 class manageupgrades(ListView):
     template_name = "ceqanet/manageupgrades.html"
     context_object_name = "upgrades"
@@ -4889,6 +5051,10 @@ class manageupgrades(ListView):
         context = super(manageupgrades, self).get_context_data(**kwargs)
 
         return context
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(manageupgrades, self).dispatch(*args, **kwargs)
 
 def ManageUpgradesListQuery(request):
     queryset = requestupgrade.objects.filter(rqst_pending=True)
@@ -4936,6 +5102,10 @@ class manageupgrade(FormView):
         rqstupgrd.delete()
 
         return super(manageupgrade,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(manageupgrade, self).dispatch(*args, **kwargs)
 
 class usersettings(FormView):
     form_class = usersettingsform
@@ -4992,6 +5162,10 @@ class usersettings(FormView):
         us.save()
 
         return super(usersettings,self).form_valid(form)
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(usersettings, self).dispatch(*args, **kwargs)
 
 def citiesforcounty_json(request, county):
     current_county = geowords.objects.get(geow_pk=county)
