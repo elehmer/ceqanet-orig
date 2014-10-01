@@ -23,7 +23,7 @@
 {% block content %}
 
 {{ form.media }}
-<FORM name="adddoc" class="adddocform" method="post" action="">
+<FORM id="adddocform" name="adddoc" class="adddocform" method="post" action="">
   {% csrf_token %}
   <h1>Add New Notice of Determination Document:</h1>
   <TABLE border="0" cellpadding="5" cellspacing="0" width="763" valign="top">
@@ -472,9 +472,17 @@
     </TR>
     <TR> 
       <TD align="left" colspan="3"> 
-        <input id="next" type="submit" value="Next >>">
+        <input id="next" type="button" value="Next >>">
       </TD>
     </TR>
+    <script>
+      $(document).ready(function() {
+        $("#next").click(function() {
+          $("#nodagency").prop('disabled', false);
+          $("#adddocform").submit();
+        });
+      });
+    </script>
   </TABLE>
   <input type="hidden" name="prj_pk" value="{{ prj_pk }}">
   <input type="hidden" name="doctype" value="{{ doctype }}">

@@ -2,6 +2,14 @@
 
 {% load staticfiles %}
 
+{% block extrajs %}
+
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/admin_styles.css" %}">
+<link rel="stylesheet" type="text/css" href="{% static "ceqanet/css/adddoc.css" %}">
+<link rel="stylesheet" href="{% static 'ceqanet/css/style.css' %}">
+
+{% endblock extrajs %}
+
 {% block content %}
 
 {% if not isrequested %}
@@ -74,6 +82,11 @@
     <TR> 
       <TD colspan="2">
         {{ form.rqst_reason.label }} {{ form.rqst_reason }}
+      </TD>
+    </TR>
+    <TR> 
+      <TD colspan="2">
+        {{ form.rqst_reason.errors }}
       </TD>
     </TR>
     <TR> 

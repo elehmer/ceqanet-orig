@@ -1,6 +1,11 @@
 {% load i18n %}
-{% trans "Activate account at" %} {{ site.name }}:
+
+Dear CEQANet User,
+Thank you for registering for the State Clearinghouse CEQANet System. To activate your account please click the link provided below:
 
 http://{{ site.domain }}{% url 'registration_activate' activation_key %}
+
+If you have any questions, feel free to call the State Clearinghouse at (916)445-0613.
+Thank you.
 
 {% blocktrans %}Link is valid for {{ expiration_days }} days.{% endblocktrans %}

@@ -5031,7 +5031,7 @@ class requestupgrd(FormView):
         rqst.save()
 
         if settings.SENDEMAIL:
-            email_requestforupgrade()
+            email_requestforupgrade(self,data)
 
         return super(requestupgrd,self).form_valid(form)
 
@@ -5094,7 +5094,7 @@ class manageupgrade(FormView):
             usrprof.save()
 
             if settings.SENDEMAIL:
-                email_upgradeacceptance
+                email_upgradeacceptance(self)
         else:
             if settings.SENDEMAIL:
                 email_upgraderejection(self)

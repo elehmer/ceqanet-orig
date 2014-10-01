@@ -1,13 +1,13 @@
 import os
 from django.core.urlresolvers import reverse
-from ceqanet.models import documents,projects,latlongs,dockeywords,docgeowords,docreviews,docattachments,clearinghouse,Locations,doccomments
+from ceqanet.models import documents,projects,latlongs,dockeywords,docgeowords,docreviews,docattachments,clearinghouse,Locations,doccomments,requestupgrade
 from django.contrib.auth.models import User,Group
 from django.core.mail import send_mail,EmailMultiAlternatives
 from datetime import datetime
 from django.templatetags.static import static
 
 opr_email_address = "opr@ceqa.ice.ucdavis.edu"
-opr_email_recipients = "opr@ceqa.ice.ucdavis.edu,Christine.Asiata@OPR.CA.GOV"
+opr_email_recipients = "opr@ceqa.ice.ucdavis.edu,Christine.Asiata@OPR.CA.GOV,elehmer@ucdavis.edu"
 
 def generate_schno(region):
     ch = clearinghouse.objects.get(pk=1)
@@ -111,19 +111,18 @@ def email_acceptance(self):
     strBody += "Posted: " + doc.doc_received.strftime('%m/%d/%Y') + "\n"
     strBody += "If you have any questions or need to correct your submittal, feel free to call the State Clearinghouse at (916)445-0613.\n"
     strBody += "Thank you.\n"
-    strBody += "Link:" + self.request.gethost() + docurl + "\n"
 
     html_content = "<!DOCTYPE html>"
     html_content += "<html class=\"no-js\" lang=\"en\"><HEAD><meta charset=\"utf-8\"><title>OPR CEQANet Email Communication</title>"
-    html_content += "<link rel=\"stylesheet\" href=\"" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
-    html_content += "<link rel=\"stylesheet\" href=\"" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
     html_content += "</HEAD><body class=\"clearfix\">"
     html_content += "<div id=\"main_content\" class=\"clearfix\">"
     html_content += "<div class=\"add_maincontent_padding\">"
     html_content += "<h1 class=\"add_icon_blue_arrow_right\">OPR CEQANet Communication: Acceptance of Submittal</h1>"
     html_content += "<P>Dear CEQANet User,<BR>"
     html_content += "Thank you for submitting a CEQA document on the State Clearinghouse CEQANet System. The following document has been accepted and posted by the State Clearinghouse:</P>"
-    html_content += "<ul><li>Project Title: " + doc.doc_prj_fk.prj_title 
+    html_content += "<ul><li>Project Title: <a href=\"http://" + self.request.get_host() + docurl + "\">" + doc.doc_prj_fk.prj_title + "</a>"
     html_content += "<li>Lead Agency: " + doc.doc_prj_fk.prj_leadagency
     html_content += "<li>Type of CEQA Document: " + doc.doc_doctype
     html_content += "<li>State Clearinghouse Number (SCH#), if existing: "
@@ -134,7 +133,6 @@ def email_acceptance(self):
     html_content += "<li>Posted: " + doc.doc_received.strftime('%m/%d/%Y') + "</ul>"
     html_content += "<p>If you have any questions or need to correct your submittal, feel free to call the State Clearinghouse at (916) 445-0613.</p>"
     html_content += "Thank you."
-    html_content += "Link: <a href=\"" + self.request.get_host() + docurl + "\">" + self.request.get_host() + docurl + "</a>"
     html_content += "</div></div>"
     html_content += "</BODY></HTML>"
 
@@ -161,12 +159,11 @@ def email_rejection(self):
     strBody += "The document has been deleted and will need to be resubmitted.\n"
     strBody += "Please contact the State Clearinghouse at (916)445-0613 to discuss your document submittal.\n"
     strBody += "Thank you.\n"
-    strBody += "Link:" + self.request.gethost() + docurl + "\n"
 
     html_content = "<!DOCTYPE html>"
     html_content += "<html class=\"no-js\" lang=\"en\"><HEAD><meta charset=\"utf-8\"><title>OPR CEQANet Email Communication</title>"
-    html_content += "<link rel=\"stylesheet\" href=\"" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
-    html_content += "<link rel=\"stylesheet\" href=\"" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
     html_content += "</HEAD><body class=\"clearfix\">"
     html_content += "<div id=\"main_content\" class=\"clearfix\">"
     html_content += "<div class=\"add_maincontent_padding\">"
@@ -188,13 +185,13 @@ def email_rejection(self):
 
 def email_demotiontodraft(self,doc):
     if doc.doc_doct_fk.keyw_pk == 109:
-        docurl = reverse('docdesp_noe', args=[self.request.POST.get('doc_pk')])
+        docurl = "%s?doc_pk=%s" % (reverse('draftedit_noe'),doc.doc_pk)
     elif doc.doc_doct_fk.keyw_pk == 108:
-        docurl = reverse('docdesp_nod', args=[self.request.POST.get('doc_pk')])
+        docurl = "%s?doc_pk=%s" % (reverse('draftedit_nod'),doc.doc_pk)
     elif doc.doc_doct_fk.keyw_pk == 102:
-        docurl = reverse('docdesp_nop', args=[self.request.POST.get('doc_pk')])
+        docurl = "%s?doc_pk=%s" % (reverse('draftedit_nop'),doc.doc_pk)
     else:
-        docurl = reverse('docdesp_noc', args=[self.request.POST.get('doc_pk')])
+        docurl = "%s?doc_pk=%s" % (reverse('draftedit_noc'),doc.doc_pk)
 
     emaillist = doc.doc_conemail
     if doc.doc_conemail != doc.doc_added_userid.email:
@@ -212,19 +209,18 @@ def email_demotiontodraft(self,doc):
     strBody += "The document has been returned to the Draft Documents list on your account and will need to be corrected before being submitted again.\n"
     strBody += "Please contact the State Clearinghouse at (916)445-0613 to discuss your document submittal.\n"
     strBody += "Thank you.\n"
-    strBody += "Link:" + self.request.gethost() + docurl + "\n"
 
     html_content = "<!DOCTYPE html>"
     html_content += "<html class=\"no-js\" lang=\"en\"><HEAD><meta charset=\"utf-8\"><title>OPR CEQANet Email Communication</title>"
-    html_content += "<link rel=\"stylesheet\" href=\"" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
-    html_content += "<link rel=\"stylesheet\" href=\"" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
     html_content += "</HEAD><body class=\"clearfix\">"
     html_content += "<div id=\"main_content\" class=\"clearfix\">"
     html_content += "<div class=\"add_maincontent_padding\">"
     html_content += "<h1 class=\"add_icon_blue_arrow_right\">OPR CEQANet Communication: Rejection of Submittal</h1>"
     html_content += "<P>Dear CEQANet User,<BR>"
     html_content += "Thank you for submitting a CEQA document on the State Clearinghouse CEQANet System. The following document has been rejected by the State Clearinghouse:</P>"
-    html_content += "<ul><li>Project Title: " + doc.doc_prj_fk.prj_title 
+    html_content += "<ul><li>Project Title: <a href=\"http://" + self.request.get_host() + docurl + "\">" + doc.doc_prj_fk.prj_title + "</a>"
     html_content += "<li>Lead Agency: " + doc.doc_prj_fk.prj_leadagency
     html_content += "<li>Type of CEQA Document: " + doc.doc_doctype
     html_content += "<p>The document has been returned to the Draft Documents list on your account and will need to be corrected before being submitted again.</p>"
@@ -274,15 +270,15 @@ def email_submission(self,doc):
 
     html_content = "<!DOCTYPE html>"
     html_content += "<html class=\"no-js\" lang=\"en\"><HEAD><meta charset=\"utf-8\"><title>OPR CEQANet Email Communication</title>"
-    html_content += "<link rel=\"stylesheet\" href=\"" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
-    html_content += "<link rel=\"stylesheet\" href=\"" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
     html_content += "</HEAD><body class=\"clearfix\">"
     html_content += "<div id=\"main_content\" class=\"clearfix\">"
     html_content += "<div class=\"add_maincontent_padding\">"
     html_content += "<h1 class=\"add_icon_blue_arrow_right\">OPR CEQANet Communication: Comfirmation of Submittal</h1>"
     html_content += "<P>Dear CEQANet User,<BR>"
     html_content += "Thank you for submitting a CEQA document on the State Clearinghouse CEQANet System. Please review the following information to ensure it is correct:</P>"
-    html_content += "<ul><li>Project Title: " + doc.doc_prj_fk.prj_title 
+    html_content += "<ul><li>Project Title: <a href=\"http://" + self.request.get_host() + docurl + "\">" + doc.doc_prj_fk.prj_title + "</a>"
     html_content += "<li>Lead Agency: " + doc.doc_prj_fk.prj_leadagency
     html_content += "<li>Type of CEQA Document: " + doc.doc_doctype
     html_content += "<li>State Clearinghouse Number (SCH#), if existing: "
@@ -295,7 +291,6 @@ def email_submission(self,doc):
     html_content += "</ul><p>State Clearinghouse staff will review your submittal for completeness. If necessary, the State Clearinghouse staff will also assign the project a State Clearinghouse number, determine which state agencies will receive the document for review, and set the review period dates for your document.  Once these steps are complete, you will receive another confirmation email.</p>"
     html_content += "<p>If you have any questions or need to correct your submittal, feel free to call the State Clearinghouse at (916) 445-0613.</p>"
     html_content += "Thank you."
-    html_content += "Link: <a href=\"" + self.request.get_host() + docurl + "\">" + self.request.get_host() + docurl + "</a>"
     html_content += "</div></div>"
     html_content += "</BODY></HTML>"
 
@@ -321,7 +316,7 @@ def email_assigned(self,doc):
     strSubject = "Document Assigned to Planners - " + doc.doc_doctype
     strBody = "The document of type: " + doc.doc_docname + " form submission on " + doc.doc_received.strftime('%m/%d/%Y') + " has been assigned to planners for review.  \n \n"
     strBody += "\n \n" + "--- Information Submitted ---" + "\n"
-    strBody += "Document Type: " + doc.doc_doctype + "\n"        
+    strBody += "Document Type: " + doc.doc_doctype + "\ndoc.doc_pk"        
     strBody += "Project Title: " + doc.doc_prj_fk.prj_title + "\n"
     strBody += "Project Location: " + doc.doc_location + "\n"
     strBody += "    City: " + doc.doc_city + "\n"
@@ -339,6 +334,15 @@ def email_assigned(self,doc):
         print "Not Able to Send Email:", detail
 
 def email_inreview(self,doc):
+    if doc.doc_doct_fk.keyw_pk == 109:
+        docurl = reverse('docdesp_noe', args=[self.request.POST.get('doc_pk')])
+    elif doc.doc_doct_fk.keyw_pk == 108:
+        docurl = reverse('docdesp_nod', args=[self.request.POST.get('doc_pk')])
+    elif doc.doc_doct_fk.keyw_pk == 102:
+        docurl = reverse('docdesp_nop', args=[self.request.POST.get('doc_pk')])
+    else:
+        docurl = reverse('docdesp_noc', args=[self.request.POST.get('doc_pk')])
+
     emaillist = doc.doc_conemail
     if doc.doc_conemail != doc.doc_added_userid.email:
         emaillist += "," + doc.doc_added_userid.email
@@ -349,6 +353,8 @@ def email_inreview(self,doc):
         for ra in self.request.POST.get('ragencies'):
             if u.get_profile().set_rag_fk == ra:
                 emaillist += "," + u.email
+
+    reviewers = docreviews.objects.filter(drag_doc_fk=doc.pk)
 
     strFrom = opr_email_address
     ToList = [emaillist]
@@ -370,35 +376,106 @@ def email_inreview(self,doc):
     strBody += "    E-mail: " + doc.doc_conemail + "\n"
     strBody += "Date Recieved: " + doc.doc_received.strftime('%m/%d/%Y') + "\n"
 
-    try:
-        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
-    except Exception as detail:
-        print "Not Able to Send Email:", detail
+    html_content = "<!DOCTYPE html>"
+    html_content += "<html class=\"no-js\" lang=\"en\"><HEAD><meta charset=\"utf-8\"><title>OPR CEQANet Email Communication</title>"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
+    html_content += "</HEAD><body class=\"clearfix\">"
+    html_content += "<div id=\"main_content\" class=\"clearfix\">"
+    html_content += "<div class=\"add_maincontent_padding\">"
+    html_content += "<h1 class=\"add_icon_blue_arrow_right\">OPR CEQANet Communication: Acceptance of Submittal</h1>"
+    html_content += "<P>Dear CEQANet User,<BR>"
+    html_content += "Thank you for submitting a CEQA document on the State Clearinghouse CEQANet System. The following document has been accepted and posted by the State Clearinghouse:</P>"
+    html_content += "<ul><li>Project Title: <a href=\"http://" + self.request.get_host() + docurl + "\">" + doc.doc_prj_fk.prj_title + "</a>"
+    html_content += "<li>Lead Agency: " + doc.doc_prj_fk.prj_leadagency
+    html_content += "<li>Type of CEQA Document: " + doc.doc_doctype
+    html_content += "<li>State Clearinghouse Number (SCH#), if existing: "
+    if doc.doc_schno != None:
+        html_content += doc.doc_schno
+    else:
+        html_content += "Not Assigned Yet"
+    html_content += "<li>Posted: " + doc.doc_received.strftime('%m/%d/%Y') + "</ul>"
+    html_content += "<p>The State Review period for your document will begin on " + doc.doc_dept.strftime('%m/%d/%Y') + " and conclude on " + doc.doc_clear.strftime('%m/%d/%Y') + ".</P>"
+    html_content += "<P>The following state agencies have received your document for review:</P>"
+    html_content += "<UL>"
+    html_content += "</UL>"
+    html_content += "<p>If you have any questions or need to correct your submittal, feel free to call the State Clearinghouse at (916) 445-0613.</p>"
+    html_content += "Thank you."
+    html_content += "</div></div>"
+    html_content += "</BODY></HTML>"
 
-def email_requestforupgrade():
+    msg = EmailMultiAlternatives(strSubject, strBody, strFrom, ToList)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
+
+def email_requestforupgrade(self,data):
     strFrom = opr_email_address
     ToList = [opr_email_recipients]
     strSubject = "CEQANet: Upgrade Request"
     strBody = "There is a new request for account upgrade. Please check website." + "\n"
 
-    try:
-        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
-    except Exception as detail:
-        print "Not Able to Send Email:", detail
+    docurl = "%s?user_id=%s" % (reverse('manageupgrade'),self.request.user.pk)
+
+    html_content = "<!DOCTYPE html>"
+    html_content += "<html class=\"no-js\" lang=\"en\"><HEAD><meta charset=\"utf-8\"><title>OPR CEQANet Email Communication</title>"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
+    html_content += "</HEAD><body class=\"clearfix\">"
+    html_content += "<div id=\"main_content\" class=\"clearfix\">"
+    html_content += "<div class=\"add_maincontent_padding\">"
+    html_content += "<h1 class=\"add_icon_blue_arrow_right\">OPR CEQANet Communication: Request for Account Upgrade</h1>"
+    html_content += "<P>The following registered CEQANet System User has requested an upgraded status:</P>"
+    html_content += "<ul><li>User Name: " + self.request.user.username
+    html_content += "<li>Request Type: " + self.request.POST.get('rqst_type')
+    if self.request.POST.get('rqst_type') == 'lead':
+        html_content += "<li>Lead Agency: " + data['rqst_lag_fk'].lag_name
+    else:
+        html_content += "<li>Reviewing Agency: " + data['rqst_rag_fk'].rag_name
+    html_content += "<li>Email: " + self.request.user.email
+    if self.request.user.get_profile().conphone != None:
+        html_content += "<li>Phone Number: " + self.request.user.get_profile().conphone
+    html_content += "</ul>"
+    html_content += "<a href=\"http://" + self.request.get_host() + docurl + "\">Click here to review the request.</a>"
+    html_content += "</div></div>"
+    html_content += "</BODY></HTML>"
+
+    msg = EmailMultiAlternatives(strSubject, strBody, strFrom, ToList)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 def email_upgradeacceptance(self):
     emaillist = User.objects.get(pk=self.request.POST.get('user_id')).email
+
+    rqstupgrd = requestupgrade.objects.get(user_id=self.request.POST.get('user_id'))
     
     strFrom = opr_email_address
     ToList = [emaillist]
     strSubject = "CEQANet: Acceptance of Account Upgrade Request"
-    strBody = "Your request to have your CEQANet account upgraded has been accepted." + "\n"
+    strBody = "Your request to have your CEQANet account upgraded has been accepted."
     strBody += "\n \n" + "Please reply to this email if you have any questions regarding this rejection."
 
-    try:
-        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
-    except Exception as detail:
-        print "Not Able to Send Email:", detail
+    html_content = "<!DOCTYPE html>"
+    html_content += "<html class=\"no-js\" lang=\"en\"><HEAD><meta charset=\"utf-8\"><title>OPR CEQANet Email Communication</title>"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
+    html_content += "</HEAD><body class=\"clearfix\">"
+    html_content += "<div id=\"main_content\" class=\"clearfix\">"
+    html_content += "<div class=\"add_maincontent_padding\">"
+    html_content += "<h1 class=\"add_icon_blue_arrow_right\">OPR CEQANet Communication: Acceptance of Upgrade Request</h1>"
+    html_content += "<P>Thank you for requesting an upgrade to your status on the State Clearinghouse CEQANet System.  Your request has been approved.</P>"
+    if rqstupgrd.rqst_type == 'lead':
+        html_content += "<P>You may now submit CEQA documents on the CEQANet System for review.</P>"
+    else:
+        html_content += "<P>You will now receive email notification for documents sent by the State Clearinghouse for your state agency's review.  You may also submit comment letters on these documents.</P>"
+    html_content += "<a href=\"http://" + self.request.get_host() + "\">Click here to go to CEQANet</a>"
+    html_content += "<p>If you have any questions, feel free to call the State Clearinghouse at (916) 445-0613.</p>"
+    html_content += "Thank you."
+    html_content += "</div></div>"
+    html_content += "</BODY></HTML>"
+
+    msg = EmailMultiAlternatives(strSubject, strBody, strFrom, ToList)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 def email_upgraderejection(self):
     emaillist = User.objects.get(pk=self.request.POST.get('user_id')).email
@@ -410,16 +487,32 @@ def email_upgraderejection(self):
     strBody += self.request.POST.get('rejectreason')
     strBody += "\n \n" + "Please reply to this email if you have any questions regarding this rejection."
 
-    try:
-        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
-    except Exception as detail:
-        print "Not Able to Send Email:", detail
+    html_content = "<!DOCTYPE html>"
+    html_content += "<html class=\"no-js\" lang=\"en\"><HEAD><meta charset=\"utf-8\"><title>OPR CEQANet Email Communication</title>"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
+    html_content += "</HEAD><body class=\"clearfix\">"
+    html_content += "<div id=\"main_content\" class=\"clearfix\">"
+    html_content += "<div class=\"add_maincontent_padding\">"
+    html_content += "<h1 class=\"add_icon_blue_arrow_right\">OPR CEQANet Communication: Rejection of Upgrade Request</h1>"
+    html_content += "<P>Thank you for requesting an upgrade to your status on the State Clearinghouse CEQANet System.  Your request has been rejected.  You will not be able to submit or review CEQA documents at this time.</P>"
+    html_content += "<P>Reason: " + self.request.POST.get('rejectreason') + "</P>"
+    html_content += "<p>Please contact the State Clearinghouse at (916)445-0613 to discuss your status.</p>"
+    html_content += "Thank you."
+    html_content += "</div></div>"
+    html_content += "</BODY></HTML>"
+
+    msg = EmailMultiAlternatives(strSubject, strBody, strFrom, ToList)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
 
 def email_commentacceptance(self):
     doc = documents.objects.get(pk=self.request.POST.get('doc_pk'))
 
     usrprof = self.request.user.get_profile()
     usr_rag_pk = usrprof.set_rag_fk
+
+    docurl = "%s?doc_pk=%s" % (reverse('commentdetail'),doc.doc_pk)
     
     emaillist = doc.doc_conemail
 
@@ -431,7 +524,7 @@ def email_commentacceptance(self):
     
     strFrom = opr_email_address
     ToList = [emaillist]
-    strSubject = "CEQANet: Comment Added to Document by Reveiwing Agency"
+    strSubject = "CEQANet: Comment Added to Document by Reviewing Agency"
     strBody = "A new comment has been added to the following document:" + "\n"
     strBody += "\n \n" + "--- Information Submitted ---" + "\n"
     strBody += "Document Type: " + doc.doc_doctype + "\n"        
@@ -447,7 +540,32 @@ def email_commentacceptance(self):
     strBody += "DATE: " + doc.doc_received.strftime('%m/%d/%Y') + "\n"
     strBody += "\n \n" + "Please reply to this email if you have any questions regarding this action."
 
-    try:
-        send_mail(strSubject,strBody,strFrom,ToList,fail_silently=False)
-    except Exception as detail:
-        print "Not Able to Send Email:", detail
+    html_content = "<!DOCTYPE html>"
+    html_content += "<html class=\"no-js\" lang=\"en\"><HEAD><meta charset=\"utf-8\"><title>OPR CEQANet Email Communication</title>"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/style.css") + "\">"
+    html_content += "<link rel=\"stylesheet\" href=\"http://" + self.request.get_host() + static("ceqanet/CA_template/css/colorscheme_oceanside.css") + "\">"
+    html_content += "</HEAD><body class=\"clearfix\">"
+    html_content += "<div id=\"main_content\" class=\"clearfix\">"
+    html_content += "<div class=\"add_maincontent_padding\">"
+    html_content += "<h1 class=\"add_icon_blue_arrow_right\">OPR CEQANet Communication: Comment Added to Document by Reviewing Agency</h1>"
+    html_content += "<P>Dear CEQANet User,<BR>"
+    html_content += usr_rag_pk.rag_name + " has submitted a comment letter on the following CEQA document:</P>"
+    html_content += "<ul><li>Project Title: " + doc.doc_prj_fk.prj_title + "</a>"
+    html_content += "<li>Lead Agency: " + doc.doc_prj_fk.prj_leadagency
+    html_content += "<li>Type of CEQA Document: " + doc.doc_doctype
+    html_content += "<li>State Clearinghouse Number (SCH#), if existing: "
+    if doc.doc_schno != None:
+        html_content += doc.doc_schno
+    else:
+        html_content += "Not Assigned Yet"
+    html_content += "<p>The State Review period for your document began on " + doc.doc_dept.strftime('%m/%d/%Y') + " and concludes on " + doc.doc_clear.strftime('%m/%d/%Y') + ".</P>"
+    html_content += "<p><a href=\"http://" + self.request.get_host() + docurl + "\">Click Here to View The Comment Letter</a></P>"
+    html_content += "<p>If the comment letter was received after the close of the State Review period above, the comment is considered a late comment (CEQA Guidelines 15207).  The State Clearinghouse encourages lead agencies to incorporate these comments into your final environmental document and to consider them prior to taking final action on the proposed project.</P>"
+    html_content += "<p>If you have any questions, feel free to call the State Clearinghouse at (916)445-0613.</P>"
+    html_content += "Thank you."
+    html_content += "</div></div>"
+    html_content += "</BODY></HTML>"
+
+    msg = EmailMultiAlternatives(strSubject, strBody, strFrom, ToList)
+    msg.attach_alternative(html_content, "text/html")
+    msg.send()
