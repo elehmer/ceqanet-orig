@@ -19,12 +19,23 @@
   <TABLE border="0" cellpadding="3" cellspacing="0" width="763" valign="top">
     <TR> 
       <TH colspan="3" align="left">
-        <h3>Attach Related Electronic Information:</h3>
+        <h3>Attach Related
+        {% if doc.doc_doct_fk.keyw_pk = 109 %}
+          Optional
+        {% elif doc.doc_doct_fk.keyw_pk = 108 %}
+          Optional
+        {% endif %}
+         Electronic Information:</h3>
       </TH>
     </TR>
     <TR> 
       <TD colspan="3" align="left">
-        Use the interface below to attach PDF files to this document:
+        Use the interface below to attach PDF files to this document 
+        {% if doc.doc_doct_fk.keyw_pk = 109 %}
+          (Optional)
+        {% elif doc.doc_doct_fk.keyw_pk = 108 %}
+          (Optional)
+        {% endif %}:
       </TD>
     </TR>  
     <TR> 

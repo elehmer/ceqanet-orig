@@ -838,6 +838,7 @@ class docadd_nod(FormView):
         if self.request.GET.get("prj_pk") != 'None':
             prjinfo = projects.objects.get(prj_pk__exact=self.request.GET.get("prj_pk"))
             initial['prj_title'] = prjinfo.prj_title
+            initial['prj_applicant'] = prjinfo.prj_applicant
             initial['prj_description'] = prjinfo.prj_description
 
         initial['doc_conname'] = self.request.user.first_name + " " + self.request.user.last_name
@@ -955,7 +956,7 @@ class docadd_nod(FormView):
                 doc_nodfeespaid = False
 
         if self.request.POST.get('prj_pk') == 'None':
-            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_status=doct.keyw_shortname,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today)
+            prj = projects(prj_lag_fk=lag,prj_doc_fk=doc,prj_status=doct.keyw_shortname,prj_title=data['prj_title'],prj_description=data['prj_description'],prj_leadagency=lag.lag_name,prj_datefirst=today,prj_datelast=today,prj_applicant=data['prj_applicant'])
             prj.save()
         else:
             prj = projects.objects.get(pk=self.request.POST.get('prj_pk'))
@@ -1897,6 +1898,7 @@ class docedit_nod(FormView):
 
         initial['prj_title'] = docinfo.doc_prj_fk.prj_title
         initial['prj_description'] = docinfo.doc_prj_fk.prj_description
+        initial['prj_applicant'] = docinfo.doc_prj_fk.prj_applicant
         initial['doc_title'] = docinfo.doc_title
         initial['doc_description'] = docinfo.doc_description
         initial['doc_conname'] = docinfo.doc_conname
@@ -2056,6 +2058,7 @@ class docedit_nod(FormView):
         doc.doc_eiravailableat = data['doc_eiravailableat']
         doc.save()
         prj.prj_title = data['prj_title']
+        prj.prj_applicant = data['prj_applicant']
         prj.prj_description = data['prj_description']
         prj.save()
 
@@ -3256,6 +3259,7 @@ class pendingdetail_nod(FormView):
         latlonginfo = latlongs.objects.filter(doc_pk=self.request.GET.get('doc_pk'))
 
         initial['prj_title'] = docinfo.doc_prj_fk.prj_title
+        initial['prj_applicant'] = docinfo.doc_prj_fk.prj_applicant
         initial['prj_description'] = docinfo.doc_prj_fk.prj_description
         initial['doc_title'] = docinfo.doc_title
         initial['doc_description'] = docinfo.doc_description
@@ -3428,6 +3432,7 @@ class pendingdetail_nod(FormView):
             doc.doc_clerknotes = data['doc_clerknotes']
             doc.save()
             prj.prj_title = data['prj_title']
+            prj.prj_applicant = data['prj_applicant']
             prj.prj_description = data['prj_description']
 
             if not prj.prj_schno:

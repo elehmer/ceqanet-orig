@@ -110,13 +110,15 @@ class nodform(basedocumentform):
     det5 = forms.ChoiceField(required=True,choices=DETERMINATION_CHOICES,widget=forms.RadioSelect(attrs={'id':'det5'}))
     doc_eiravailableat = forms.CharField(required=False,widget=forms.Textarea(attrs={'cols':'75','rows':'5'}))
     doc_nodfeespaid = forms.ChoiceField(required=True,choices=NODFEESPAID_CHOICES,widget=forms.RadioSelect(attrs={'id':'fees','class':'fees'}))
+    prj_applicant = forms.CharField(label="Project Applicant:",required=True,max_length=64,widget=forms.TextInput(attrs={'size':'50'}))
 
 class editnodform(nodform):
     def __init__(self, *args, **kwargs):
         super(editnodform, self).__init__(*args, **kwargs)
         self.fields['geom'].required = False
         self.fields['doc_conemail'].required = False
-        self.fields['doc_nodfeespaid'].required = False    
+        self.fields['doc_nodfeespaid'].required = False
+        self.fields['prj_applicant'].required = False
     doc_latitude = forms.CharField(label="Document Latitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_longitude = forms.CharField(label="Document Longitude:",required=False,widget=forms.TextInput(attrs={'size':'30'}))
     doc_conphone = forms.CharField(required=True,max_length=32,widget=forms.TextInput(attrs={'size':'32'}))

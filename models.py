@@ -322,6 +322,7 @@ class projects(models.Model):
     prj_pending = models.BooleanField()
     prj_visible = models.BooleanField()
     prj_plannerreview = models.BooleanField()
+    prj_applicant = models.CharField(null=True,blank=True,max_length=64)
 
     class Meta:
         verbose_name = "Project"
